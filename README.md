@@ -17,6 +17,9 @@ The beamer theme used for this lecture is the same used [for this Bash lecture](
 If you wish to compile LaTeX source code, the `TeXnicalities` package and the used beamer theme are needed and can be found [here](https://github.com/AxelKrypton/TeXnicalities).
 You will need the [Yanone Kaffeesatz font](https://fonts.google.com/specimen/Yanone+Kaffeesatz) available on your machine, too.
 
+There is a _Makefile_ in the ***TeX*** folder and the `lualatex` compiler (and a TeX distribution not older than 2020) is required to compile the documents.
+Use e.g. `DAY=1 make slide` from within the ***TeX*** folder to compile Day 1 material.
+
 ---
 
 ## Table of content
