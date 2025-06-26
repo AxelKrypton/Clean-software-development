@@ -1,0 +1,76 @@
+# Clean software development
+
+Material relative to a 5-days training about good practices in software development offered as [HGS-HIRe](https://hgs-hire.de) power week in a joined effort with the [CRC-TR 211](https://itp.uni-frankfurt.de/~strongmatter/) collaboration.
+Refer to the lecture [table of content](#table-of-content) to have an overview of the discussed topics.
+
+#### A thrilling alternation of discussion and practical sessions
+
+The course has been structured in many small lecture-like sessions, each followed by an practical one.
+Participants have been split into small groups and have worked together on different tasks, reporting to the whole attendees at the end of each day. 
+All material has been here uploaded and slides have been created on purposed for later reading.
+There is a natural significant overlap between [the _«Good practices in general programming»_ presentations](https://github.com/AxelKrypton/Clean-code-good-practices) and this material.
+The content has been reviewed and improved, though.
+
+## The beamer theme
+
+The beamer theme used for this lecture is the same used [for this Bash lecture](https://github.com/AxelKrypton/Bash-lecture).
+If you wish to compile LaTeX source code, the `TeXnicalities` package and the used beamer theme are needed and can be found [here](https://github.com/AxelKrypton/TeXnicalities).
+You will need the [Yanone Kaffeesatz font](https://fonts.google.com/specimen/Yanone+Kaffeesatz) available on your machine, too.
+
+---
+
+## Table of content
+
+Here you can find the list of the topics discussed in the various days, so that you can directly open the right file if you are looking for a specific argument.
+Practical sessions have been omitted (refer to the training schedule in the slides about Day 1 for a detailed overview).
+
+### Day 1
+
+1. Training format
+1. The idea of clean code
+1. Clean testing (I)
+
+### Day 2
+
+1. Clean code principles (I)
+1. Clean testing (II)
+1. Clean testing (III)
+1. DRY, KISS, YAGNI
+
+### Day 3
+
+1. Git in real life
+1. Clean testing (IV)
+1. Pull requests on GitHub
+
+### Day 4
+
+1. Data validation and data cleaning
+1. Statistical analysis and plotting
+
+### Day 5
+
+1. Code review
+1. What to do, now?
+
+---
+
+### Preparation workroad
+
+- [ ] Lecture slides
+  - [X] Day 1
+  - [ ] Day 2
+  - [ ] Day 3
+  - [ ] Day 4
+  - [ ] Day 5
+
+- [ ] Review/improve slides examples
+  - [X] Day 1
+  - [ ] Day 2
+  - [ ] Day 3
+  - [ ] Day 4
+  - [ ] Day 5
+
+- [ ] Practical sessions
+  - [ ] Try Day 3 TDD tasks
+  - [ ] Solve Day 4 tasks
