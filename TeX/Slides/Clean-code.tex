@@ -1,0 +1,178 @@
+%-------------------------------%
+%  Author: Alessandro Sciarra   %
+%    Date: 18 Jun 2025          %
+%-------------------------------%
+
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{The best definition}
+    \begin{tikzpicture}[remember picture, overlay]
+        \node (O) at (current page.center) {\includegraphics[width=\textwidth]{WTF}};
+        \node[below = 0mm of O, font=\tiny] {\myCopyright\ 2008 Focus Shift};
+    \end{tikzpicture}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{}
+    \begin{overlayarea}{\textwidth}{\textheight}
+        \begin{varblock*}{quote}[0.85\textwidth]{Clean code}[Michael Feathers]
+            Clean code always looks like it was written by someone who cares.
+            There is nothing obvious that you can do to make it better.
+            [$\ldots$] if you try to imagine improvements, you're led back to where you are.
+        \end{varblock*}
+        \begin{onlyenv}<1>
+            \begin{varblock*}{quote}[0.85\textwidth]{}[Bjarne Stroustrup]
+                I like my code to be elegant and efficient [$\ldots$] clean code does one thing well.
+            \end{varblock*}
+            \begin{varblock*}{quote}[0.85\textwidth]{}[Grady Booch]
+                Clean code is simple and direct. [$\ldots$] Clean code reads like well-written prose.
+            \end{varblock*}
+            \begin{varblock*}{quote}[0.85\textwidth]{}[Ward Cunningham]
+                You know you are working on clean code when each routine you read turns out to be pretty much what you expected.
+            \end{varblock*}
+        \end{onlyenv}
+        \FrameRemark<1>{Inventor of the SOLID principle, of the C++ language, of the Booch method and of the Wiki, respectively (top to bottom).}
+        \begin{onlyenv}<2>
+            \vspace{3mm}
+            \begin{itemize}
+                \setlength{\itemindent}{6mm}
+                \item \alert{Readable}
+                \item \PQ{Maintainable}
+                \item Easy to extend\tikzmark{itemCenter}
+                \item Easy to use
+                \item Hard to break
+                \item \alert{Testable/Tested}
+                \item \ldots
+            \end{itemize}
+            \begin{tikzpicture}[remember picture, overlay]
+                \node[right = 2cm of itemCenter] (fig) {\includegraphics[height=35mm]{Clean-code}};
+                \PrepareURLsymbol[PP]
+                \node[below = 1mm of fig, font=\scriptsize, xshift=-2pt]
+                {\URL*{http://clean-code-developer.com/}{The Clean Code developer road}};
+                \node[below = 6mm of fig, font=\tiny] (progress) {
+                    %\href{http://clean-code-developer.com/grades/grade-0-black/}{Black} $\,\to\,$
+                    \PrepareURLsymbol[PQ]
+                    \URL*{http://clean-code-developer.com/grades/grade-1-red/}{Red} $\,\to\,$
+                    \PrepareURLsymbol[PT]
+                    \URL*{http://clean-code-developer.com/grades/grade-2-orange/}{Orange} $\,\to\,$
+                    \PrepareURLsymbol[Goldenrod]
+                    \URL*{http://clean-code-developer.com/grades/grade-3-yellow/}{Yellow} $\,\to\,$
+                    \PrepareURLsymbol[PS]
+                    \URL*{http://clean-code-developer.com/grades/grade-4-green/}{Green} $\,\to\,$
+                    \PrepareURLsymbol[PB]
+                    \URL*{http://clean-code-developer.com/grades/grade-5-blue/}{Blue} $\,\to\,$
+                    \PrepareURLsymbol[white]
+                    \colorbox{PP}{\URL*{http://clean-code-developer.com/grades/grade-6-white/}{White}}
+                };
+                \path[to] (progress.359) edge[out=350, in=190, looseness=1.2] (progress.181);
+            \end{tikzpicture}
+        \end{onlyenv}
+    \end{overlayarea}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{We will develop the needed code sense!}
+    \begin{tikzpicture}[remember picture, overlay,
+        every node/.style={inner sep=0pt}, pgfornamentstyle/.style={color=PB}]
+        \def\ornsize{11mm}
+        \node[font=\large](Text) at ($(current page.north)!0.52!(current page.south)$) {%
+            \begin{tabular}{c}
+                A gut feeling is like a drill, a simple instrument\\
+                whose force lies in the quality of its material.\\[1mm]
+                {\normalsize---~Gerd Gigerenzer~---}
+            \end{tabular}
+        };
+        \node[shift={(-12mm,6mm)},anchor=north west] (CNW)
+        at (Text.north west) {\pgfornament[width=\ornsize]{61}};
+        \node[shift={(12mm,6mm)},anchor=north east] (CNE)
+        at (Text.north east) {\pgfornament[width=\ornsize,symmetry=v]{61}};
+        \node[shift={(-12mm,-5mm)},anchor=south west] (CSW)
+        at (Text.south west) {\pgfornament[width=\ornsize,symmetry=h]{61}};
+        \node[shift={(12mm,-5mm)},anchor=south east] (CSE)
+        at (Text.south east) {\pgfornament[width=\ornsize,symmetry=c]{61}};
+        \pgfornamentline{CNW.north east}{CNE.north west}{3}{88}
+        \pgfornamentline{CSW.south east}{CSE.south west}{3}{88}
+        \pgfornamentline{CNW.south west}{CSW.north west}{2}{88}
+        \pgfornamentline{CNE.south east}{CSE.north east}{2}{88}
+    \end{tikzpicture}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{Why do we need to care?}
+    \vspace{-4mm}
+    \begin{overlayarea}{\textwidth}{0.8\textheight}
+        \begin{onlyenv}<1>
+            \begin{center}
+                \vspace{5mm}%
+                \includegraphics[width=0.55\textwidth]{Readability}
+            \end{center}
+        \end{onlyenv}
+        \begin{uncoverenv}<3->
+            \begin{quoteblock}{The technical debt}[Wikipedia]
+                \footnotesize
+                It is a concept that reflects the implied cost of additional rework caused
+                by choosing an easy solution now instead of using a better approach that would take longer.\\[-1ex]
+            \end{quoteblock}
+        \end{uncoverenv}
+        \begin{onlyenv}<2-3>
+            \vspace{3mm}
+            \begin{itemize}
+                \item We never write code for one \alert{time-invariant} reader!
+                \item Learning and applying \PP{few simple rules} increase quality of code base.
+                \item When a program is modified, its complexity will increase, provided that one does not actively work against this.
+                \item Many principles are totally \PS{language independent}.
+            \end{itemize}
+        \end{onlyenv}
+        \vspace{-4mm}
+        \begin{onlyenv}<4-5,7->
+            \begin{center}
+                \begin{tikzpicture}[font=\footnotesize, node distance=9mm]
+                    \coordinate (O) at (0,0);
+                    \begin{scope}[scope on=<4->]
+                        \node[thick, ellipse, Shape={PB}{PB!20}{PB}, text width=19mm, align=center, left  = of O] (A) {Quick and dirty implementation};
+                        \node[thick, ellipse, Shape={PP}{PP!20}{PP}, text width=18mm, align=center, above = of O] (B) {Technical debt increases};
+                        \path[to] (A) edge[out=90, in=180] (B);
+                    \end{scope}
+                    \begin{scope}[scope on=<4-5>]
+                        \node[thick, ellipse, Shape={PT}{PT!20}{PT}, text width=18mm, align=center, below = of O] (C) {Harder to add new features};
+                        \path[to] (B) edge[out=0, in=0, looseness=1.26] (C) (C) edge[out=180, in=270] (A);
+                    \end{scope}
+                    \begin{scope}[scope on=<5>]
+                        \node[starburst, starburst point height=15mm, minimum width=7cm, minimum height=5cm,
+                        Shape={red}{yellow!50}{red}, line width=1.5pt, font=\Huge\ttfamily, rotate=10]
+                        at (O) {BOOM};
+                    \end{scope}
+                    \begin{scope}[scope on=<7>]
+                        \node[thick, ellipse, Shape={PS}{PS!20}{PS}, text width=18mm, align=center, right = of O] (D) {Pay back technical debt};
+                        \path[to] (B) edge[out=0, in=102] (D.86) (D.274) edge[out=265, in=270, looseness=0.6] (A);
+                        \node[hexagon={red}{yellow!20}{red}, font=\small] (note) at ([yshift=-8mm]C) {Technical debt naturally tends to increase};
+                    \end{scope}
+                \end{tikzpicture}
+            \end{center}
+        \end{onlyenv}
+        \begin{onlyenv}<6>
+            \begin{center}
+                \includegraphics[height=0.55\textheight]{Visualized-codebase}
+            \end{center}
+        \end{onlyenv}
+    \end{overlayarea}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{As scientist, why having high quality code?}
+    \vspace{-1mm}
+    \begin{itemize}
+        \item It is plenty of problems which need to be approached numerically\\
+        $\quad\to\;$ Programming is one of the major tasks in physics!
+        \item Reproducibility should be a pillar of science\\
+        $\quad\to\;$ One of the main responsibilities of a scientist!
+        \item Lots of bad code around and passed on across generations\\
+        $\quad\to\;$ \PB{A huge amount of time is wasted, subtracted to research!}
+    \end{itemize}
+    \vspace{-1mm}
+    \begin{varblock}{alert}{It should not happen\ldots}
+        \guillemotleft{}Wow! There is definitely \alert{a new physics signal} in these data!\guillemotright\\
+        {\color{PB}\scriptsize\ldots{}few days/weeks/months/years later\ldots}\\[0.5ex]
+        \guillemotleft{}Oh, no! It was \alert{just a bug} in the code!\guillemotright
+    \end{varblock}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[c]{The starting point\ldots}
+    \uncover<2>{\centerline{\includegraphics[width=0.7\textwidth]{But-it-runs}}}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%

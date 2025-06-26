@@ -1,0 +1,183 @@
+\usepackage{listings}
+\usepackage{lstautogobble}
+\def\transpPerc{100}
+%listings set
+\lstdefinestyle{MyCpp}{
+% backgroundcolor=\color{white},    % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+breakatwhitespace=false,            % sets if automatic breaks should only happen at whitespace
+breaklines=true,                    % sets automatic line breaking
+captionpos=b,                       % sets the caption-position to bottom
+deletekeywords={...},               % if you want to delete keywords from the given language
+escapeinside={@|}{|@},                % if you want to add LaTeX within your code
+extendedchars=true,                 % lets you use non-ASCII characters; for 8-bits encodings only,
+                                    % does not work with UTF-8
+frame=none  ,                       % adds a frame around the code
+numbers=none,                       % where to put the line-numbers; possible values are (none, left, right)
+numbersep=5pt,                      % how far the line-numbers are from the code
+numberstyle=\tiny\color{black},     % the style that is used for the line-numbers
+rulecolor=\color{black},            % if not set, the frame-color may be changed on line-breaks within not-black text
+                                    % (e.g. comments (green here))
+showspaces=false,                   % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+showstringspaces=false,             % underline spaces within strings only
+showtabs=false,                     % show tabs within strings adding particular underscores
+stepnumber=2,                       % the step between two line-numbers. If it's 1, each line will be numbered
+stringstyle=\color{OliveGreen},     % string literal style
+tabsize=2,                          % sets default tabsize to 2 spaces
+title=\lstname,                     % show the filename of files included with \lstinputlisting; also try caption instead of title
+%
+%Base style for this presentation
+keepspaces=true,                    % keeps spaces in text, useful for keeping indentation of code
+                                    % (possibly needs columns=flexible)
+keywordstyle=\color{Cyan},          % keyword style
+language=C++,
+basicstyle=\ttfamily\scriptsize\color{black},
+keywordstyle=\color{OliveGreen},
+stringstyle=\color{Magenta},
+commentstyle=\color{red},
+moredelim=[is][\color{ForestGreen}]{|+}{+|},
+moredelim=[is][\color{Blue}]{|=}{=|},
+literate=% literate={<replace>}{<replacement text>}{<width>}
+  {\#define}{{{\color{CarnationPink}\#define}}}{6}
+  {\#include}{{{\color{CarnationPink}\#include}}}{7},
+morekeywords={real, vector, Minesweeper, myVecVec, Cell, SetOfCells, regex, T, string, CD,
+              invalid_argument, Jukebox, Coffee, Version, Point2D, Point3D, Person, pair,
+              runtime_error, WikiPage, Letter, function, InitGoogleTest, CoffeeMachine,
+              MockCoffeeMachine, Updater, Seconds, StorageServer, Dslash, hmc_float, File,
+              Stat_t, StatOptions, Cup, CupTester, logical_error},
+emph=[1]{calculateAverage, size, exit, begin, end, find, makeReportForUser, isElementInVector,
+         main, WelcomeUserToTheGame, playGame, PrintGameResult, isPrime, sqrt, push_back, FC,
+         getFlaggedCells, isFlagged, at, isEligibleForFullBenefits, gsl_fcmp, getDefaultForHelper,
+         trim_right, addCD, MakeCoffee, WarmUpMachineIfNeeded, GrindCoffee, SetPressureAndTemperature,
+         BrewCoffee, getMajorVersionNumber, getMinorVersionNumber, getBuildNumber, Distance, factorial,
+         Q_rsqrt, Q_fastInverseSqrt, calculateApproximateInverseSqrt, refineResult, get, fetch, retrieve,
+         obtain, temperature, warmUp, prepareGrinder, grind, calculateGrams, pressure, prepareToBrew, brew,
+         transform, isHeader, isVowel, capitalize, traverseAndTransform, cube, warmUp, UpdateAsync, SleepFor,
+         Updated, StartLogCapture, Start, Contains, Logs, GetStorageServerHandle, Store, Load, rand,
+         test_fermionmatrix, Stat, StatWithOptions, Times, max, IsEmpty, Drink, Fill},
+emphstyle=[1]{\color{NavyBlue}}, %Functions
+emph=[2]{cout, data, sum, sum1, sum2, data, dataSet, dataSet1, dataSet2, first, last, argc, argv, minesweeper,
+         number, i, c, f, b, list, gameBoard, flaggedCells, cell, realDaysPerIdealWeek, totalRealWeeksNeeded,
+         realDaysPerTask, taskDaysEstimate, realWeeksPerTask, j, e, employee, timePattern, iterationNumber,
+         functionValue, epsilon, it, value, keyToDecipher, longTitle, longAuthor, durationInMinutes, cd,
+         typeOfCoffee, x, y, z, x2, approximateResult, floatAsInteger, initialNumber, refinedResult,
+         threehalfs, result, timestamp, ymdhms, neededT, neededP, line, letter, wiki, __func__, machine,
+         brewingT, updater, server, my_val, refs, file, stat, opts, n, cup, tester},
+emphstyle=[2]{\color{Orange}}, %Variables
+emph=[3]{if, else, while, do, for, case, switch},
+emphstyle=[3]{\color{violet}}, %Loops, if, etc.
+emph=[4]{const, auto, break, continue, default, static, return, struct, NULL, sizeof, typedef,
+         template, typename, true, false, throw, public, private, class, using, nullptr, override, virtual},
+emphstyle=[4]{\color{ProcessBlue}}, %Logical keywords
+emph=[5]{std, boost, string_literals, testing, constants, Frobber, physics, fermionmatrix, numeric_limits},
+emphstyle=[5]{\color{Maroon}}, %Namespaces
+emph=[6]{STATUS_VALUE, FLAGGED, WORKING_DAYS_PER_WEEK, NUMBER_OF_TASKS, HOURLY_FLAG,
+         CG_CHECK_RESIDUUM_EVERY, BOOST_AUTO_TEST_CASE, BOOST_TEST_MODULE, BOOST_REQUIRE_EQUAL,
+         READY_TO_BREW, BOOST_TEST_MODULE, BOOST_TEST, RUN_ALL_TESTS, EXPECT_EQ, TEST, VERIFY,
+         BOOST_REQUIRE_CLOSE, EXPECT_TRUE, EXPECT_THAT, EXPECT_CALL, TEST_CATCH, COMPARE, INT_MAX,
+         REQUIRE, TEST_CASE},
+emphstyle=[6]{\color{Gray}}, %Macros
+emph=[7]{age, flags, title, author, tracks, duration, cdList, T, grinder, status, isEmpty_},
+emphstyle=[7]{\color{Peach!50!Purple}}, %Members
+emph=[8]{Factorial, SpecialCases, NormalCases, first_test, FactorialTest, HandlesZeroInput,
+         HandlesPositiveInput, cube_test, warmUp_test, UpdaterTest, RunsFast, Logger, LogWasCalled,
+         Server, StorageTest, Dirac_M, Filesystem, FSUsage, BasicTests, Negative_factorial},
+emphstyle=[8]{\color{Blue}}, %Boost cases and suite
+%Additional customizations
+autogobble=true, % lstautogobble needed!
+belowskip=-7mm,
+aboveskip=0pt
+}
+
+\def\CPP{\lstinline[style=MyCpp, basicstyle=\ttfamily\color{black}]}
+
+\makeatletter
+\newenvironment{CenteredBox}{%
+\begin{Sbox}}{% Save the content in a box
+\end{Sbox}\centerline{\parbox{\wd\@Sbox}{\TheSbox}}}% And output it centered
+\makeatother
+
+%===================================================================
+%Colors for bash listings
+\colorlet{background-color}{gray!20}
+\colorlet{basic-color}{black}
+\colorlet{keywords-color}{Goldenrod}
+\colorlet{comment-color}{red!95!black}
+\colorlet{strings-color}{ForestGreen}
+\colorlet{builtins-color}{MediumBlue!90!black}
+\colorlet{functions-color}{NavyBlue}
+\colorlet{variables-color}{DarkOrange}
+\colorlet{environment-color}{Gray}
+\colorlet{external-color}{SteelBlue}
+
+% Needed for beamer -> https://tex.stackexchange.com/a/570949
+\newsavebox\mypostbreak
+\savebox\mypostbreak{\raisebox{-1.5pt}[0ex][0ex]{\ensuremath{\color{gray}\hookrightarrow\space}}}
+
+\lstdefinestyle{MyBash}{
+    backgroundcolor=\color{background-color},
+    breakatwhitespace=false,
+    breaklines=true,
+    postbreak=\usebox\mypostbreak,
+    captionpos=b,
+    escapeinside={@|}{|@},
+    extendedchars=false,
+    frame=single,
+    framerule=0pt,
+    framesep=3pt,
+    linewidth=\textwidth,
+    xleftmargin=1mm,
+    xrightmargin=1mm,
+    numbers=none,
+    numberblanklines=false,
+    numbersep=8pt,
+    numberstyle=\tiny\color{black},
+    rulecolor=\color{black},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    stepnumber=1,
+    tabsize=2,
+    title=\lstname,
+    %
+    %Base style for this presentation
+    keepspaces=true, % (possibly needs columns=flexible)
+    language=bash,
+    basicstyle=\ttfamily\scriptsize\color{basic-color},
+    keywordstyle=\color{keywords-color},
+    stringstyle=\color{strings-color},
+    commentstyle=\color{comment-color},
+    morestring=[b][\color{strings-color}]{"},
+    morestring=[d][\color{strings-color}]{'},
+    moredelim=[is][\color{basic-color}]{|+}{+|}, % I will use this for terminal output
+    literate={`}{\textasciigrave}1, % https://tex.stackexchange.com/a/466224/128737
+    literate={~}{{\textasciitilde}}1,
+    alsoletter=0123456789![]/\{\}.:+, % This to mark the symbols in keyword/emph[5] to be highlighted (otherkeywords does not work i.e. it highlights also in comments!) -> manual at page 45
+    morekeywords={if, then, else, elif, fi, case, esac, for, select, while, until, do, done, in, function, time, [[, ]], \{, \}, !, coproc}, %https://askubuntu.com/a/513712
+    emph=[1]{},
+    emphstyle=[1]{\color{functions-color}}, %Functions
+    emph=[2]{br},
+    emphstyle=[2]{\color{variables-color}}, %Variables
+    emph=[4]{PATH, SHELL, IFS, BASH_ALIASES, BASH_REMATCH, PS3, REPLY, HOME, LANGUAGE, EDITOR, PIPESTATUS, PWD, FUNCNEST,
+        DIRSTACK, PWD, OLDPWD, SHELLOPTS, BASHOPTS, TIMEFORMAT, COMP_CWORD, COMP_LINE, COMP_POINT, COMP_TYPE, COMP_KEY,
+        COMP_WORDBREAKS, COMP_WORDS, COMPREPLY, INPUTRC},
+    emphstyle=[4]{\color{environment-color}}, %Environment variables
+    emph=[5]{alias, bg, bind, break, builtin, cd, command, compgen, complete, continue, declare, dirs, disown, echo, enable, eval,
+        exec, exit, export, false, fc, fg, getopts, hash, help, history, jobs, kill, let, local, logout, popd, printf, pushd, pwd,
+        read, readonly, return, set, shift, shopt, source, suspend, test, times, trap, true, type, typeset, ulimit, umask,
+        % case, if, until, while  % <--- these built-in are keywords and I leave them highlighted as such
+        unalias, unset, wait, :, ., [, ]},
+    emphstyle=[5]{\color{builtins-color}}, %Shell built-in
+    emph=[6]{man, apropos, ls, rm, g++, chmod, cp, awk, sed, cut, perl, args, date, grep, sleep, tput, seq, cat, wc, sort, uniq, tail,
+        head, sdiff, tar, mktemp, mkdir, ps, emacs, systemd, timeout, parallel, xargs, gnuplot, pdflatex, vi, ping, bash,
+        egrep, shuf, stat, find, fgrep, bc, tr, paste, expr, diff, touch, git},
+    emphstyle=[6]{\color{external-color}}, %(External) commands
+    emph=[7]{},
+    emphstyle=[7]{\color{variables-color}}, %Class for local variables (usually with bad names)
+    emph=[8]{},
+    emphstyle=[8]{\color{builtins-color}}, %Class for local commands (usually with bad names)
+    %
+    %Additional customizations
+    belowskip=-7mm,
+    aboveskip=3pt,
+    autogobble=true, % lstautogobble needed!
+}

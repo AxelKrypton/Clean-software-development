@@ -1,0 +1,444 @@
+%-------------------------------%
+%  Author: Alessandro Sciarra   %
+%    Date: 18 Jun 2025          %
+%-------------------------------%
+
+%===================================================================================================%
+\subsection{Why (automated) testing?}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\AlertFrame{A mind-blowing changing point!}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{Lots of software should rather work...}{In our society you cannot spend 60 seconds without interacting with a software system}
+    \vspace{-2mm}
+    \begin{enumerate}
+        \item \parbox[t]{0.5\textwidth}{In modern car there is software that controls the steering wheel\ldots}
+        \qquad\raisebox{-.5\height}{\includegraphics[width=22mm]{Lane-assistant-symbol}}
+        \item Think of medical devices, aeroplanes, lifts, etc.
+        \item Aren't you upset when an app on your phone stalls or crashes?!
+    \end{enumerate}
+    \vspace{2mm}
+    \begin{center}
+        \includegraphics[width=0.3\textwidth]{Airplane}
+        \includegraphics[width=0.3\textwidth]{Lift}
+        \includegraphics[width=0.3\textwidth]{Dentist-tools}
+    \end{center}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{An old, simple fact}{Taken from Casper Jones, «Program quality and programmer productivity» -- 1977}
+    \vspace{-2mm}
+    \begin{center}
+        \includegraphics[width=0.82\textheight]{Bugs-per-line}
+    \end{center}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\newcommand{\FermatExample}[4][3]{$#2^#1+#3^#1\neq#4^#1$}
+\begin{frame}{The unfortunate tendency in many cases}
+    \vspace{-1mm}
+    \begin{itemize}
+        \item \alert{It gives reasonable results $\;\Rightarrow\;$ it works!} \Emoji{face-screaming-in-fear}
+        \item Manual (and possibly not systematic) testing is unfortunately still common practice in our community!
+        \item Even if done in a systematic way, you will never run your tests enough!
+    \end{itemize}
+    \vspace{-1mm}
+    \begin{overlayarea}{\textwidth}{0.4\textheight}
+        \begin{onlyenv}<1-2>
+            \vspace{3mm}
+            \begin{varblock}{example}[\textwidth]{An remarkable story about manual testing}
+                I have been using an own manually tested ``agenda-script'' to track my working time \alert{\textbf{for months}} and then one day it suddenly crashed.\\
+                Where was the problem?
+                \uncover<2>{\PB{I assumed \textbf{every} day has 24 hours\ldots\Emoji{smiling-face-with-halo}}}
+            \end{varblock}
+        \end{onlyenv}
+        \begin{onlyenv}<3>
+            \begin{varblock}{quote}[0.7\textwidth]{Theorem:}
+                Prove that, with $n,x,y,z\in \mathbb{N}>0$ and $n>2$, the equation $x^n+y^n =z^n$ has no solutions.
+            \end{varblock}
+            \begin{varblock}{quote}[0.8\textwidth]{Would you accept this as proof or even argument?}
+                \small
+                \FermatExample{2}{3}{4}\; and\;\FermatExample[4]{1}{5}{6}\; and\;\FermatExample[5]{4}{2}{5}
+            \end{varblock}
+        \end{onlyenv}
+        \begin{onlyenv}<4>
+            \vspace{3mm}
+            \begin{varblock}{alert}[0.7\textwidth]{Now, software testing is not like mathematics...}
+                \large ...but would you accept a physics fact \textbf{without rigorous evidence}?
+            \end{varblock}
+        \end{onlyenv}
+    \end{overlayarea}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{Consider one of your programs. Does it work?}
+    \vspace{-2mm}
+    \begin{varblock}{example}[0.8\textwidth]{How do you prove that a software works?}
+        \uncover<2->{
+            You don't.
+            You try proving it doesn't work\ldots\ and fail!
+        }
+    \end{varblock}
+    \begin{uncoverenv}<3>
+        \begin{varblock}{}[\textwidth]{The scientific method}
+            \begin{enumerate}
+                \item Make an hypothesis $\PB{\;\mathcal{C}\;}\to\;$  «My code is correct»
+                \item Tests attempt to show $\PB{\;!\mathcal{C}\;}$
+                \item Confidence in $\;\PB{\mathcal{C}\;}$ tracks thoroughness of tests
+            \end{enumerate}
+        \end{varblock}
+        \vspace{-2mm}
+        \begin{varblock}{}[\textwidth]{}
+            \large
+            Testing code is science (cf. Popper's falsification principle)
+        \end{varblock}
+    \end{uncoverenv}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{Uncle Bob's magic button}
+    \vspace{-3mm}
+    \begin{varblock}{quote}[1.02\textwidth]{Fearless competence}<2->
+        Are you afraid to touch the code?
+        Are you afraid to improve the code?
+        Do you have that little echo in your  ear saying -- Ah, if it ain't broken, don't fix it?
+        I expect you to improve the code, all of the time, fearless competence.
+        How do you get fearless competence?
+    \end{varblock}
+    \vspace{-3mm}
+    \begin{center}
+        \begin{tikzpicture}
+            \node (button) {\includegraphics[width=0.25\textwidth]{Magic-button}};
+            \node[right = of button] (Y) {\includegraphics[width=12mm]{Yes}};
+            \node[left = of button] (N) {\includegraphics[width=12mm]{X}};
+            \path[to, thick] (button) edge[out=0, in=180] (Y);
+            \path[to, thick] (button) edge[out=180, in=0] (N);
+        \end{tikzpicture}
+    \end{center}
+    \vspace{-3mm}
+    \begin{varblock}{quote}[0.95\textwidth]{}[Robert C. Martin]<2->
+        Tests! What if I had a button, a little button I could push on my keyboard and some lights would blink and science-fiction sounds would come out of my laptop for a few minutes and then a little green light would light up and that green light told me that the system worked.
+        \alert{And I believed it.}
+    \end{varblock}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{The \PQ{wrong} mental approach to testing}
+    \vspace{0mm}
+    \begin{itemize}
+        \item I do not have time to waste writing tests.
+        \item \alert{The result is reasonable, the code should be correct!}
+        \item This part of code is simple, why should I test it?
+        \item Let me finish to implement this feature so that I can produce some data and in the meanwhile I write some tests.
+    \end{itemize}
+    \vspace{2mm}
+    \begin{center}
+        \begin{tikzpicture}
+            \node[inner ysep=0mm] (fig) {\includegraphics[width=0.45\textwidth]{Wrong-testing}};
+            \node[anchor=north, font=\Tiny] at ([yshift=1mm]fig.south) {\url{https://android.jlelse.eu/basics-of-unit-testing-affdd2273310}};
+            \draw[red, line width=2mm, visible on=<2>] (fig.south east) -- (fig.north west) (fig.south west) -- (fig.north east);
+        \end{tikzpicture}
+    \end{center}
+    \begin{tikzpicture}[overlay, remember picture]
+        \node[starburst, starburst points=27, starburst point height=16mm, minimum width=12cm, minimum height=5cm,
+        Shape={red}{yellow!50}{red}, line width=1.5pt, font=\Huge, rotate=10, visible on=<2>] at ([shift={(-0mm,21mm)}]current page.center) {Please, NO!};
+    \end{tikzpicture}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{The \PS{correct} mental approach to testing}
+    \begin{itemize}
+        \setlength{\itemindent}{-2mm}
+        \item Testing is part of the natural evolution of the code (not an overhead)
+        \item Test code has to fulfil the same clean code rules as production code
+        \item \alert{Tests are the key to be free to change (improve) the production code!}
+        \item Keep balance between adding new code, writing tests and refactoring
+    \end{itemize}
+    \vspace{3mm}
+    \begin{center}
+        \resizebox{!}{0.32\textheight}{
+            \begin{tikzpicture}
+                \tikzstyle{Pie}=[font=\Large]
+                \tikzstyle{PieNum}=[font=\Large\bfseries\ttfamily]
+                \piechartthreed[scale=0.8,
+                                background color=white,
+                                mix color= white]{120/PT,120/PS!50!LimeGreen,120/PP!50!white}
+                \foreach \i in {1,...,3} { \fill (pc \i) ellipse (0.1 and 0.05);}
+                \draw[darkgray] (pc 1)  -- ++(7,0) coordinate (s1)
+                    node[Pie, anchor=south east] {Testing}
+                    node[PieNum, anchor=north east] {\tc{PT}{33\%}};
+                \draw[darkgray] (pc 2)  -- ++(-1,1) -- ++(-5,0) coordinate (s2)
+                    node[Pie, anchor=south west] {Developing}
+                    node[PieNum, anchor=north west] {\tc{PS}{33\%}};
+                \draw[darkgray] (pc 3)  -- (pc 3 -| s2)
+                    node[Pie, anchor=south west] {Refactoring}
+                    node[PieNum, anchor=north west] {\tc{PP}{33\%}};
+            \end{tikzpicture}
+        }
+    \end{center}
+    \FrameRemark{Cf. with the \PT{Red}-\PS{Green}-\PP{Refactor} technique, which will be introduced later.}
+\end{frame}
+%===================================================================================================%
+
+
+%===================================================================================================%
+\subsection{Different types of testing}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{Software testing}{Test code is just as important as production code}
+    \vspace{-7mm}
+    \begin{columns}[t]
+        \begin{column}{0.45\textwidth}
+            \begin{itemize}
+                \item \PP{Testing levels}
+                \begin{itemize}
+                    \item \PS{Unit testing}
+                    \item \PS{Integration testing}
+                    \item System testing
+                    \item Acceptance testing
+                \end{itemize}
+                \vspace{6mm}
+                \centering
+                \includegraphics[height=28mm]{Software-testing}\hfill
+                \includegraphics[height=28mm]{TDD}
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.55\textwidth}
+            \begin{itemize}
+                \item \PP{Testing types and techniques}
+                \begin{itemize}
+                    \item \textcolor{bg!80!normal text.fg}{Manual testing}
+                    \item \PS{Automated testing}
+                    \item Continuous testing
+                    \item Functional testing
+                    \item Mutation testing
+                    \item Fuzzy testing
+                    \item \ldots
+                \end{itemize}
+                \vspace{1mm}
+                \item \small \PB{Plenty of videos/resources on the web}
+            \end{itemize}
+            \begin{itemize}
+                \scriptsize\setlength{\itemsep}{0mm}
+                \item[]
+                \URL{https://www.youtube.com/watch?v=u5senBJUkPc}{~CppCon2015 -- All your tests are terrible\ldots}
+                \item[]
+                \URL{https://www.youtube.com/watch?v=FjwayiHNI1w}{~CppCon2020 -- The science of unit tests}
+                \item[]
+                \URL{https://www.youtube.com/watch?v=_OHE33s7EKw}{~CppCon2020 -- Back to Basics: Unit Tests}
+                \item[]
+                \URL{https://www.youtube.com/watch?v=EZ05e7EMOLM}{~TDD, Where Did It All Go Wrong}
+                \item[]
+                \URL{https://www.youtube.com/watch?v=a6oP24CSdUg}{~TDD for those who don't need it}
+            \end{itemize}
+        \end{column}
+    \end{columns}
+    \FrameRemark{The videos linked here above (as well as the references therein) were mainly used to prepare this material.}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{The tests pyramid}
+    \begin{center}
+        \resizebox{!}{0.8\textheight}{
+            \begin{tikzpicture}
+                \path coordinate (A) at (0,0)
+                      coordinate (B) at (0,2)
+                      coordinate (C) at (0,4)
+                      coordinate (D) at (0,6)
+                      coordinate (O) at ($(A)+(150:5)-(0.5,0)$);
+                \draw (O) -- ++(30:2); %Just draw axis behind pyramid
+                %Draw Pyramid
+                \pyramidLayer{A}{1.5}{5}{red}{Unit};
+                \pyramidLayer{B}{1.5}{4}{orange!80!yellow}{Integration};
+                \pyramidLayer{C}{1.5}{3}{PS}{System};
+                \pyramidLayer{D}{1.5}{2}{PP}{Acceptance};
+                \draw[to] (O) -- ++(0,6) node[right, anchor=north west] {
+                    \begin{tabular}{@{}l}
+                        Development cost\\
+                        Execution time\\
+                    \end{tabular}
+                };
+                \draw[to] (O) -- ++(330:6) node[right] {Number of tests};
+            \end{tikzpicture}
+        }
+    \end{center}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{Unit tests are not enough!}
+    \begin{onlyenv}<1>
+        \begin{center}
+            \includegraphics[width=0.85\textwidth]{Unit-tests-not-enough}
+        \end{center}
+    \end{onlyenv}
+    \begin{varblock}{example}[0.9\textwidth]{Integration tests}<only@2->
+        Once you are sure that all components work correctly alone, be sure they work as expected together!
+    \end{varblock}
+    \vspace{3mm}
+    \begin{overlayarea}{\textwidth}{0.8\textheight}
+        \begin{center}
+            \begin{onlyenv}<2>
+                \includegraphics[height=4cm]{Unit-vs-integration-tests-A}$\quad$
+                \includegraphics[height=4cm]{Unit-vs-integration-tests-B}\\
+            \end{onlyenv}
+            \begin{onlyenv}<3>
+                \includegraphics[height=35mm]{Mars-climate-orbiter}\\
+                {
+                    \scriptsize
+                    \URL[PB]{http://www.vitalstatistics.info/uploads/mars\%20climate\%20orbiter.jpg}{Mars Climate Orbiter}
+                    lost in 1999 -- By NASA/JPL/Corby Waste -- \myCopyright\ Public Domain
+                }
+            \end{onlyenv}
+        \end{center}
+    \end{overlayarea}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{And once integration tests pass?}
+    \vspace{-2mm}
+    \begin{varblock*}{quote}[0.86\textwidth]{System testing}[Wikipedia]
+        System testing tests a completely integrated system to verify that the system meets its requirements.
+    \end{varblock*}
+    \vspace{-3mm}
+    \begin{varblock*}{quote}[0.86\textwidth]{Acceptance testing}[Standard Glossary of Terms used in Software Testing]
+        Formal testing with respect to user needs, requirements, and business processes conducted to determine whether a system satisfies the acceptance criteria and to enable the user, customers or other authorized entity to determine whether to accept the system.\\[-2mm]
+    \end{varblock*}
+    \vspace{-3mm}
+    \begin{varblock}{example}[\textwidth]{In smaller projects}
+        You might not need all categories, but, if you drop any, do it consciously!
+    \end{varblock}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{A technique for system/acceptance tests}
+    \begin{varblock*}{quote}[0.86\textwidth]{Functional tests}[Wikipedia]
+        They tend to answer the question of ``can the user do this'' or ``does this particular feature work''.
+    \end{varblock*}
+    \begin{center}
+        \begin{tikzpicture}[thick, node distance=15mm]
+            \node[cylinder, cylinder uses custom fill, cylinder end fill=PP!50,
+            cylinder body fill=PP!25, aspect=0.5, draw=PB, minimum height=15mm,
+            minimum width=12mm] (SW) {Software};
+            \begin{scope}[every node/.style={rectangle, rounded corners}]
+                \node[left = of SW,  draw=PS, fill=PS!20, yshift=+8mm] (IN) {Given input};
+                \node[right = of SW, draw=PT, fill=PT!20, yshift=-8mm] (OUT) {Given output};
+            \end{scope}
+            \path[to, thin] (IN) edge[out=0, in=180] (SW);
+            \path[to, thin] ($(SW.before top)!0.5!(SW.after top)$) edge[out=0, in=180] (OUT);
+        \end{tikzpicture}
+    \end{center}
+    \begin{itemize}
+        \item Consider to implement these tests in an external script!
+        \item \alert{This is a good starting point to work with legacy code without tests!}
+    \end{itemize}
+\end{frame}
+%===================================================================================================%
+\subsection{Testing frameworks}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[fragile]{A small interlude: Unit test frameworks for C++}{Essential for self-validation and automation!}
+    \vspace{2mm}
+    \begin{overlayarea}{\textwidth}{0.8\textheight}
+        \begin{enumerate}[<only@+->]
+            \setlength{\itemindent}{3mm}
+            \item \tikzmark{Boost} Boost Test Library\hfill
+            \parbox{0.4\textwidth}{\footnotesize\URL[PB]{https://www.boost.org/doc/libs/1_82_0/libs/test/doc/html/index.html}{Documentation}}
+            \item \tikzmark{Google} GoogleTest \uncover<+->{\;\textcolor{bg!60!normal text.fg}{or}\; Catch2}\hfill
+            \parbox{0.4\textwidth}{
+                \footnotesize
+                \URL[PB]{https://google.github.io/googletest/}{User's guide} \uncover<.->{or
+                    \URL[PB]{https://github.com/catchorg/Catch2}{GitHub project}}
+            }
+            \item \tikzmark{Vir} Vir's Unit Test Framework\hfill
+            \parbox{0.4\textwidth}{\footnotesize\URL[PB]{https://github.com/mattkretz/virtest}{GitHub repository}}
+            \item[] {\small ...and so many mores!}\hfill
+            \parbox{0.4\textwidth}{
+                \footnotesize
+                \URL[PB]{https://en.wikipedia.org/wiki/List_of_unit_testing_frameworks\#C++}{List on Wikipedia}
+            }
+        \end{enumerate}
+        \begin{varblock}{example}[0.9\textwidth]{}<only@1>
+            \begin{lstlisting}[style=MyCpp]
+                #define BOOST_TEST_MODULE My Test
+                #include |+<boost/test/included/unit_test.hpp>+|
+
+                BOOST_AUTO_TEST_CASE(first_test)
+                {
+                    int i = 1;
+                    BOOST_TEST(i);
+                    BOOST_TEST(i == 2);
+                }
+            \end{lstlisting}
+            \begin{lstlisting}[style=MyBash]
+                |+Running 1 test case...
+                test_file.cpp(8): error: in "first_test": check i == 2 has failed [1 != 2]
+
+                *** 1 failure is detected in the test module "My Test"+|
+            \end{lstlisting}
+        \end{varblock}
+        \begin{varblock}{example}[0.9\textwidth]{}<only@2>
+            \begin{lstlisting}[style=MyCpp]
+                #include |+<gtest/gtest.h>+|
+                #include |+"src/factorial.h"+|
+
+                TEST(FactorialTest, HandlesZeroInput) {
+                    EXPECT_EQ(factorial(0), 1);
+                }
+
+                TEST(FactorialTest, HandlesPositiveInput) {
+                    EXPECT_EQ(factorial(1), 1);
+                }
+
+                int main(int argc, char **argv) {
+                    ::testing::InitGoogleTest(&argc, argv);
+                    return RUN_ALL_TESTS();
+                }
+            \end{lstlisting}
+        \end{varblock}
+        \begin{varblock}{example}[0.9\textwidth]{}<only@3>
+            \begin{lstlisting}[style=MyCpp]
+                #include |+<catch2/catch_test_macros.hpp>+|
+
+                unsigned int factorial(unsigned int number)
+                {
+                    return number > 1 ? factorial(number - 1) * number : 1;
+                }
+
+                TEST_CASE("Factorials are computed", "[factorial]") {
+                    REQUIRE(factorial(0)  == 1);
+                    REQUIRE(factorial(1)  == 1);
+                    REQUIRE(factorial(3)  == 6);
+                    REQUIRE(factorial(10) == 3628800);
+                }
+            \end{lstlisting}
+        \end{varblock}
+        \begin{varblock}{example}[0.9\textwidth]{}<only@4>
+            \begin{lstlisting}[style=MyCpp]
+                #include |+<vir/test.h>+|
+
+                TEST(test_name) {
+                    int test = 3;
+                    COMPARE(test, 2) << "more " << "details";
+                    //COMPARE(test, 2).on_failure("more ", "details");
+                }
+            \end{lstlisting}
+            \begin{lstlisting}[style=MyBash]
+                @|\tikzmark{corner}|@|+FAIL:  at tests/testfile.cpp:5 (0x40451f):
+                FAIL:  test (3) == 2 (2) -> false more details
+                FAIL:  test_name
+
+                Testing done. 0 tests passed. 1 tests failed.+|
+            \end{lstlisting}
+        \end{varblock}
+        \vspace{1mm}
+        \begin{varblock*}{alert}[0.8\textwidth]{Not all have the same weight and functionality}<only@5>
+            Pick your favourite depending on your needs and project:
+            \vspace{2mm}
+            \begin{enumerate}
+                \small
+                \item \tikzmark{BoostInfo} Natural choice if you already depend on Boost
+                \item \tikzmark{GoogleInfo} More complex but also more powerful
+                \item \tikzmark{VirInfo} Very simple and lightweight
+            \end{enumerate}
+        \end{varblock*}
+        \begin{tikzpicture}[remember picture, overlay]
+            % virtest output symbol
+            \draw[thick, visible on=<4>] ($(corner)-(0.335\textwidth,0.13)$) -- ++(-0.12,0) -- ++(0,-0.68) -- ++(0.12,0);
+            % connecting lines of enumerate environments
+            \begin{scope}[visible on=<5>]
+                \draw[thin, to] ($(Boost)-(0.68,0)$)  -- ++(-0.45,0) |- ($(BoostInfo)-(0.06\textwidth,0.05)$);
+                \draw[thin, to] ($(Google)-(0.68,0)$) -- ++(-0.30,0) |- ($(GoogleInfo)-(0.06\textwidth,0.05)$);
+                \draw[thin, to] ($(Vir)-(0.68,0)$)    -- ++(-0.15,0) |- ($(VirInfo)-(0.06\textwidth,0.05)$);
+            \end{scope}
+        \end{tikzpicture}
+    \end{overlayarea}
+    \FrameRemark<5>{If you use a different language, you can find at the Wikipedia link lists for most programming languages.}
+\end{frame}
+%===================================================================================================%

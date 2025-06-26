@@ -1,0 +1,188 @@
+% Compile with or without links to TOC
+\newif\ifAddLinkToTOC
+\AddLinkToTOCtrue
+
+% Command to define beamer template for TOC. This is basically identical to the beamer template
+% except for what colours are used. The used colors are those defined later in this file: either
+% lecture, exercise or closing.
+\newcommand{\installTOCbeamertemplate}[1]{%
+    \defbeamertemplate*{#1 section in toc}{default}{%
+        \leavevmode\leftskip=1.75ex%
+        \llap{%
+            \usebeamerfont*{section number projected}%
+            \usebeamercolor[bg]{#1 section}%
+            \vrule width2.25ex height1.85ex depth.4ex%
+            \hskip-2.25ex%
+            \hbox to2.25ex{\hfil\usebeamercolor[fg]{#1 section}\inserttocsectionnumber\hfil}}%
+        \kern1.25ex\usebeamercolor[bg]{#1 section}\inserttocsection\par%
+    }
+    \defbeamertemplate*{#1 section in toc shaded}{default}[1][20]
+        {\begin{colormixin}{##1!parent.bg}\usebeamertemplate{#1 section in toc}\end{colormixin}\unskip}
+}
+
+\mode<presentation>
+{
+    \usetheme{Z02}
+    \defbeamertemplate{footline}{Empty}{}
+    \setbeamersize{text margin left=5mm,text margin right=5mm}
+    \setbeamerfont{title}{size=\huge}
+    \setbeamerfont{subtitle}{size=\LARGE}
+    %\setbeamerfont{section title}{size=\Huge}
+    %Add a link to table of content on frames with a footline
+    \addtobeamertemplate{footline}{}{%
+        \ifAddLinkToTOC%
+            \begin{tikzpicture}[remember picture,overlay]
+                %xelatex needs \XeTeXLinkBox, won't create a link unless it
+                %finds text --- rules don't work without \XeTeXLinkBox.
+                %Still builds correctly with pdflatex and lualatex
+                \node[anchor=south east, inner sep=3pt, font=\scriptsize] at (current page.south east) {\hyperlink{toc}{\XeTeXLinkBox{\emoji{blue-book}}}};
+            \end{tikzpicture}%
+        \fi%
+    }%
+    % New templates to change square and title color in TOC
+    \colorlet{lecture}{BGDARK}
+    \colorlet{exercise}{PS}
+    \colorlet{closing}{PQ}
+    \setbeamercolor{lecture section}{bg=lecture, fg=BGLIGHT}
+    \setbeamercolor{exercise section}{bg=exercise, fg=BGLIGHT}
+    \setbeamercolor{closing section}{bg=closing, fg=BGLIGHT}
+    \installTOCbeamertemplate{lecture}
+    \installTOCbeamertemplate{exercise}
+    \installTOCbeamertemplate{closing}
+    \setbeamercolor{subsection page background canvas}{bg=PB}
+}
+
+\makeatletter
+\AtBeginSection[]% <- Empty optional argument, do nothing for \section*
+{%
+    \ifnum\beamer@tocsectionnumber>0%
+        \begin{frame}[plain, noframenumbering]{}
+             \sectionpage
+        \end{frame}
+    \fi
+}
+\AtBeginSubsection[]% <- Empty optional argument, do nothing for \subsection*
+{%
+    \ifnum\beamer@tocsectionnumber>0%
+        \begin{frame}[plain, noframenumbering]{}
+             \subsectionpage
+        \end{frame}
+    \fi
+}
+\makeatother
+
+%Append code to put license and GitHub profile to titlepage
+\newcommand{\GitHubAuthors}[1]{
+    \def\insertGitHubAuthors{#1}
+}
+\appto\titlepage{%
+    \begin{tikzpicture}[remember picture, overlay]
+        \node[anchor=south, inner ysep=0pt] (license) at ($(current page.south)+(0mm,3mm)$)
+        {\includegraphics[width=10mm]{CC-BY}};
+        \node[anchor=south, font=\small, text=BGLIGHT] (Axel) at (license.north)
+        {\insertGitHubAuthors};
+    \end{tikzpicture}
+}
+
+%===============================================================%
+\title{Clean software development}
+\titlegraphic{$\stackrel{\includegraphics[width=24mm]{Logo-CRC}}{\includegraphics[width=24mm]{Logo-HGS-HIRe}}$}
+%===============================================================%
+
+
+% The following code has been taked from the beamer class beamerbasesection.sty file and changed
+% so that the  \addtocontents{toc} adds now a 6th argument to the .toc file, which is the color
+% to be used in the TOC. This is the command that among others is adding lines to the .toc file
+% which is later used to typeset the TOC.
+%
+% NOTE: The default \section command still works and uses the lecture type as this is set as
+%       default in the \session command.
+\makeatletter
+\long\def\beamer@section[#1]#2{%
+    \beamer@savemode%
+    \mode<all>%
+    \ifbeamer@inlecture
+    \refstepcounter{section}%
+    \ifblank{#2}%
+    {\long\def\secname{#1}\long\def\lastsection{#1}}%
+    {\global\advance\beamer@tocsectionnumber by 1\relax%
+        \long\def\secname{#2}%
+        \long\def\lastsection{#1}%
+        \addtocontents{toc}{\protect\beamer@sectionintoc{\the\c@section}{#2}{\the\c@page}{\the\c@part}%
+            {\the\beamer@tocsectionnumber}{\currentsectiontype}}}% <---- CHANGED
+    {\let\\=\relax\xdef\sectionlink{{Navigation\the\c@page}{\noexpand\secname}}}%
+    \beamer@tempcount=\c@page\advance\beamer@tempcount by -1%
+    \addtocontents{nav}{\protect\headcommand{\protect\beamer@sectionpages{\the\beamer@sectionstartpage}{\the\beamer@tempcount}}}%
+    \addtocontents{nav}{\protect\headcommand{\protect\beamer@subsectionpages{\the\beamer@subsectionstartpage}{\the\beamer@tempcount}}}%
+    \ifblank{#1}{}{%
+        \addtocontents{nav}{\protect\headcommand{\protect\sectionentry{\the\c@section}{#1}{\the\c@page}{\secname}{\the\c@part}}}%
+    }%
+    \beamer@sectionstartpage=\c@page%
+    \beamer@subsectionstartpage=\c@page%
+    \def\insertsection{\expandafter\hyperlink\sectionlink}%
+    \def\insertsubsection{}%
+    \def\insertsubsubsection{}%
+    % Deal with a defective patch in metropolis theme
+    \def\insertsectionhead{\hyperlink{Navigation\the\c@page}{#1}}%
+    \edef\insertsectionhead{\noexpand\hyperlink{Navigation\the\c@page}{\unexpanded{#1}}}%
+    \def\insertsubsectionhead{}%
+    \def\insertsubsubsectionhead{}%
+    \def\lastsubsection{}%
+    \Hy@writebookmark{\the\c@section}{\secname}{Outline\the\c@part.\the\c@section}{2}{toc}%
+    \hyper@anchorstart{Outline\the\c@part.\the\c@section}\hyper@anchorend%
+    \ifblank{#2}{\beamer@atbeginsections}{\beamer@atbeginsection}%
+    \fi%
+    \beamer@resumemode}%
+
+% The following code has also been taked from the beamer class beamerbasetoc.sty file and changed
+% in a couple of places:
+%   1. The command takes 6 arguments
+%   2. The \beamer@tocact command is used with a template name that depends on the 6th argument
+\def\beamer@sectionintoc#1#2#3#4#5#6{% <--- CHANGED
+    \ifnum\c@tocdepth>0%
+    \ifnum#4=\beamer@showpartnumber%
+    {
+        \beamer@saveanother%
+        \gdef\beamer@todo{}%
+        \beamer@slideinframe=#1\relax%
+        \expandafter\only\beamer@tocsections{\gdef\beamer@todo{%
+                \beamer@tempcount=#5\relax%
+                \advance\beamer@tempcount by\beamer@sectionadjust%
+                \ifnum\beamer@tempcount>0
+                \edef\inserttocsectionnumber{\the\beamer@tempcount}%
+                \else
+                \def\inserttocsectionnumber{}%
+                \fi%
+                \def\inserttocsection{\hyperlink{Navigation#3}{#2}}%
+                \beamer@tocifnothide{\ifnum\c@section=#1\beamer@toc@cs\else\beamer@toc@os\fi}%
+                {%
+                    \ifbeamer@pausesections\pause\fi%
+                    \ifx\beamer@toc@ooss\beamer@hidetext
+                    \vskip1.5em
+                    \else
+                    \vfill
+                    \fi
+                    {%
+                        \hbox{\vbox{%
+                                \def\beamer@breakhere{\\}%
+                                \beamer@tocact{\ifnum\c@section=#1\beamer@toc@cs\else\beamer@toc@os\fi}{#6 section in toc}}}%  <--- CHANGED
+                        \par%
+                    }%
+                }%
+            }%
+        }%
+        \beamer@restoreanother%
+    }
+    \beamer@todo%
+    \fi\fi%
+}
+\makeatother
+
+
+
+
+
+
+
+
+

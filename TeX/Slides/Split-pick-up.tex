@@ -1,0 +1,34 @@
+%-------------------------------%
+%  Author: Alessandro Sciarra   %
+%    Date: 18 Jun 2025          %
+%-------------------------------%
+
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{Sub-groups}
+    \begin{enumerate}
+        \item<1-> Let's split in groups of 4 people.
+                  \begin{itemize}
+                      \item Maximise number of programming languages per group
+                  \end{itemize}
+        \item<2-> Take your snippet of code:
+                  \begin{itemize}
+                      \item Each has 5 minutes to introduce it to the group.
+                      \item Pick-up that which looks the least clean.
+                  \end{itemize}
+        \item<3-> Why did you make such a choice?\\
+                  How was it not clean?\\
+                  Share the 3 most important reasons.\\[1mm]
+                  \begin{itemize}
+                      \item Difficult to read (why?)
+                      \item Not maintainable
+                      \item Difficult to extend
+                      \item Difficult to use
+                      \item Easy to break
+                      \item Not tested (or testable)
+                  \end{itemize}
+    \end{enumerate}
+    \begin{tikzpicture}[remember picture, overlay]
+        \node[anchor=south east, visible on=<2->] at ($(current page.south east)+(-1,1)$) {\includegraphics[width=0.35\textwidth]{But-it-runs}};
+    \end{tikzpicture}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%

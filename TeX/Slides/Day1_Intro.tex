@@ -1,0 +1,87 @@
+%-------------------------------%
+%  Author: Alessandro Sciarra   %
+%    Date: 12 Jun 2025          %
+%-------------------------------%
+
+%===================%
+\subtitle{Welcome!}
+\author{
+    \begin{tabular}{c}
+        Alessandro Sciarra\\[1mm]
+        David A. Clarke\\
+    \end{tabular}
+}
+\institute{}
+\titlepagelogo{$\stackrel{\includegraphics[width=24mm]{Logo-FRA}}{\includegraphics[width=24mm]{Logo-BIE}}$}
+\GitHubAuthors{
+    \begin{tabular}{c}
+        \href{https://github.com/AxelKrypton}{\faGithub\,AxelKrypton}\\[1mm]
+        \href{https://github.com/clarkedavida}{\faGithub\,clarkedavida}\\
+    \end{tabular}
+}
+\date{}
+%===================%
+
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\AddLinkToTOCfalse
+\PrepareURLsymbol[PB]
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[plain,noframenumbering]
+    \titlepage
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+
+%===================%
+\subtitle{Day 1}
+\author{Alessandro Sciarra}
+\institute{Z02~--~Software Development Center}
+\titlepagelogo{\includegraphics[width=24mm]{Logo-FRA}}
+\GitHubAuthors{\href{https://github.com/AxelKrypton}{\faGithub\,AxelKrypton}}
+\date{6 October 2025}
+%===================%
+
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[plain,noframenumbering]
+    \titlepage
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+%Here force to make a section 0 to balance toc
+\makeatletter
+\setcounter{section}{-1\relax}%
+\beamer@tocsectionnumber=-1\relax\space
+\makeatother
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[label=toc,plain,noframenumbering]{Topics of the day}
+    \vspace{-6mm}
+    \begin{columns}[t]
+        \begin{column}{.45\textwidth}
+            \hspace*{4mm}
+            \begin{minipage}[t][0.2\textheight]{\textwidth}
+                \begin{NoHyper}
+                    \tableofcontents[currentsection,sections={0}]
+                \end{NoHyper}
+            \end{minipage}
+        \end{column}
+        \begin{column}{.45\textwidth}
+            \begin{minipage}[t][0.2\textheight]{\textwidth}
+            \end{minipage}
+        \end{column}
+    \end{columns}
+    \vspace{3.5mm}
+    \begin{columns}[t]
+        \begin{column}{.45\textwidth}
+            \hspace*{4mm}
+            \begin{minipage}[t][0.5\textheight]{\textwidth}
+                %\vspace{-7.7mm}
+                \tableofcontents[sections={1-3},hideallsubsections]
+            \end{minipage}
+        \end{column}
+        \begin{column}{.45\textwidth}
+            \begin{minipage}[t][0.5\textheight]{\textwidth}
+                \tableofcontents[sections={4-},hideallsubsections]
+            \end{minipage}
+        \end{column}
+    \end{columns}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\section{Formal welcome} %Just for the toc
