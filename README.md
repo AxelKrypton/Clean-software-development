@@ -32,13 +32,30 @@ Practical sessions have been omitted (refer to the training schedule in the slid
 1. Training format
 1. The idea of clean code
 1. Clean testing (I)
+   - Why (automated) testing?
+   - Types of tests
+   - Testing frameworks
 
 ### Day 2
 
 1. Clean code principles (I)
+   - Meaningful names
+   - Comments and formatting
+   - Documentation
+   - Functions and classes
+   - IOSP
 1. Clean testing (II)
+   - The curse of the **unit** word
+   - White- and black-box testing!?
+   - Test the behaviour, not the implementation
 1. Clean testing (III)
-1. DRY, KISS, YAGNI
+   - Tests goals – properties – good principles
+1. Clean code principles (II)
+   - The DRY principle
+   - The KISS principle
+   - The YAGNI principle
+   - Optimisation
+   - Boy scout philosophy
 
 ### Day 3
 
