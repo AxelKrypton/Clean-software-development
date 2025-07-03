@@ -1,0 +1,38 @@
+%-------------------------------%
+%  Author: Alessandro Sciarra   %
+%    Date: 26 Jun 2025          %
+%-------------------------------%
+
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\PrepareURLsymbol[PB]
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[plain,noframenumbering]
+    \titlepage
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[label=toc,plain,noframenumbering]{Topics of the day}
+    \begin{columns}
+        \hfill
+        \begin{column}{.55\textwidth}
+            \hspace*{4mm}
+            \begin{minipage}[0.5\textheight]{\textwidth}
+                \tableofcontents[sections={1}]
+                \vspace{1.5mm}
+                \tableofcontents[sections={2}, hideallsubsections]
+            \end{minipage}
+        \end{column}
+        \hfill
+        \begin{column}{.4\textwidth}
+            \begin{minipage}[0.5\textheight]{\textwidth}
+                \tableofcontents[sections={3-}, hideallsubsections]
+            \end{minipage}
+        \end{column}
+        \hfill
+    \end{columns}
+    \vspace{2mm}
+    \begin{varblock}{quote}[\textwidth]{An enlightening day}
+        \normalfont\small
+        Today you will learn and/or reflect on simple language-independent ideas and principles which will be the starting point of a new software era in your daily life!
+    \end{varblock}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%

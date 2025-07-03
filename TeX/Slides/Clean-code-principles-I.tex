@@ -1,0 +1,670 @@
+%-------------------------------%
+%  Author: Alessandro Sciarra   %
+%    Date: 01 Jul 2025          %
+%-------------------------------%
+
+%===================================================================================================%
+\subsection{Meaningful names}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[fragile]{Use intention-revealing names}
+    \vspace{-2mm}
+    \begin{varblock}{block example}{\alt<1-2>{Why is it hard to tell what this code is doing?}{Good names are crucial for readability!}}
+        \begin{onlyenv}<1-2>
+            \begin{lstlisting}[style=MyCpp]
+                using std::vector<std::vector<int>> = myVecVec;
+
+                myVecVec FC(const myVecVec& b)
+                {
+                    myVecVec list;
+                    for(const std::vector<int>& c : b){
+                        if(c[0] == 4)
+                            list.push_back(c);
+                    }
+                    return list;
+                }
+            \end{lstlisting}
+        \end{onlyenv}
+        \begin{onlyenv}<3>
+            \begin{lstlisting}[style=MyCpp]
+                using std::vector<std::vector<int>> = myVecVec;
+
+                myVecVec getFlaggedCells(const myVecVec& gameBoard)
+                {
+                    myVecVec flaggedCells;
+                    for(const std::vector<int>& cell : gameBoard){
+                        if(cell[STATUS_VALUE] == FLAGGED)
+                            flaggedCells.push_back(cell);
+                    }
+                    return flaggedCells;
+                }
+            \end{lstlisting}
+        \end{onlyenv}
+        \begin{onlyenv}<4>
+            \begin{lstlisting}[style=MyCpp]
+                using std::vector<std::vector<int>> = SetOfCells;
+
+                SetOfCells getFlaggedCells(const SetOfCells& gameBoard)
+                {
+                    SetOfCells flaggedCells;
+                    for(const Cell& cell : gameBoard){
+                        if(cell.isFlagged())
+                            flaggedCells.push_back(cell);
+                    }
+                    return flaggedCells;
+                }
+            \end{lstlisting}
+        \end{onlyenv}
+
+    \end{varblock}
+    \begin{uncoverenv}<2->
+        \begin{itemize}
+            \setlength{\itemsep}{0mm}
+            \item What kind of object is contained in \alt<2>{\CPP|list|}{\CPP|flaggedCells|}?
+            \item What does \alt<2>{\PB{0}}{\CPP|STATUS_VALUE|} represent in the \CPP|if|-clause?
+            \item What does \alt<2>{\PB{4}}{\CPP|FLAGGED|} mean in the \CPP|if|-clause?
+            \item How would I use the object being returned?
+        \end{itemize}
+    \end{uncoverenv}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[fragile]{Use names which can be searched}
+    \vspace{-2mm}
+    \begin{overlayarea}{\textwidth}{\textheight}
+        \begin{varblock}{alert}[\textwidth]{Rule of thumb}
+            The length of a name should be chosen w.r.t. to the size of its scope
+        \end{varblock}
+        \begin{center}
+            \begin{minipage}{0.9\textwidth}
+                \begin{description}
+                    \item[\textbf{Variables:}] Proportionally to their scope size
+                    \item[\textbf{Functions:}] In inverse proportion to their scope (cf.\ C++ STL)
+                \end{description}
+            \end{minipage}
+        \end{center}
+        \vspace{1mm}
+        \begin{onlyenv}<1>
+            \begin{itemize}
+                \item Single-letter names \textbf{only} for local variables inside \textbf{short scopes}
+                \item Single-word names \textbf{a must} for functions in widely used \textbf{libraries}
+                \item IDE very good at renaming variables $\;\Rightarrow\;$ rename, rename, rename!
+            \end{itemize}
+        \end{onlyenv}
+        \vspace{-4mm}
+        \begin{varblock}{block example}{Something like this\ldots}<only@2>
+            \begin{lstlisting}[style=MyCpp]
+                for(int j = 0; j < 34; j++)
+                    s += t[j]*4/5;
+            \end{lstlisting}
+        \end{varblock}
+        \begin{varblock}{block example}[\textwidth]{\ldots{}or something like this?}<only@3>
+            \begin{lstlisting}[style=MyCpp]
+                const int realDaysPerIdealWeek = 4;
+                int numberOfTotalRealWeeks = 0;
+                for(int j = 0; j < NUMBER_OF_TASKS; j++)
+                {
+                    const int weeksPerTask  = taskDaysEstimate[j] *
+                                              realDaysPerIdealWeek /
+                                              WORKING_DAYS_PER_WEEK;
+                    numberOfTotalRealWeeks += weeksPerTask;
+                }
+            \end{lstlisting}
+        \end{varblock}
+    \end{overlayarea}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[fragile]{Other important principles}
+    \vspace{-3mm}
+    \begin{itemize}
+        \setlength{\itemindent}{-3mm}
+        \item Avoid disinformation
+        \item \alert{Use pronounceable names} $\;\to\;$ \PS{\texttt{timestamp}} better than \PQ{\texttt{ymdhms}}
+        \item Avoid mental mapping
+        \item Pick \alert{one} word per concept $\;\to\;$\CPP|get|, \CPP|fetch|, \CPP|retrieve|, \CPP|obtain|
+        \item Do not be cute
+        \item \ldots
+    \end{itemize}
+    \vspace{-3mm}
+    \begin{varblock}{alert}[0.5\textwidth]{Take home lesson}
+        \textbf{Choose carefully every name!}\\[1mm]
+        $\downarrow$\\[1mm]
+        Rename when you find better ones!
+    \end{varblock}
+\end{frame}
+%===================================================================================================%
+
+
+%===================================================================================================%
+\subsection{Comments and Formatting}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{Do not comment bad code, rewrite it}
+    \vspace{-3mm}
+    \begin{onlyenv}<1>
+        \begin{tikzpicture}[remember picture, overlay,
+            every node/.style={inner sep=0pt}, pgfornamentstyle/.style={color=ALERT}]
+            \def\ornsize{11mm}
+            \node[font=\large](Text) at ($(current page.north)!0.52!(current page.south)$) {%
+                \begin{tabular}{c}
+                    Comments are an \textbf{unfortunate necessity},\\
+                    NOT a great achievement!\\[3mm]
+                    {\normalsize---~Robert C. Martin~---}
+                \end{tabular}
+            };
+            \node[shift={(-12mm,6mm)},anchor=north west] (CNW)
+            at (Text.north west) {\pgfornament[width=\ornsize]{61}};
+            \node[shift={(12mm,6mm)},anchor=north east] (CNE)
+            at (Text.north east) {\pgfornament[width=\ornsize,symmetry=v]{61}};
+            \node[shift={(-12mm,-5mm)},anchor=south west] (CSW)
+            at (Text.south west) {\pgfornament[width=\ornsize,symmetry=h]{61}};
+            \node[shift={(12mm,-5mm)},anchor=south east] (CSE)
+            at (Text.south east) {\pgfornament[width=\ornsize,symmetry=c]{61}};
+            \pgfornamentline{CNW.north east}{CNE.north west}{3}{88}
+            \pgfornamentline{CSW.south east}{CSE.south west}{3}{88}
+            \pgfornamentline{CNW.south west}{CSW.north west}{2}{88}
+            \pgfornamentline{CNE.south east}{CSE.north east}{2}{88}
+        \end{tikzpicture}
+    \end{onlyenv}
+    \begin{onlyenv}<2>
+        \begin{quoteblock}{Avoid comments!}[R. C. Martin]
+            The proper use of comments is to compensate for our failure to express ourself in code.
+            Note that I used the word \alert{failure}. I meant it. Comments are always failures. [\ldots]
+            Why am I so down on comments? Because they lie. Not always, and not intentionally, but too often.
+            The older a comment is, and the farther away it is from the code it describes, the more likely
+            it is to be just plain wrong.
+        \end{quoteblock}
+        \begin{itemize}
+            \item To keep comments up-to-date costs energy and this energy should rather go into make the code clearer and more expressive!
+            \item Inaccurate comments are far worse than no comments!
+            \item \alert{Truth can only be found in one place: the code.}
+        \end{itemize}
+    \end{onlyenv}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[fragile]{Explain yourself in the code}
+    \vspace{-5mm}
+    \begin{varblock}{block example}[0.85\textwidth]{What you should strive to avoid\ldots}
+        \begin{lstlisting}[style=MyCpp]
+            Person e; // The employee we are considering
+
+            // Check if the employee is eligible for full benefits
+            if( (e.flags & HOURLY_FLAG) && e.age > 65 )
+        \end{lstlisting}
+    \end{varblock}
+    \begin{varblock}{block example}[0.8\textwidth]{\ldots{}in favour of expressive code}<2->
+        \begin{lstlisting}[style=MyCpp]
+            Person employee;
+
+            if(employee.isEligibleForFullBenefits())
+        \end{lstlisting}
+    \end{varblock}
+    \begin{uncoverenv}<3>
+        \begin{itemize}
+            \item It is simple to come up with good ideas
+            \item It is often simply matter of creating a function whose name expresses the content of the comment!
+        \end{itemize}
+    \end{uncoverenv}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[fragile]{Good comments}{But try to limit them as much as possible!}
+    \begin{overlayarea}{\textwidth}{0.75\textheight}
+        \begin{onlyenv}<4->
+            \vspace{3mm}
+            \begin{itemize}
+                \item Informative comment
+                \item Explanation of intent, Clarification
+                \item<only@5-> Amplification
+                \item<only@6-> \PQ{TODO comments}{$\;$\scriptsize $\to\;$border line: really needed in a code? Do not check them in!\tikzmark{todoEnd}}
+                \item<only@6-> \PQ{Legal comments}{$\;$\scriptsize $\to\;$border line: not legally required \& overlap with version control.}
+            \end{itemize}
+            \begin{onlyenv}<6->
+                \begin{tikzpicture}[remember picture, overlay]
+                    \node[anchor=north east] (TD) at ($(current page.north east)-(7mm,3mm)$) {\includegraphics[scale=0.07]{Todo}};
+                    \path[thin, to] ($(TD.south)!0.5!(TD.south east)$) edge[out=270, in=0] (todoEnd);
+                \end{tikzpicture}
+            \end{onlyenv}
+        \end{onlyenv}
+        \begin{onlyenv}<1-3>
+            \vspace{-1mm}
+            \begin{varblock}{block example}[0.98\textwidth]{Informative comment}
+                \begin{lstlisting}[style=MyCpp]
+                    // Format matched:     hh:mm:ss dd Month yyyy
+                    std::regex timePattern("(\\d{2}:){2}\\d{2}, \\d{2} \\S+ \\d{4}");
+                \end{lstlisting}
+            \end{varblock}
+            \begin{varblock}{block example}[0.77\textwidth]{Explanation of intent}<uncover@2->
+                \begin{lstlisting}[style=MyCpp]
+                    // Checking the residuum possibly not every
+                    // iteration allows for speed up on GPUs
+                    if(iterationNumber % CG_CHECK_RESIDUUM_EVERY == 0)
+                \end{lstlisting}
+            \end{varblock}
+            \begin{varblock}{block example}[0.77\textwidth]{Clarification when using cryptic external API}<uncover@3>
+                \begin{lstlisting}[style=MyCpp]
+                    // Check if root was found up to desired precision
+                    if(gsl_fcmp(functionValue, 0.0, epsilon) == 0)
+                \end{lstlisting}
+            \end{varblock}
+        \end{onlyenv}
+        \begin{varblock}{block example}[0.99\textwidth]{Amplification}<only@4>
+            \begin{lstlisting}[style=MyCpp]
+                // See https://stackoverflow.com/a/1736040 for more information.
+                template<typename T>
+                std::string getDefaultForHelper(const T& number)
+            \end{lstlisting}
+        \end{varblock}
+        \vspace{-1mm}
+        \begin{varblock}{block example}[0.99\textwidth]{}<only@4>
+            \begin{lstlisting}[style=MyCpp]
+                // Removing trailing spaces is crucial since any would break the
+                // following algorithm. It might leave the string unchanged, but
+                // the absence of trailing spaces is at the moment not guaranteed!
+                boost::trim_right(keyToDecipher);
+            \end{lstlisting}
+        \end{varblock}
+        \begin{onlyenv}<5>
+            \begin{varblock}{block example}[0.98\textwidth]{TODO comments}
+                \begin{lstlisting}[style=MyCpp]
+                    // TODO: The following two classes should be merged into one!
+                \end{lstlisting}
+            \end{varblock}
+            \vspace{-2mm}
+            \begin{varblock}{block example}[0.7\textwidth]{Legal comments}
+                \begin{lstlisting}[style=MyCpp]
+                    /*******************************************
+                     *  Copyright (c) 2018 Alessandro Sciarra  *
+                     *                                         *
+                     *  This file is part of BaHaMAS.          *
+                     *******************************************/
+                \end{lstlisting}
+            \end{varblock}
+        \end{onlyenv}
+        \vspace{-5mm}
+        \begin{varblock}{block alerted}[0.96\textwidth]{Automatic documentation comments}<6>
+            If you are writing a public API, then you should certainly provide a good documentation.
+            But be aware that documentation comments can be as misleading, misplaced and lying as any other comment.
+        \end{varblock}
+    \end{overlayarea}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[fragile]{Bad comments}
+    \begin{overlayarea}{\textwidth}{\textheight}
+        \begin{onlyenv}<1>
+            \vspace{-3mm}
+            \begin{varblock}{block example}[0.94\textwidth]{Several bad habits in one example}<only@1>
+                \begin{lstlisting}[style=MyCpp]
+                    /**
+                    * @param longTitle The complete title of the CD
+                    * @param longAuthor The complete author of the CD
+                    * @param nTracks The number of tracks of the CD
+                    * @param durationInMinutes The duration of the CD in minutes
+                    */
+                    void Jukebox::addCD(std::string longTitle,
+                                        std::string longAuthor,
+                                        /*int nTracks,*/ int durationInMinutes)
+                    {
+                        // Create new CD to be later added to the list
+                        CD cd;
+                        cd.title    = longTitle;
+                        cd.author   = longAuthor;
+                        //cd.tracks   = nTracks;
+                        cd.duration = durationInMinutes;
+                        if(cd.duration<60) // Added by James
+                           throw std::invalid_argument();
+                        cdList.push_back(cd);
+                    } // addCD method
+                \end{lstlisting}
+            \end{varblock}
+        \end{onlyenv}
+        \begin{onlyenv}<2>
+            \begin{varblock}{block example}[0.7\textwidth]{The same code cleaned up}
+                \begin{lstlisting}[style=MyCpp]
+                    void Jukebox::addCD(std::string longTitle,
+                                        std::string longAuthor,
+                                        int durationInMinutes)
+                    {
+                        CD cd;
+                        cd.title    = longTitle;
+                        cd.author   = longAuthor;
+                        cd.duration = durationInMinutes;
+                        if(cd.duration<60)
+                            throw std::invalid_argument();
+                        cdList.push_back(cd);
+                    }
+                \end{lstlisting}
+            \end{varblock}
+            \vspace{-2mm}
+            \begin{varblock}{block example}[0.7\textwidth]{}
+                The code becomes smaller and it reads well!\\
+                Why should you add a comment here?!
+            \end{varblock}
+        \end{onlyenv}
+        \begin{onlyenv}<3>
+            \vspace{3mm}
+            \begin{itemize}
+                \item Redundant comments               \hfill\makebox[55mm][l]{\PP{$\;\to\;$}\alert{Avoid}}
+                \item Noise comments                   \hfill\makebox[55mm][l]{\PP{$\;\to\;$}\alert{Avoid}}
+                \item Misleading comments              \hfill\makebox[55mm][l]{\PP{$\;\to\;$}\alert{Avoid}}
+                \item Comments instead of a good name  \hfill\makebox[55mm][l]{\PP{$\;\to\;$}\PS{Use good name}}
+                \item Closing brace comments           \hfill\makebox[55mm][l]{\PP{$\;\to\;$}\PB{Rarely}}
+                \item Attribution comments             \hfill\makebox[55mm][l]{\PP{$\;\to\;$}\alert{Delete, use version control}}
+                \item Commented-out code               \hfill\makebox[55mm][l]{\PP{$\;\to\;$}\alert{Delete, use version control}}
+                \item Unclear, cryptic comments        \hfill\makebox[55mm][l]{\PP{$\;\to\;$}\alert{Remove or clarify}}
+            \end{itemize}
+            \begin{center}
+                \large
+                Have \textbf{\tikzmark{GR1}good reasons\tikzmark{GR2}} before adding a comment!
+            \end{center}
+            \begin{tikzpicture}[remember picture, overlay]
+                \node[anchor=north, font=\footnotesize, text=ALERT] at ($(GR1)!0.5!(GR2)-(0,2mm)$) {Are they?};
+            \end{tikzpicture}
+        \end{onlyenv}
+    \end{overlayarea}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{Formatting}{Yes, formatting is important!}
+    \begin{onlyenv}<1-4>
+        \begin{varblock}{alert}[0.6\textwidth]{The 3 most important rules:}
+            \begin{enumerate}[<+(1)->]
+                \item Stay coherent with what you find
+                \item Stay coherent with what you find
+                \item Stay coherent with what you find
+            \end{enumerate}
+        \end{varblock}
+        \vspace{-2mm}
+        \begin{varblock}{alert}[0.7\textwidth]{}<uncover@4>
+            \textbf{This starts with but it is not limited to formatting!}
+        \end{varblock}
+        \vspace{-2mm}
+        \begin{varblock}{alert}[0.85\textwidth]{}<uncover@4>
+            Especially important when working on an existing codebase!
+        \end{varblock}
+    \end{onlyenv}
+    \begin{onlyenv}<5>
+        \vspace{-2mm}
+        \begin{itemize}
+            \item How big should be a file? \\ $\to\;$ Try to stay \PP{below few hundreds}, the reader will be grateful!
+            \item Give some vertical breath to your code
+            \item Care about length of lines (\PP{80} to \alert{140} characters) \\
+            $\to\;$ Crucial if the code is readable from browser (e.g. \PP{GitHub})
+            \item Consider horizontal alignment and spacing (e.g. \PP{around operators})
+            \item Be coherent (e.g. \PP{braces})
+        \end{itemize}
+        \vspace{-1mm}
+        \begin{varblock}{alert}[0.9\textwidth]{How to work when different people write in the same code base?}
+            Agree on a style and \alert{use a tool} (e.g.\ clang-format) to enforce it
+        \end{varblock}
+    \end{onlyenv}
+\end{frame}
+%===================================================================================================%
+
+
+%===================================================================================================%
+\subsection{Documentation}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{Some tension}
+    \begin{onlyenv}<2>
+        \begin{columns}
+            \hfill
+            \begin{column}{0.45\textwidth}
+                \includegraphics[width=\textwidth]{Documentation-self-explanatory}
+            \end{column}
+            \begin{column}{0.45\textwidth}
+                \includegraphics[width=\textwidth]{Documentation-not-read}
+            \end{column}
+            \hfill
+        \end{columns}
+    \end{onlyenv}
+    \begin{onlyenv}<3>
+        \begin{center}
+            \includegraphics[width=0.7\textwidth]{Documentation-up-to-date}
+        \end{center}
+    \end{onlyenv}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{Never forget it!}
+    \begin{onlyenv}<1-2>
+        \begin{varblock*}{quote}[0.7\textwidth]{Software testing}[Riona MacNamara, Google]
+             A professionalized discipline integrated into the software development process.
+        \end{varblock*}
+        \vspace{3mm}
+        \begin{varblock}{alert}[0.7\textwidth]{Software documentation}<uncover@2>
+             A professionalized discipline integrated into the software development process
+        \end{varblock}
+    \end{onlyenv}
+    \begin{onlyenv}<3-4>
+        \begin{varblock*}{example}[0.85\textwidth]{It is about culture and mind setup}
+            \begin{enumerate}
+                \item Writing documentation belongs to code development!
+                \item Code changes can invalidate documentation!
+                \item Good testing code documents your codebase
+            \end{enumerate}
+        \end{varblock*}
+        \vspace{3mm}
+        \begin{varblock}{alert}[\textwidth]{Writing documentation is boring and people do not read it!}<uncover@4>
+            That's why \textbf{you need to find the best compromise for your project}.\\[1mm]
+            What's the best approach?
+            What's your documentation for?\\
+            Is that detail needed to be documented?
+        \end{varblock}
+    \end{onlyenv}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{Choose your tool carefully}
+    \def\SphinxWeb{https://www.sphinx-doc.org/en/master/}
+    \def\DoxygenWeb{https://www.doxygen.nl}
+    \def\MkdocsWeb{https://www.mkdocs.org}
+    \def\DocsifyWeb{https://docsify.js.org/}
+    \begin{center}
+        \begin{tikzpicture}[node distance=5mm]
+            \foreach \l [count=\n from 1, count=\nm from 0] in {Sphinx, Doxygen, Mkdocs, Docsify}{
+                \ifnum\n=1
+                    \node[draw, label={[font=\small]270:{\URL*{\csname\l Web\endcsname}{\l}}}] (L\n) at (0,0)
+                        {\includegraphics[height=12mm]{Logo-\l}};
+                \else
+                    \node[draw, label={[font=\small]270:{\URL*{\csname\l Web\endcsname}{\l}}}, right = of L\nm] (L\n)
+                        {\includegraphics[height=12mm]{Logo-\l}};
+                \fi
+            }
+            \node[draw, right=of L4] {...};
+        \end{tikzpicture}
+    \end{center}
+    \begin{varblock}{example}[0.75\textwidth]{The list of tools is longer than you might think}
+        There are even \URL*{https://dev.to/doctave/how-google-twitter-and-spotify-built-a-culture-of-documentation-3e0m}{lists of tools} available!
+    \end{varblock}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{It is all about the mind setup!}
+    \begin{varblock}{quote}[0.85\textwidth]{A software engineer}
+         {}[...] many overestimate the cost of maintaining documentation.
+         If you have a system in place, incremental improvements to docs don't have to be a huge burden that suck time away from other engineering tasks.
+    \end{varblock}
+    \begin{varblock}{quote}[0.85\textwidth]{Another software engineer}
+         And underestimate the damage that inaccurate docs have on users' opinions.
+         \alert{Once a user discovers inaccurate content, they are leery of trusting anything else you say.}
+    \end{varblock}
+\end{frame}
+%===================================================================================================%
+
+
+%===================================================================================================%
+\subsection{Functions and Classes}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[fragile]{Common general aspects}
+    \vspace{-1mm}
+    \begin{overlayarea}{\textwidth}{\textheight}
+        \begin{varblock}{block alerted}[0.5\textwidth]{SMALL}
+            Do \alert{one} thing. Do it \alert{well}. Do it \alert{only}!
+        \end{varblock}
+        \begin{itemize}[<only@1-3,5>]
+            \item Functions and classes interfaces should stay small (see next slide)
+            \item \tc<2>{PP}{Classes should fulfil the single responsibility principle}
+            \item \tc<3>{PP}{One level of abstraction per function}
+        \end{itemize}
+        \begin{onlyenv}<3>
+            \begin{center}
+                \begin{minipage}{0.65\textwidth}
+                    \begin{enumerate}
+                        \item Let's start with an example of bad code
+                        \item and then have a look to how it should be
+                    \end{enumerate}
+                \end{minipage}
+            \end{center}
+        \end{onlyenv}
+        \vspace{-2mm}
+        \begin{varblock}{block example}[0.51\textwidth]{Single-responsibility class}<only@2>
+            \begin{lstlisting}[style=MyCpp]
+                class Version {
+                  public:
+                    int getMajorVersionNumber();
+                    int getMinorVersionNumber();
+                    int getBuildNumber();
+                    // [...]
+                };
+            \end{lstlisting}
+        \end{varblock}
+        \begin{varblock}{block example}[0.8\textwidth]{Impolite, rude code $\to$ up and down to understand it!}<only@4>
+            \begin{lstlisting}[style=MyCpp]
+                void MakeCoffee(const Coffee& typeOfCoffee){
+                    auto neededT = temperature(typeOfCoffee);
+                    if(neededT < T)
+                        warmUp(neededT);
+                    while(grinder != nullptr)
+                        prepareGrinder();
+                    grind(calculateGrams(typeOfCoffee));
+                    auto neededP = pressure(typeOfCoffee);
+                    prepareToBrew(neededT, neededP);
+                    if(status == READY_TO_BREW)
+                        brew(typeOfCoffee);
+                    else
+                        throw std::runtime_error("Unable to brew!");
+                }
+            \end{lstlisting}
+        \end{varblock}
+        \begin{varblock}{block example}[0.71\textwidth]{Single-level-of-abstraction function}<only@5>
+            \begin{lstlisting}[style=MyCpp]
+                void MakeCoffee(const Coffee& typeOfCoffee){
+                    WarmUpMachineIfNeeded(typeOfCoffee);
+                    GrindCoffee(typeOfCoffee);
+                    SetPressureAndTemperature(typeOfCoffee);
+                    BrewCoffee(typeOfCoffee);
+                }
+            \end{lstlisting}
+        \end{varblock}
+    \end{overlayarea}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[fragile]{More about this one-thing idea}
+    \begin{overlayarea}{\textwidth}{0.85\textheight}
+        \begin{varblock}{quote}[0.75\textwidth]{How big should a function be?}[Robert C. Martin]<only@1,3>
+            \uncover<3>{
+                A function should do one thing.
+                But what's one thing?
+                A function does one thing, if you cannot meaningfully extract another function from it.
+            }
+        \end{varblock}
+        \begin{varblock}{block example}[0.8\textwidth]{Back to our example}<only@2>
+            \begin{lstlisting}[style=MyCpp]
+                void MakeCoffee(const Coffee& typeOfCoffee){
+                    // 1. WarmUpMachineIfNeeded
+                    auto neededT = temperature(typeOfCoffee);
+                    if(neededT < T)
+                        warmUp(neededT);
+                    // 2. GrindCoffee
+                    while(grinder != nullptr)
+                        prepareGrinder();
+                    grind(calculateGrams(typeOfCoffee));
+                    // 3. SetPressureAndTemperature, needs T again
+                    auto neededP = pressure(typeOfCoffee);
+                    prepareToBrew(neededT, neededP);
+                    // 4. BrewCoffee
+                    if(status == READY_TO_BREW)
+                        brew(typeOfCoffee);
+                    else
+                        throw std::runtime_error("Unable to brew!");
+                }
+            \end{lstlisting}
+        \end{varblock}
+        \begin{varblock}{block example}[0.71\textwidth]{Result after extraction}<only@3>
+            \begin{lstlisting}[style=MyCpp]
+                void MakeCoffee(const Coffee& typeOfCoffee){
+                    WarmUpMachineIfNeeded(typeOfCoffee);
+                    GrindCoffee(typeOfCoffee);
+                    SetPressureAndTemperature(typeOfCoffee);
+                    BrewCoffee(typeOfCoffee);
+                }
+            \end{lstlisting}
+        \end{varblock}
+    \end{overlayarea}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[fragile]{Limit the number of arguments}{Make useful abstractions whenever it helps}
+    \begin{varblock}{block example}[\textwidth]{When you call the function, which argument is what?}
+        \begin{lstlisting}[style=MyCpp]
+            double Distance(double, double, double, double);
+            double Distance(double, double, double, double, double, double);
+        \end{lstlisting}
+    \end{varblock}
+    \begin{tikzpicture}
+        \path coordinate (A) at (0,0) coordinate (B) at (3,1);
+        \fill[PB] (A) circle[radius=1mm]; \fill[PB] (B) circle[radius=1mm];
+        \draw[<->, >=stealth, shorten <= 4pt, shorten >= 4pt] (A) -- (B);
+        \node[left = 2mm of A] {$A$};
+        \node[right = 2mm of B] {$B$};
+    \end{tikzpicture}
+    \vspace{-1mm}
+    \begin{varblock}{block example}[0.72\textwidth]{Isn't this much better?}<uncover@2>
+        \begin{lstlisting}[style=MyCpp]
+            struct Point2D {           struct Point3D {
+                double x, y;               double x, y, z;
+            };                         };
+
+            double Distance(std::pair<Point2D, Point2D>);
+            double Distance(std::pair<Point3D, Point3D>);
+        \end{lstlisting}
+    \end{varblock}
+    \begin{tikzpicture}[remember picture, overlay]
+        \draw[visible on=<2>, thick] ($(current page.center)-(0.2,1.7)$) -- ++(0,-1);
+    \end{tikzpicture}
+\end{frame}
+%===================================================================================================%
+
+
+%===================================================================================================%
+\subsection{IOSP}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[fragile]{\PQ{I}ntegration \PQ{O}peration \PQ{S}egregation \PQ{P}rinciple}
+    \begin{overlayarea}{\textwidth}{0.85\textheight}
+        \vspace{-3mm}
+        \begin{varblock}{block alerted}[\textwidth]{Clear separation of:}
+            \begin{description}
+                \item[Operation:]   A function which contains exclusively logic, meaning transformations, control structures or API invocations.
+                \item[Integration:] A function which does not contain any logic but exclusively calls other functions of the code base.
+            \end{description}
+        \end{varblock}
+        \vspace{-1mm}
+        \begin{varblock}{block example}[0.75\textwidth]{Operation}<only@1>
+            \begin{lstlisting}[style=MyCpp]
+                bool isPrime(unsigned int number)
+                {
+                    if(number == 1) return false;
+                    for(auto i = 2u; i <= std::sqrt(number); ++i)
+                    {
+                        if(number%i == 0) return false;
+                    }
+                    return true;
+                }
+            \end{lstlisting}
+        \end{varblock}
+        \begin{varblock}{block example}[0.62\textwidth]{Integration}<only@2>
+            \begin{lstlisting}[style=MyCpp]
+                int main(int argc, char *argv[])
+                {
+                    WelcomeUserToTheGame();
+                    Minesweeper minesweeper(argc, argv);
+                    minesweeper.playGame();
+                    PrintGameResult();
+                }
+            \end{lstlisting}
+        \end{varblock}
+    \end{overlayarea}
+\end{frame}
+%===================================================================================================%

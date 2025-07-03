@@ -1,0 +1,372 @@
+%-------------------------------%
+%  Author: Alessandro Sciarra   %
+%    Date: 02 Jul 2025          %
+%-------------------------------%
+
+%===================================================================================================%
+\subsection{DRY}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[fragile]{Don't Repeat Yourself $\;\to\;$ The DRY principle}
+    \vspace{1mm}
+    \begin{overlayarea}{\textwidth}{0.8\textheight}
+        \begin{itemize}
+            \item If you are doing \alert{\emph{Copy \& Paste}}, you are doing it wrong!
+            \item One of the most basic and yet most disregarded principle
+            \item Code duplication makes the code less maintainable and easy to break
+        \end{itemize}
+        \begin{varblock}{block example}[11cm]{Trivial example}<only@2-3>
+            \begin{onlyenv}<2>
+                \begin{lstlisting}[style=MyCpp]
+                    double sum1=0;
+                    for(const auto& data : dataSet1)
+                        sum1 += data;
+                    sum1 /= dataSet1.size();
+
+
+                    double sum2=0;
+                    for(const auto& data : dataSet2)
+                        sum2 += data;
+                    sum2 /= dataSet2.size();
+                \end{lstlisting}
+            \end{onlyenv}
+            \begin{onlyenv}<3>
+                \begin{lstlisting}[style=MyCpp]
+                    double calculateAverage(const std::vector<double>& dataSet)
+                    {
+                        double sum=0;
+                        for(const auto& data : dataSet)
+                            sum += data;
+                        return sum / dataSet.size();
+                    }
+
+                    calculateAverage(dataSet1);
+                    calculateAverage(dataSet2);
+                \end{lstlisting}
+            \end{onlyenv}
+        \end{varblock}
+        \begin{varblock}{block example}[0.98\textwidth]{Less trivial example}<only@4-5>
+            \begin{lstlisting}[style=MyCpp]
+                double calculateAverage(const std::vector<double>& dataSet)
+                {
+                    // ...
+                    throw std::runtime_error("Error in \"calculateAverage\"");
+                }
+            \end{lstlisting}
+            \begin{uncoverenv}<5>
+                \begin{lstlisting}[style=MyCpp]
+                    double calculateAverage(const std::vector<double>& dataSet)
+                    {
+                        // ...
+                        using namespace std::string_literals;
+                        throw std::runtime_error("Error in \""s + __func__ + "\""s);
+                    }
+                \end{lstlisting}
+            \end{uncoverenv}
+        \end{varblock}
+        \PrepareURLsymbol[PB]
+        \FrameRemark<5>{\texttt{\_\_func\_\_} in C++ is an implementation-defined string and is just one among \URL*{https://stackoverflow.com/a/4384825/14967071}{other possibilities}.}
+        \begin{varblock}{block example}[0.98\textwidth]{Traversing a complex structure}<6->
+            \begin{onlyenv}<6>
+                \begin{lstlisting}[style=MyCpp]
+                    // Imagine to have to do this very often
+                    for(auto& line : wiki)
+                    {
+                        if(line.isHeader())
+                            continue;
+                        for(auto& letter : line)
+                        {
+                            if(letter.isVowel())
+                            capitalize(letter);
+                        }
+                    }
+                    // How can you avoid duplication?
+                \end{lstlisting}
+            \end{onlyenv}
+            \begin{onlyenv}<7>
+                \begin{lstlisting}[style=MyCpp]
+                    void traverseAndTransform(WikiPage& wiki,
+                                              std::function<void(Letter)> transform)
+                    {
+                        for(auto& line : wiki){
+                            if(line.isHeader())
+                               continue;
+                            for(auto& letter : line)
+                               transform(letter);
+                        }
+                    }
+
+                    traverseAndTransform(wiki, /*lambda function*/);
+                \end{lstlisting}
+            \end{onlyenv}
+        \end{varblock}
+    \end{overlayarea}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\subsection{KISS}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[fragile]{Keep It Simple, Stupid $\;\to\;$ The KISS principle}
+    \begin{overlayarea}{\textwidth}{\textheight}
+        \begin{varblock}{quote}[0.8\textwidth]{Avoid complexity!}[A. Einstein]<only@1>
+            Everything should be done as simple as possible, but not simpler.
+        \end{varblock}
+        \begin{onlyenv}<1>
+            \begin{itemize}
+                \item If you have a solution, ask yourself if there is an easier one
+                \item Complexity reduces readability and maintainability
+                \item \alert{Use libraries!}
+                \item Do not feel cool because you did something hard in a tricky way.\\
+                \PP{Feel cool when you did the same in a trivial-to-understand way!}
+                \item If you really need something complicated (do you!?), then be sure everybody understands!
+            \end{itemize}
+        \end{onlyenv}
+        \begin{varblock}{block example}[0.86\textwidth]{Simple example}<only@2-4>
+            \begin{onlyenv}<2>
+                \begin{lstlisting}[style=MyCpp]
+                    std::vector<int> data = {1, -3, 2, 8, 4, -9};
+
+                    auto first = data.begin(), last = data.end();
+                    while (first != last) {
+                        if (*first == 4) {
+                            makeReportForUser();
+                            break;
+                        }
+                        ++first;
+                    }
+                \end{lstlisting}
+            \end{onlyenv}
+            \begin{onlyenv}<3>
+                \begin{lstlisting}[style=MyCpp]
+                    std::vector<int> data = {1, -3, 2, 8, 4, -9};
+
+                    auto it = std::find(data.begin(), data.end(), 4);
+                    if(it != data.end())
+                        makeReportForUser();
+                \end{lstlisting}
+            \end{onlyenv}
+            \begin{onlyenv}<4>
+                \begin{lstlisting}[style=MyCpp]
+                    std::vector<int> data = {1, -3, 2, 8, 4, -9};
+
+                    //Even better
+                    if(isElementInVector(data, 4))
+                        makeReportForUser();
+                \end{lstlisting}
+            \end{onlyenv}
+        \end{varblock}
+        \begin{onlyenv}<4>
+            \vspace{-2.5mm}
+            \begin{varblock}{block example}[0.86\textwidth]{}
+                \begin{lstlisting}[style=MyCpp]
+                    template<typename T>
+                    bool isElementInVector(const std::vector<T>& data,
+                                           const T& value)
+                    {
+                        auto it = std::find(data.begin(), data.end(), value);
+                        return it != data.end();
+                    }
+                \end{lstlisting}
+            \end{varblock}
+        \end{onlyenv}
+        \begin{varblock}{block example}[0.88\textwidth]{Example from real life (Quake III Arena, 1999)}<only@5-6>
+            \begin{uncoverenv}<6>
+                \begin{lstlisting}[style=MyCpp]
+                    float Q_rsqrt(float number)
+                    {
+                        long i;  float x2, y;  const float threehalfs = 1.5F;
+
+                        x2 = number * 0.5F;  y  = number;
+                        // evil floating point bit level hacking
+                        i  = * (long*) &y;
+                        i  = 0x5f3759df - (i >> 1);  // what the fuck?
+                        y  = * (float*) &i;
+                        // 1st iteration
+                        y  = y * (threehalfs - (x2 * y * y));
+                        // 2nd iteration, this can be removed
+                        // y  = y * (threehalfs - (x2 * y * y));
+                        return y;
+                    }
+                \end{lstlisting}
+            \end{uncoverenv}
+        \end{varblock}
+        \begin{varblock}{block example}[0.78\textwidth]{A possible refactoring}<only@7->
+            \begin{uncoverenv}<8->
+                \begin{lstlisting}[style=MyCpp]
+                    float Q_fastInverseSqrt(float number)
+                    {
+                        float approximateResult
+                            = calculateApproximateInverseSqrt(number);
+                        return refineResult(approximateResult, number);
+                    }
+                \end{lstlisting}
+            \end{uncoverenv}
+        \end{varblock}
+        \vspace{-2.5mm}
+        \PrepareURLsymbol[red]
+        \begin{varblock}{block example}[0.9\textwidth]{}<only@9>
+            \begin{lstlisting}[style=MyCpp]
+                float calculateApproximateInverseSqrt(float number)
+                {
+                    //Here some very low level operations are carried out.
+                    //Read @|\URL*{https://en.wikipedia.org/wiki/Fast\_inverse\_square\_root\#Algorithm}{here}|@ for a detailed explanation.
+                    long floatAsInteger = * (long*) &number;
+                    floatAsInteger = 0x5f3759df - (floatAsInteger >> 1);
+                    return * (float*) &i;
+                }
+            \end{lstlisting}
+        \end{varblock}
+        \begin{varblock}{block example}[0.9\textwidth]{}<only@10>
+            \begin{lstlisting}[style=MyCpp]
+                float refineResult(float result, float initialNumber)
+                {
+                    //Here one iteration of the Newton's method is used.
+                    //Read @|\URL*{https://en.wikipedia.org/wiki/Fast\_inverse\_square\_root\#Newton's\_method}{here}|@ for a detailed explanation.
+                    float refinedResult = initialNumber * result * result;
+                    return (3.0F - refinedResult) * result * 0.5F;
+                }
+            \end{lstlisting}
+        \end{varblock}
+    \end{overlayarea}
+    \begin{tikzpicture}[remember picture, overlay]
+        \node[visible on=<5>] at (current page.center) {\includegraphics[width=0.5\textwidth]{Quake-III-arena}};
+    \end{tikzpicture}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\subsection{YAGNI}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[fragile,t]{You Aren't Gonna Need It $\;\to\;$ The YAGNI principle}
+    \vspace{-3mm}
+    \begin{overlayarea}{\textwidth}{0.7\textheight}
+        \begin{onlyenv}<1>
+            \begin{varblock*}{quote}[0.8\textwidth]{A possible definition}[\URL*{https://ronjeffries.com/xprog/articles/practices/pracnotneed/}{Ron Jeffries}]
+                %Resist that impulse, every time.
+                Always implement things when you actually need them, never when you just foresee that you need them.
+            \end{varblock*}
+            \begin{itemize}
+                \item \PP{Avoid reasonably unnecessary abstractions}\\
+                      \then\textbf{Yet, it is a judgment call!}
+                \item \alert{Maintaining unused code is a burden}
+            \end{itemize}
+            \begin{center}
+                \includegraphics[height=0.25\textheight]{YAGNI}
+            \end{center}
+        \end{onlyenv}
+        \begin{varblock}{quote}[\textwidth]{Experience makes you better}[A comment on Reddit]<only@2->
+            \footnotesize
+            Here's the truth with these patterns/paradigms.
+            A junior dev will ignore them and code something simple that will not scale.
+            A mid level will understand abstraction but over engineer a lot of things because they lack the experience to judge whether they are appropriate in the context of their work.
+            Seniors will go back to simple things and postpone until it's really needed to make it more complex, because life taught them the costs of premature optimizations.
+            The final level is when you understand that all of these are concepts that are good to know but none is a universal truth.
+            [...]
+        \end{varblock}
+        \vspace{-1mm}
+        \begin{onlyenv}<3->
+            \begin{varblock}{example}[\textwidth]{I need to check whether a vector contains an element:}<only@3>
+                \begin{lstlisting}[style=MyCpp]
+                    // A (too?) specific implementation
+                    bool isElementInVector(const std::vector<double>& data,
+                                           double value)
+                    {
+                        auto it = std::find(data.begin(), data.end(), value);
+                        return it != data.end();
+                    }
+                \end{lstlisting}
+            \end{varblock}
+            \begin{varblock}{example}[\textwidth]{I need to check whether a vector contains an element:}<only@4>
+                \begin{lstlisting}[style=MyCpp]
+                    template<typename T>
+                    bool isElementInVector(const std::vector<T>& data,
+                                           const T& value)
+                    {
+                        auto it = std::find(data.begin(), data.end(), value);
+                        return it != data.end();
+                    }
+                \end{lstlisting}
+            \end{varblock}
+            \begin{varblock}{example}[\textwidth]{I need to check whether a vector contains an element:}<only@5>
+                \begin{lstlisting}[style=MyCpp]
+                    // Probably NOT straight away!
+                    template<typename Container, typename Item>
+                    bool contains(const Container& container, const Item& value)
+                    {
+                        // Some implementation possibly calling container
+                        // member find or ::std::find if container has none
+                    }
+                \end{lstlisting}
+            \end{varblock}
+        \end{onlyenv}
+    \end{overlayarea}
+    \FrameRemark<1>{Ron Jeffries is a co-founder of extreme programming (XP) philosophy.}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\subsection{Optimisation}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{Do not be disappointed}{I have only a couple of slides about optimisation}
+    \begin{varblock}{quote}[0.8\textwidth]{}
+        \normalfont\Large\PS{\textbf{Correctness}} comes before \alert{performance}!
+    \end{varblock}
+    \begin{varblock*}{}[0.72\textwidth]{Steps needed seeking for speed:}
+        \begin{enumerate}
+            \item Write \textbf{enough} tests
+            \item Profile the code
+            \item Benchmark the part you want optimise
+            \item Change the code \uncover<2>{{\small$\;\leftarrow\;$ \alert{\textbf{Optimisation is not just this!}}}}
+            \item Make sure tests still pass
+            \item \CPP|goto| \;\MakeEnumerateBox{3} or \MakeEnumerateBox{2}
+        \end{enumerate}
+    \end{varblock*}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{Beware of optimisations}
+    \vspace{-5mm}
+    \begin{quoteblock}{Premature optimisation}[D. Knuth]
+        Programmers waste enormous amounts of time thinking about, or worrying about,
+        the speed of noncritical parts of their programs, and these attempts at efficiency
+        actually have a strong negative impact when debugging and maintenance are considered.
+        We should forget about small efficiencies, say about 97\% of the time:
+        \par\smallskip
+        \centerline{\alert{\textbf{Premature optimisation is the root of all evil}.}}
+        \par\smallskip
+        Yet we should not pass up our opportunities in that critical 3\%.
+    \end{quoteblock}
+    \vspace{-3mm}
+    \begin{itemize}
+        \item Compiler do more and more a better job!
+        \item Use optimisations flags (e.g. \PP{\texttt{-O1}}, \PP{\texttt{-O3}} with \texttt{g++} and \texttt{clang})
+        \item \alert{Never} sacrifice clean code in name of \textbf{claimed} better performance!
+        \item Only optimise after having used a profiler and having written tests!
+    \end{itemize}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\subsection{Boy scout philosophy}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{The boy scout rule}
+    \vspace{0mm}
+    \begin{columns}[c]
+        \hfill
+        \begin{column}{0.46\textwidth}
+            \vspace{-\medskipamount}
+            \begin{varblock}{}[\columnwidth]{}
+                \color{PB}Leave the campground cleaner than you found it
+            \end{varblock}
+            \vspace{-1mm}
+            \begin{varblock}{example}[\columnwidth]{}
+                \color{PS}Always check in the code cleaner than you checked it out
+            \end{varblock}
+        \end{column}
+        \begin{column}{0.45\textwidth}
+            \includegraphics[width=0.9\textwidth]{Firecamp.jpg}
+        \end{column}
+    \end{columns}
+    \vspace{3mm}
+    \begin{itemize}
+        \item To clean an existing code base takes time and requires effort
+        \item Aim for tiny but continuous progress
+        \item Applying the boy scout rule is a way to pay back technical debt
+        \item Any IDE will help you in quickly achieving easy refactoring
+    \end{itemize}
+    \begin{tikzpicture}[remember picture, overlay]
+        \path[to] ($(current page.north west)!0.52!(current page.west)+(9mm,0)$) edge[out=180, in=180] ++(0,-18.5mm);
+    \end{tikzpicture}
+\end{frame}
+%===================================================================================================%

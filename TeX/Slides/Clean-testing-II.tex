@@ -1,0 +1,351 @@
+%-------------------------------%
+%  Author: Alessandro Sciarra   %
+%    Date: 02 Jul 2025          %
+%-------------------------------%
+
+%===================================================================================================%
+\subsection{The curse of the \textbf{unit} word}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{What is a \textbf{unit} in unit testing?}
+    \begin{overlayarea}{\textwidth}{0.38\textheight}
+        \begin{onlyenv}<1>
+            \begin{varblock}{quote}[0.7\textwidth]{}[Wikipedia]
+                A group of related functions often called a module.
+            \end{varblock}
+            \begin{varblock}{quote}[0.7\textwidth]{}[Ian Cooper]
+                A unit test should test a requirement, only test against the stable contract of the API.
+            \end{varblock}
+        \end{onlyenv}
+        \begin{onlyenv}<2>
+            \vspace{-4mm}
+            \begin{center}
+                \includegraphics[width=0.7\textwidth]{Fragile-test-problem}
+            \end{center}
+        \end{onlyenv}
+    \end{overlayarea}
+    \begin{varblock}{alert}[0.98\textwidth]{A unit is not necessarily a class or a function}
+        This is possibly one of the most misunderstood concepts in software engineering in the last decade.
+        Sometimes a unit is a class or a function, but there should be a good reason for such a correspondence.
+        \textbf{More often a unit should be (the public API of) a module.}
+    \end{varblock}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\AlertFrame{
+    \begin{tabular}{c}
+        Wait, what's wrong\\ in testing each single class?
+    \end{tabular}
+}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{It depends}
+    \vspace{-3mm}
+    \begin{varblock}{quote}[0.8\textwidth]{TDD, Where Did It All Go Wrong}[Ian Cooper]
+        A couple of times we were very proud of the fact that we produced some code that went to production with almost zero defects.
+        [...]
+        I looked at this test suite.
+        One things I noticed was that \alert{we had about three times as much test code as production code}.
+    \end{varblock}
+    \begin{itemize}
+        \item Some classes are simply implementation details\\
+        \then You would like to freely change them
+        \item Imagine a module with few classes working together \Remark{in your implementation, today}\\
+        \then Does it make sense to mock all but one several times?
+        \item If a class happens to be the API of a module, probably that's a unit
+    \end{itemize}
+\end{frame}
+%===================================================================================================%
+
+
+%===================================================================================================%
+\subsection[White- and black-box testing!?]{The weaknesses of white- and black-box testing}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\AlertFrame{
+    \begin{tabular}{c}
+        I'll test a single class next in examples,\\
+        but you now know what a \textbf{unit} is!
+    \end{tabular}
+}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[fragile]{White box testing}
+    \vspace{-3mm}
+    \begin{overlayarea}{\textwidth}{0.7\textheight}
+        \begin{itemize}
+            \item You allow yourself in using all code in your tests\\
+            \begin{onlyenv}<1>
+                \then even private methods and members\\
+                \then implementation details are used to test interface
+            \end{onlyenv}
+            \item<2-> In some languages (e.g.\ Python) easier than in others (e.g.\ C++)
+            \item<only@5-> \PS{Something to consider to start working on legacy code!}\\
+            \item<only@6> \alert{What happens when you change your implementation?}\\
+            \then Compilation might break\\
+            \then If not, some tests will probably fail\\
+            \then You likely need to change your tests code\\
+            \then For large refactoring, it might be boring/frustrating\\[3mm]
+            \centerline{\Huge\emoji{thinking-face}}
+        \end{itemize}
+        \begin{columns}[T]
+            \begin{column}{0.45\textwidth}
+                \begin{varblock}{example}[\textwidth]{Consider this class}<only@2-3>
+                    \begin{lstlisting}[style=MyCpp]
+                        // File Cup.h
+
+                        class Cup {
+                            public:
+                            Cup();
+                            bool IsEmpty();
+                            bool Drink();
+                            bool Fill();
+                            private:
+                            bool isEmpty_ = true;
+                        };
+                    \end{lstlisting}
+                \end{varblock}
+                \begin{varblock}{example}[\textwidth]{Consider this class}<only@4>
+                    \begin{lstlisting}[style=MyCpp]
+                        // File Cup.h
+
+                        class Cup {
+                            public:
+                            Cup();
+                            bool IsEmpty();
+                            bool Drink();
+                            bool Fill();
+                            private:
+                            friend struct CupTester;
+                            bool isEmpty_ = true;
+                        };
+                    \end{lstlisting}
+                \end{varblock}
+            \end{column}
+            \begin{column}{0.48\textwidth}
+                \begin{varblock}{example}[\textwidth]{Test file}<only@2>
+                    \begin{lstlisting}[style=MyCpp]
+                        #include |+"vir/test.h"+|
+                        #include |+"Cup.h"+|
+
+
+                        TEST(|=Cup::Cup=|) {
+                            Cup cup{};
+                            VERIFY(cup.isEmpty_);
+                        }
+                        TEST(|=Cup::IsEmpty=|) { /*...*/ }
+                        TEST(|=Cup::Fill=|)    { /*...*/ }
+                        TEST(|=Cup::Drink=|)   { /*...*/ }
+                    \end{lstlisting}
+                \end{varblock}
+                \begin{varblock}{example}[\textwidth]{Test file}<only@3>
+                    \begin{lstlisting}[style=MyCpp]
+                        #include |+"vir/test.h"+|
+                        #include |+"Cup.h"+|
+                        #define private public // UB!!!
+
+                        TEST(|=Cup::Cup=|) {
+                            Cup cup{};
+                            VERIFY(cup.isEmpty_);
+                        }
+                        TEST(|=Cup::IsEmpty=|) { /*...*/ }
+                        TEST(|=Cup::Fill=|)    { /*...*/ }
+                        TEST(|=Cup::Drink=|)   { /*...*/ }
+                    \end{lstlisting}
+                \end{varblock}
+                \begin{varblock}{example}[\textwidth]{Test file}<only@4>
+                    \begin{lstlisting}[style=MyCpp]
+                        #include |+"vir/test.h"+|
+                        #include |+"Cup.h"+|
+                        struct CupTester { /*...*/ };
+
+                        TEST(|=Cup::Cup=|) {
+                            Cup cup{};
+                            CupTester tester{cup};
+                            VERIFY(tester.isEmpty_);
+                        }
+                        TEST(|=Cup::IsEmpty=|) { /*...*/ }
+                        TEST(|=Cup::Fill=|)    { /*...*/ }
+                        TEST(|=Cup::Drink=|)   { /*...*/ }
+                    \end{lstlisting}
+                \end{varblock}
+                \centering\vspace{-3mm}
+                \only<2>{\alert{\scriptsize This does not compile!}}
+                \only<3>{\alert{\scriptsize This relies on undefined behaviour!!!}}
+            \end{column}
+        \end{columns}
+        \FrameRemark<2-4>{I took this example from Dave Steffen's talk at CppCon2020.}
+    \end{overlayarea}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[fragile]{Black-box testing}
+    \vspace{-3mm}
+    \begin{overlayarea}{\textwidth}{0.7\textheight}
+        \begin{itemize}
+            \item What about just testing the public interface?
+        \end{itemize}
+        \vspace{-3mm}
+        \begin{columns}[T]
+            \begin{column}{0.45\textwidth}
+                \begin{varblock}{example}[\textwidth]{Consider this class}<only@1-3>
+                    \begin{lstlisting}[style=MyCpp]
+                        // File Cup.h
+
+                        class Cup {
+                            public:
+                            Cup();
+                            bool IsEmpty();
+                            bool Drink();
+                            bool Fill();
+                            private:
+                            bool isEmpty_ = true;
+                        };
+                    \end{lstlisting}
+                \end{varblock}
+                \centering%\vspace{-3mm}
+                \only<1-3>{\scriptsize Source code same as before}
+            \end{column}
+            \begin{column}{0.48\textwidth}
+                \begin{varblock}{example}[\textwidth]{Test file}<only@1>
+                    \begin{lstlisting}[style=MyCpp]
+                        #include |+"vir/test.h"+|
+                        #include |+"Cup.h"+|
+
+                        TEST(|=Cup::Cup=|)     { /*...*/ }
+                        TEST(|=Cup::IsEmpty=|) { /*...*/ }
+                        TEST(|=Cup::Fill=|)    { /*...*/ }
+                        TEST(|=Cup::Drink=|)   { /*...*/ }
+                    \end{lstlisting}
+                \end{varblock}
+                \begin{varblock}{example}[\textwidth]{Test file}<only@2>
+                    \begin{lstlisting}[style=MyCpp]
+                        #include |+"vir/test.h"+|
+                        #include |+"Cup.h"+|
+
+                        TEST(|=Cup::Cup=|) {
+                            Cup cup{};
+                            VERIFY(cup.IsEmpty());
+                        }
+                        TEST(|=Cup::IsEmpty=|) { /*...*/ }
+                        TEST(|=Cup::Fill=|)    { /*...*/ }
+                        TEST(|=Cup::Drink=|)   { /*...*/ }
+                    \end{lstlisting}
+                \end{varblock}
+                \begin{varblock}{example}[\textwidth]{Test file}<only@3>
+                    \begin{lstlisting}[style=MyCpp]
+                        #include |+"vir/test.h"+|
+                        #include |+"Cup.h"+|
+
+                        TEST(|=Cup::Cup=|) {
+                            Cup cup{};
+                            VERIFY(cup.IsEmpty());
+                        }
+                        TEST(|=Cup::IsEmpty=|){
+                            Cup cup{};
+                            VERIFY(cup.IsEmpty());
+                        }
+                        TEST(|=Cup::Fill=|)    { /*...*/ }
+                        TEST(|=Cup::Drink=|)   { /*...*/ }
+                    \end{lstlisting}
+                \end{varblock}
+            \end{column}
+        \end{columns}
+        \begin{onlyenv}<3>
+            \begin{center}
+                \alert{Wait, we wrote the same code twice!}
+            \end{center}
+        \end{onlyenv}
+        \vspace{-3mm}
+        \begin{varblock}{quote}[0.8\textwidth]{The black-box conundrum}[Dave Steffen]<only@4-5>
+            Fundamentally if we only test via the public interface, we have a circular-logic problem: you have to use the interface to test the interface, so at some point you have to trust something which you haven't tested.
+        \end{varblock}
+        \begin{varblock}{alert}[0.95\textwidth]{So, what to do then?}<only@5>
+            \begin{enumerate}
+                \item Ignore the problem \Remark{Be aware: Tests are not independent, one bug triggers many failures!}
+                \item Declare one member function ``correct by inspection'' \Remark{and start from there}
+                \item Abandon black-box testing as impractical
+            \end{enumerate}
+        \end{varblock}
+    \end{overlayarea}
+\end{frame}
+%===================================================================================================%
+
+
+%===================================================================================================%
+\subsection{Test the behaviour, not the implementation}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[fragile]{Do not test methods! Test behaviour!}
+    \vspace{-11mm}
+    \begin{overlayarea}{\textwidth}{0.7\textheight}
+        \begin{varblock}{example}[0.75\textwidth]{Back to our cup example:}<only@1>
+            \begin{lstlisting}[style=MyCpp]
+                #include |+"vir/test.h"+|
+                #include |+"Cup.h"+|
+
+                TEST(|=A new cup is empty=|)            { /*...*/ }
+                TEST(|=An empty cup can be filled=|)    { /*...*/ }
+                TEST(|=A filled cup is full=|)          { /*...*/ }
+                TEST(|=Drinking empties a filled cup=|) { /*...*/ }
+            \end{lstlisting}
+        \end{varblock}
+        \begin{varblock}{example}[0.75\textwidth]{Back to our cup example:}<only@2-3>
+            \begin{lstlisting}[style=MyCpp]
+                #include |+"vir/test.h"+|
+                #include |+"Cup.h"+|
+
+                TEST(|=A new cup is empty=|){
+                    Cup cup{};
+                    VERIFY(cup.IsEmpty());
+                }
+                TEST(|=An empty cup can be filled=|)    { /*...*/ }
+                TEST(|=A filled cup is full=|)          { /*...*/ }
+                TEST(|=Drinking empties a filled cup=|) { /*...*/ }
+            \end{lstlisting}
+        \end{varblock}
+        \only<1-3>{\vspace{3mm}}
+        \begin{itemize}
+            \item<only@1> Test names describe the unit specifications
+            \item<only@1> Suddenly, we are completely independent from implementation details
+            \item<only@1> OK, so how does test code look like?
+            \item<only@3> \alert{Wait!! This is exactly the same code that wasn't OK few minutes ago!?}\\
+            \then How is it that changing the name makes it fine?\\
+            \then How should this solve the black-box conundrum?
+        \end{itemize}
+        \begin{onlyenv}<4->
+            \begin{varblock}{example}[0.6\textwidth]{The bottom line}
+                We are now testing consistency of interface, not correctness of implementation!
+            \end{varblock}
+            \begin{varblock}{alert}[0.6\textwidth]{Let's say it once more:}<5->
+                \textbf{We are now testing consistency of interface, not correctness of implementation!}
+            \end{varblock}
+            \begin{varblock}{}[0.9\textwidth]{It is not a philosophical statement!}<6>
+                \PB{A bug that cannot be observed under any conditions is not a bug!}
+            \end{varblock}
+        \end{onlyenv}
+    \end{overlayarea}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[fragile]{\uncover<2>{As testing behaviour passes, the code is correct!}}
+    \begin{varblock}{example}[0.9\textwidth]{Is this code correct or wrong?}
+        \begin{lstlisting}[style=MyCpp]
+            // File Cup.h
+
+            class Cup {
+                public:
+                Cup()          { isEmpty_ = false; }
+                bool IsEmpty() { return !isEmpty_; }
+                bool Drink()   { /*...*/ }
+                bool Fill()    { /*...*/ }
+                private:
+                bool isEmpty_ = false;
+            };
+        \end{lstlisting}
+    \end{varblock}
+    \vspace{-2mm}
+    \begin{varblock}{example}[0.9\textwidth]{}<2>
+        \begin{lstlisting}[style=MyCpp]
+            #include |+"vir/test.h"+|
+            #include |+"Cup.h"+|
+            TEST(|=A new cup is empty=|)            { /*...*/ }
+            TEST(|=An empty cup can be filled=|)    { /*...*/ }
+            TEST(|=A filled cup is full=|)          { /*...*/ }
+            TEST(|=Drinking empties a filled cup=|) { /*...*/ }
+        \end{lstlisting}
+    \end{varblock}
+\end{frame}
+%===================================================================================================%

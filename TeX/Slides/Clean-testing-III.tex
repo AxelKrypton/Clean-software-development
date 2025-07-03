@@ -1,0 +1,375 @@
+%-------------------------------%
+%  Author: Alessandro Sciarra   %
+%    Date: 02 Jul 2025          %
+%-------------------------------%
+
+%===================================================================================================%
+\subsection{Tests goals -- properties -- good principles}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{General idea and overview}
+    \begin{overlayarea}{\textwidth}{0.7\textheight}
+        \begin{center}
+            \large
+            \only<1-2>{There is slightly different advice around, pick your favourite:}
+            \only<3->{There is one not-negotiable \textbf{requirement of tests}, though:}
+        \end{center}
+        \begin{varblock}{example}[0.8\textwidth]{Write F.I.R.S.T tests first}<only@1>
+            \begin{description}[Self-validating:]
+                \item[\PQ{F}ast:] To be run frequently
+                \item[\PQ{I}ndependent:] To make failures meaningful
+                \item[\PQ{R}epeatable:] To be run everywhere with same outcome
+                \item[\PQ{S}elf-validating:] To be automatised
+                \item[\PQ{T}imely:] To make production code testable
+            \end{description}
+        \end{varblock}
+        \begin{varblock}{example}[\textwidth]{Google's perspective}<only@2>
+            \begin{description}[Self-validating:]
+                \item[Readable:] Tests are correct by inspection
+                \item[Correct:] Do not rely on known bugs and test real scenarios
+                \item[Complete:] Test most edge cases
+                \item[Documenting:] Demonstration of how the API works
+                \item[Resilient:] Repeatable, independent, hard to break, hermetic, etc.
+            \end{description}
+        \end{varblock}
+        \begin{tikzpicture}[overlay, remember picture]
+            \node[starburst, starburst points=21, starburst point height=15mm,
+            minimum width=10cm, minimum height=6cm, Shape={red}{yellow!50}{red},
+            line width=1.5pt, font=\Huge\bfseries, visible on=<4>]
+            at ($(current page.center)-(0,1)$) {Existence};
+        \end{tikzpicture}
+    \end{overlayarea}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[fragile]{Having tests is not enough, you must trust them!}{Few words about tests correctness}
+    \begin{overlayarea}{\textwidth}{0.7\textheight}
+        \begin{itemize}
+            \item Never rely on known bugs
+            \item<only@4-> Never mock the code that you are testing
+        \end{itemize}
+        \begin{varblock}{alert}[0.6\textwidth]{Having tests passing is simple...}<only@1-2>
+            \begin{uncoverenv}<2->
+                \begin{lstlisting}[style=MyCpp]
+                    int cube(int x) {
+                        //TODO: To be implemented
+                        return 0;
+                    }
+
+                    TEST(cube_test) {
+                        VERIFY(0 == cube(2));
+                        VERIFY(0 == cube(3));
+                        VERIFY(0 == cube(42));
+                    }
+                \end{lstlisting}
+            \end{uncoverenv}
+        \end{varblock}
+        \begin{varblock}{example}[0.6\textwidth]{...better to have them failing!}<only@3>
+            \begin{lstlisting}[style=MyCpp]
+                int cube(int x) {
+                    //TODO: To be implemented
+                    return 0;
+                }
+
+                TEST(cube_test) {
+                    VERIFY(8 == cube(2));
+                    VERIFY(27 == cube(3));
+                    VERIFY(74088 == cube(42));
+                }
+            \end{lstlisting}
+        \end{varblock}
+        \begin{varblock}{alert}[0.8\textwidth]{This is probably useless}<only@4>
+            \begin{lstlisting}[style=MyCpp]
+                class MockCoffeeMachine : public CoffeeMachine {
+                    //For simplicity we assume always in temperature
+                    double warmUp() override {
+                        return constants::brewingT;
+                    }
+                }
+
+                BOOST_AUTO_TEST_CASE(warmUp_test) {
+                    MockCoffeeMachine machine{};
+                    BOOST_REQUIRE_CLOSE(machine.warmUp(),
+                    constants::brewingT, 0.1);
+                }
+            \end{lstlisting}
+        \end{varblock}
+        \vspace{3mm}
+        \begin{varblock}{}[0.85\textwidth]{Think of a clear reaction procedure in your team}<only@5->
+            What should happen in your project when a test fails?\\
+            ...and when a bug that was not caught by tests is found?\\
+            $\downarrow$\\
+            \PB{Never miss any chance to improve your tests!}
+        \end{varblock}
+    \end{overlayarea}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{Tests readability}
+    \begin{center}
+        \begin{tikzpicture}[every node/.style={inner sep=0mm, text=BGLIGHT}]
+            \node (fig) {\includegraphics[width=0.75\textwidth]{Balance}};
+            \begin{DrawOnNode}{fig}
+                \node[anchor=east] at (0.41,0.78) {
+                    \begin{tabular}{c}
+                        Avoid boilerplate\\
+                        \footnotesize E.g. use functions for setup\\
+                    \end{tabular}
+                };
+                \node[anchor=west] at (0.51,0.78) {
+                    \begin{tabular}{c}
+                        Give enough context\\
+                        \footnotesize E.g. Not a single function for setup\\
+                    \end{tabular}
+                };
+            \end{DrawOnNode}
+        \end{tikzpicture}
+    \end{center}
+    \begin{varblock}{}[0.85\textwidth]{}
+        \Large Remember: \PB{Tests are correct by inspection!}
+    \end{varblock}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[fragile]{Tests completeness: What should I test and how?}
+    \begin{onlyenv}<1>
+        \begin{itemize}
+            \item Values  \\ \centerline{\includegraphics[scale=0.1]{Testing-value}}
+            \item Actions \\ \centerline{\includegraphics[scale=0.12, clip, trim=0 4cm 0 4cm]{Testing-action}}
+        \end{itemize}
+        \vspace{3mm}
+        \hfill\ldots{}and anything that makes sense!
+    \end{onlyenv}
+    \begin{varblock}{example}[0.98\textwidth]{A very nice example from Titus Winter}<only@2->
+        \begin{overlayarea}{\textwidth}{0.55\textheight}
+            \begin{uncoverenv}<3->
+                \begin{lstlisting}[style=MyCpp]
+                    int Factorial(int n) {
+                        if (n == 1) return 1;
+                        if (n == 5) return 120;
+                        return -1; // TODO(goofus): figure this out.
+                    }
+                \end{lstlisting}
+            \end{uncoverenv}
+            \begin{onlyenv}<2-3>
+                \begin{lstlisting}[style=MyCpp]
+                    TEST(FactorialTest, BasicTests) {
+                        EXPECT_EQ(1, Factorial(1));
+                        EXPECT_EQ(120, Factorial(5));
+                    }
+                \end{lstlisting}
+            \end{onlyenv}
+            \begin{onlyenv}<4>
+                \begin{lstlisting}[style=MyCpp]
+                    TEST(FactorialTest, BasicTests) {
+                        EXPECT_EQ(1, Factorial(1));
+                        EXPECT_EQ(120, Factorial(5));
+                        EXPECT_EQ(1, Factorial(0));
+                        EXPECT_EQ(479001600, Factorial(12));
+                        EXPECT_EQ(std::numeric_limits<int>::max() , Factorial(13));
+                        EXPECT_EQ(1, Factorial(0));
+                        EXPECT_EQ(std::numeric_limits<int>::max() , Factorial(-10));
+                    }
+                \end{lstlisting}
+            \end{onlyenv}
+        \end{overlayarea}
+    \end{varblock}
+    \begin{uncoverenv}<4>
+        \begin{center}
+            This will pretty much naturally emerge when doing TDD
+        \end{center}
+    \end{uncoverenv}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{The hidden value of tests}{Few words about tests as API usage examples}
+    \begin{overlayarea}{\textwidth}{0.68\textheight}
+        \begin{center}
+            \small
+            Of course, a meme, do not take it (too) seriously, but...\\
+            \vspace{3mm}
+            \begin{uncoverenv}<2>
+                \includegraphics[width=0.7\textwidth]{Documentation-meme}\\
+                \vspace{3mm}
+                ...good tests should show how to use your code!
+            \end{uncoverenv}
+        \end{center}
+        \FrameRemark<2>{In this sense, it should be avoided to use implementation details in tests (cf. white box testing downsides).}
+    \end{overlayarea}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[fragile]{Tests resilience: Google advice}
+    \begin{onlyenv}<1>
+        \begin{itemize}
+            \setlength{\itemsep}{2mm}
+            \item No flaky tests $\to$ Tests should always give the same outcome
+            \item No brittle tests $\to$ One failure should not trigger many failures
+            \item Tests reference values should not come from the system under test!
+            \item Changing tests order should never change the outcome
+            \item Tests should be as hermetic as possible $\to$ No I/O, no network, etc.
+            \item No deep dependence $\to$ Avoid any implicit assumption
+        \end{itemize}
+        \vspace{3mm}
+        \begin{varblock}{example}[0.5\textwidth]{}
+            \large\bfseries\PS{Let's see some examples!}
+        \end{varblock}
+    \end{onlyenv}
+    \begin{onlyenv}<2-3>
+        \begin{varblock}{alert}[\textwidth]{A sneaky flaky test: What happens if the test-system is overloaded?}
+            \begin{lstlisting}[style=MyCpp]
+                TEST(UpdaterTest, RunsFast) {
+                    Updater updater;
+                    updater.UpdateAsync();
+                    SleepFor(Seconds(.5)); // Half a second should be *plenty*.
+                    EXPECT_TRUE(updater.Updated());
+                }
+            \end{lstlisting}
+        \end{varblock}
+        \begin{varblock}{alert}[\textwidth]{An infamous brittle pattern}<uncover@3>
+            \begin{lstlisting}[style=MyCpp]
+                TEST(Logger, LogWasCalled) {
+                    StartLogCapture();
+                    EXPECT_TRUE(Frobber::Start());
+                    EXPECT_THAT(
+                      Logs(), Contains("file.cc:421: Opened file frobber.config" )
+                    );@|\tikzmark{logger}|@
+                }
+            \end{lstlisting}
+        \end{varblock}
+        \begin{tikzpicture}[remember picture, overlay]
+            \draw[red, thick, double, visible on=<3>]
+                ($(logger)+(3.05,0.12)$) -- ++(1.15,0)
+                +(0.18,0) -- ++(0.65,0)
+                +(2.4,0) -- ++(4.8,0);
+        \end{tikzpicture}
+    \end{onlyenv}
+    \begin{onlyenv}<4-5>
+        \begin{varblock}{alert}[\textwidth]{Where are the reference values coming from?}
+            \begin{lstlisting}[style=MyCpp]
+                BOOST_AUTO_TEST_CASE(Dirac_M)
+                {
+                    const hmc_float refs[4] =
+                        { 2610.3804893063798, 4356.332327032359,
+                          2614.2685771909237, 4364.1408252701831 };
+                    test_fermionmatrix<physics::fermionmatrix::Dslash>(refs);
+                }
+            \end{lstlisting}
+        \end{varblock}
+        \begin{varblock}{alert}[\textwidth]{A non-hermetic test: What if run twice in parallel?}<uncover@5>
+            \begin{lstlisting}[style=MyCpp]
+                TEST(Server, StorageTest) {
+                    StorageServer* server = GetStorageServerHandle();
+                    auto my_val = rand();
+                    server->Store("testkey", my_val);
+                    EXPECT_EQ(my_val, server->Load("testkey"));
+                }
+            \end{lstlisting}
+        \end{varblock}
+    \end{onlyenv}
+    \begin{onlyenv}<6>
+        \vspace{-3mm}
+        \begin{varblock}{alert}[\textwidth]{Deep dependence example}<only@6>
+            \begin{lstlisting}[style=MyCpp]
+                class File {
+                    public:
+                    // ...
+                    virtual bool StatWithOptions(Stat_t* stat, StatOptions opts) {
+                        return this->Stat(stat); // In base class ignore options
+                    }
+                };
+                TEST(Filesystem, FSUsage) {
+                    // ... and call to StatWithOptions
+                    EXPECT_CALL(file, Stat(_)).Times(1);
+                }  // This relies on a call to base StatWithOptions!!
+            \end{lstlisting}
+        \end{varblock}
+        \begin{varblock}{quote}[\textwidth]{The law of implicit interfaces (AKA Hyrum's law)}[Hyrum Wright]<only@6>
+            Given enough users of your public interface, soon or later someone will start implicitly relying on your implementation details (speed, memory consumption, etc.).\\[-1.2ex]~
+        \end{varblock}
+    \end{onlyenv}
+    \FrameRemark{This list and all GoogleTest examples are taken from Titus Winters' and Hyrum Wright's talk at CppCon2015.}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{A slide about tests precision}
+    \vspace{-3mm}
+    \begin{onlyenv}<1>
+        \begin{center}
+            \includegraphics[width=0.7\textwidth]{Precision-meme}
+        \end{center}
+    \end{onlyenv}
+    \begin{onlyenv}<2>
+        \begin{itemize}
+            \item We all know that machine precision is finite!
+            \item Comparing floating point numbers has to be done carefully
+            \item If you know a reference value exactly, put in the code more than the needed digits
+            \PB{$\;\to\pi=3.141592653589793238462643$}
+            \item Be aware of possible compiler techniques, e.g.\ FMA \Remark{fused multiply-add}\\
+            \then This could make your test fail if you require too high precision
+            \item Requiring too high precision makes tests brittle
+            \item Requiring too low precision makes tests useless
+            \item \alert{After all it is a judgement call!}
+        \end{itemize}
+    \end{onlyenv}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{Few more words about reproducibility}
+    \vspace{-5mm}
+    \begin{varblock}{example}[0.96\textwidth]{How can I make my tests reproducible?}
+        \begin{enumerate}
+            \item Isolate them from non-deterministic aspects \Remark{e.g.\ network, database, random numbers}\\
+            \then This is not always possible!
+            \item Measure unwanted environment effect and subtract it in tests
+            \item Detect if test can be run in the present environment\\
+            \then If not, either fail or handle situation
+            \item \alert{Handle intrinsic noise by statistics}\\
+            \Then{E.g.\ if random numbers are needed, measure the failure frequency and re-run the test a number of times large enough to consider a failure as such!}
+        \end{enumerate}
+    \end{varblock}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{Tests accuracy and reacting to failures}
+    \begin{center}
+        \begin{tikzpicture}
+            \coordinate (O) at (0,0);
+            \begin{scope}[every node/.style={inner ysep=6mm, inner xsep=3mm, font=\huge, minimum width=46mm},
+                every label/.style={label distance=-3mm, font=\small, anchor=south, inner sep=0mm}]
+                \node[anchor=south east, fill=PP!30, visible on=<2->] (M11) at (O) {
+                    \begin{tabular}{c}
+                        \emoji{top-arrow}\\[-5mm]
+                        {\normalsize Ship it!}\\[-9pt]
+                    \end{tabular}
+                };
+                \node[anchor=south west, fill=ALERT, visible on=<3->] (M12) at (O) {
+                    \begin{tabular}{c}
+                        \emoji{warning}\\[-5mm]
+                        {\normalsize Add tests, fix code!}\\[-9pt]
+                    \end{tabular}
+                };
+                \node[anchor=north east, fill=PT!10, visible on=<4->] (M21) at (O) {
+                    \begin{tabular}{c}
+                        \emoji{sweat-smile}\\[-5mm]
+                        {\normalsize False alarm, fix tests!}\\[-9pt]
+                    \end{tabular}
+                };
+                \node[anchor=north west, fill=PS!30, visible on=<5->] (M22) at (O) {
+                    \begin{tabular}{c}
+                        \emoji{tada}\\[-5mm]
+                        {\normalsize Success story!}\\[-9pt]
+                    \end{tabular}
+                };
+            \end{scope}
+            \begin{scope}
+                \draw (M11.south west) -- (M11.north west) -- (M12.north east) -- (M22.south east) --
+                (M21.south west) -- (M21.north west) -- (M12.south east)
+                (M11.north east) -- (M21.south east);
+            \end{scope}
+            \begin{scope}[node distance=2mm, every node/.style={inner sep=1mm, font=\Large}]
+                \node[above = of M11] (CCyes) {\yes};
+                \node[above = of M12] (CCno)  {\no};
+                \node[left  = of M11, yshift=+3mm] (TPyes) {\yes};
+                \node[left  = of M21, yshift=-3mm] (TPno)  {\no};
+            \end{scope}
+            \begin{scope}[every node/.style={font=\small}]
+                \node at ($(CCyes.east)!0.5!(CCno.west)+(0,0)$) {Is code correct?};
+                \node[rotate=90] at ($(TPyes.south)!0.5!(TPno.north)-(0,0)$) {Did tests pass?};
+            \end{scope}
+        \end{tikzpicture}
+    \end{center}
+    \FrameRemark{Tests accuracy means how much tests outcome matches code correctness.}
+\end{frame}
+%===================================================================================================%

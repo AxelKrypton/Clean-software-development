@@ -62,7 +62,7 @@ Practical sessions have been omitted (refer to the training schedule in the slid
 
 - [ ] Lecture slides
   - [X] Day 1
-  - [ ] Day 2
+  - [X] Day 2
   - [ ] Day 3
   - [ ] Day 4
   - [ ] Day 5
