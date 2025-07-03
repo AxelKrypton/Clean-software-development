@@ -19,7 +19,20 @@
 % Miscellaneous
 \newcommand<>{\tc}[2]{\textcolor#3{#1}{#2}}
 \newcommand{\myCopyright}{\raisebox{-7pt}{\large\copyright}}
-\newcommand{\Emoji}[1]{\raisebox{-2pt}{\,\emoji{#1}}}
+\newcommand{\yes}{\parbox{5mm}{\,\textcolor{ForestGreen}{\ding{51}}}}
+\newcommand{\inPr}{\parbox{5mm}{\,\textcolor{Gray}{\faCog}}}
+\newcommand{\no}{\parbox{5mm}{\,\textcolor{OrangeRed}{\ding{55}}}}
+%\pgfkeys{/beamer/overlayarea/show frame}
+
+% Command to vertically center emoji
+\newsavebox{\emojibox}
+\newcommand{\Emoji}[2][\normalsize]{%
+    \sbox{\emojibox}{#1\emoji{#2}}%
+    \raisebox{-0.33\ht\emojibox}{\usebox{\emojibox}}%
+}
+
+
+% Do a square with number inside as enumerate environment does
 \newcommand{\MakeEnumerateBox}[1]%
 {%
     \hbox{%
@@ -33,7 +46,6 @@
         \hfil}%
     }%
 }
-%\pgfkeys{/beamer/overlayarea/show frame}
 
 %Tikz group of commands to make a pyramid layer
 \newcommand{\pyramidLayer}[6][]{%

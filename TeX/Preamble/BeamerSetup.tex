@@ -138,6 +138,7 @@
 % in a couple of places:
 %   1. The command takes 6 arguments
 %   2. The \beamer@tocact command is used with a template name that depends on the 6th argument
+%   3. The vertical spacing mechanism of the TOC has been changed to use \itemsep length to space sections
 \def\beamer@sectionintoc#1#2#3#4#5#6{% <--- CHANGED
     \ifnum\c@tocdepth>0%
     \ifnum#4=\beamer@showpartnumber%
@@ -157,11 +158,14 @@
                 \beamer@tocifnothide{\ifnum\c@section=#1\beamer@toc@cs\else\beamer@toc@os\fi}%
                 {%
                     \ifbeamer@pausesections\pause\fi%
-                    \ifx\beamer@toc@ooss\beamer@hidetext
-                    \vskip1.5em
-                    \else
-                    \vfill
-                    \fi
+                    % === CHANGED === %
+                    \vskip\itemsep
+                    % \ifx\beamer@toc@ooss\beamer@hidetext
+                    %     \vskip1.5em
+                    % \else
+                    %     \vfill
+                    % \fi
+                    % === END CHANGED === %
                     {%
                         \hbox{\vbox{%
                                 \def\beamer@breakhere{\\}%
