@@ -1,0 +1,37 @@
+%-------------------------------%
+%  Author: Alessandro Sciarra   %
+%    Date: 26 Jun 2025          %
+%-------------------------------%
+
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\PrepareURLsymbol[PB]
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[plain,noframenumbering]
+    \titlepage
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[label=toc,plain,noframenumbering]{Topics of the day}
+    \begin{columns}
+        \hfill
+        \begin{column}{.55\textwidth}
+            \hspace*{4mm}
+            \begin{minipage}[0.5\textheight]{\textwidth}
+                \tableofcontents[sections={1-5}]
+            \end{minipage}
+        \end{column}
+        \hfill
+        \begin{column}{.4\textwidth}
+            \begin{minipage}[0.5\textheight]{\textwidth}
+                \tableofcontents[sections={6-}, hideallsubsections]
+            \end{minipage}
+        \end{column}
+        \hfill
+    \end{columns}
+    \vspace{2mm}
+    \begin{varblock}{quote}[\textwidth]{Cross checking}
+        \normalfont\small
+        Today the goal is to learn and practice several strategies
+        to clean and validate data.
+    \end{varblock}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%

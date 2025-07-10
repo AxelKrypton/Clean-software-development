@@ -1,0 +1,85 @@
+
+%===================================================================================================%
+
+
+\frame{\frametitle{Testing strategies}
+Here are some ideas to check consistency of code output.
+I think of them as Cross Checks.
+Some are the \textbf{same checks you do in physics}.
+What I use most commonly (no particular order, not exhaustive, not disjoint):
+\begin{enumerate}
+\item Compare against trusted result 
+\item Compare with an analytic calculation
+\item Compute a result multiple ways
+\item Check for consistency between observables
+\item Check known properties
+\item Verify independence of hyperparameters 
+\end{enumerate}
+}
+
+\frame{\frametitle{CC1: Compare against trusted result}
+\begin{itemize}
+\item Often a starting point: \textbf{reproduce something}
+\item Danger: you may \textbf{assume other calculation is correct}
+\item Blinding: 
+\begin{enumerate}
+\item Let $r\in[-R,R]$ unknown to you 
+\item Rescale all observables by $r$
+\item Remove $r$ at the end
+\end{enumerate}
+\item Can test against your old results to \textbf{ensure stability}
+\end{itemize}
+% Example of CMD? Or maybe the electron whatever thing
+}
+
+\frame{\frametitle{CC2: Compare with an analytic calculation}
+\begin{itemize}
+\item Simple test case \textbf{calculable by hand}
+\item Known result from theory
+\end{itemize}
+% diff_deriv
+}
+
+
+\frame{\frametitle{CC3: Compute a result multiple ways}
+% Example of correlator class in GPU
+% Different integration techniques give same result
+}
+
+
+\frame{\frametitle{CC4: Check for consistency between observables}
+% Acceleration/velocity?
+% What kinds of checks did Frithjof do?
+% Maybe one of your checks from material params
+}
+
+
+\frame{\frametitle{CC5: Check known properties}
+% Check RHMC is reversible
+% Covariance matrix is positive semidefinite
+}
+
+
+\frame{\frametitle{CC6: Verify independence of hyperparameters}
+\begin{itemize}
+\item Parameter: Directly \textbf{model-relevant} number
+\begin{itemize}
+\item Temperature, volume, particle mass, coupling constant
+\item Fit parameters 
+\end{itemize}
+\item Hyperparameter: Needed \textbf{only for computational strategy}
+\begin{itemize}
+\item Jackknife bins, bootstrap samples
+\item Initial guess of a fitter
+\item Max iterations, solve tolerance, CNN kernel size 
+\end{itemize}
+\item Often only independent of hyperparameter \textbf{in some region}
+\begin{itemize}
+\item Number of jackknife bins until error bar plateaus 
+\item Initial guesses leading to reasonable $\chi^2/{\rm d.o.f.}$
+\end{itemize}
+\end{itemize}
+}
+
+
+
