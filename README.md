@@ -60,8 +60,21 @@ Practical sessions have been omitted (refer to the training schedule in the slid
 ### Day 3
 
 1. Git in real life
+   - `git tag`
+   - Semantic versioning
+   - Git-flow
 1. Clean testing (IV)
-1. Pull requests on GitHub
+   - Test driven development as discipline
+   - Behavior driven development as alternative
+1. GitHub features
+   - Pull requests
+   - Issues
+   - Branches
+   - Special files
+   - Wiki and Webpage
+   - Projects
+   - Releases
+   - Actions and CI
 
 ### Day 4
 
@@ -80,14 +93,14 @@ Practical sessions have been omitted (refer to the training schedule in the slid
 - [ ] Lecture slides
   - [X] Day 1
   - [X] Day 2
-  - [ ] Day 3
+  - [X] Day 3
   - [ ] Day 4
   - [ ] Day 5
 
 - [ ] Review/improve slides examples
   - [X] Day 1
   - [ ] Day 2
-  - [ ] Day 3
+  - [X] Day 3
   - [ ] Day 4
   - [ ] Day 5
 

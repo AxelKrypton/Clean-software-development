@@ -1,0 +1,467 @@
+%-------------------------------%
+%  Author: Alessandro Sciarra   %
+%    Date: 11 Jul 2025          %
+%-------------------------------%
+
+% Partially switch to the green variant of the Z02 theme for this section
+% NOTE: This is a low-level patch taking the colours from the
+%       theme implementation. I need it only once in this session
+%       and therefore I did not look for a more elegant way.
+% NOTE: I did not switch completely to not interfere with the color-code
+%       of sessions of the rest of the day!
+\colorlet{PT}{UnrealFoodPills}
+\colorlet{ALERT}{PT}
+\colorlet{BGDARK}{GreenBlue}
+\colorlet{BGLIGHT}{MicroscopeSlide}
+\colorlet{TEXT}{Abyss}
+
+%===================================================================================================%
+\newcommand{\TextWithLink}[2]{\hyperlink{#2}{#1}}
+\MakeSubsectionFramefalse
+\newcommand{\MakeLabelledSubsectionWithCoverFrame}[2]%
+{%
+    \subsection{#2}
+    \begin{frame}[plain, noframenumbering, label=#1]{}
+        \subsectionpage
+        % Add link to overview everywhere on the slide
+        \begin{tikzpicture}[remember picture,overlay]
+            %xelatex needs \XeTeXLinkBox, won't create a link unless it
+            %finds text --- rules don't work without \XeTeXLinkBox.
+            %Still builds correctly with pdflatex and lualatex
+            \node at (current page.center){\hyperlink{TopicsWithLinks}{\XeTeXLinkBox{
+                % See https://tex.stackexchange.com/a/60331 for nested tikzpicture
+                \tikz{\node[minimum width=\paperwidth, minimum height=\paperheight]{};}
+            }}};
+        \end{tikzpicture}%
+    \end{frame}
+}
+%Add a link to table of content on frames with a footline
+\newif\ifAddLinkToGitHubWheel
+\AddLinkToGitHubWheelfalse
+\addtobeamertemplate{footline}{}{%
+    \begin{tikzpicture}[remember picture,overlay]
+        \ifAddLinkToGitHubWheel
+            %xelatex needs \XeTeXLinkBox, won't create a link unless it
+            %finds text --- rules don't work without \XeTeXLinkBox.
+            %Still builds correctly with pdflatex and lualatex
+            \node[anchor=north east, inner sep=2pt] at (current page.north east)
+                {\hyperlink{TopicsWithLinks}{\XeTeXLinkBox{\includegraphics[width=5mm]{Logo-GitHub}}}};
+        \fi
+    \end{tikzpicture}%
+}%
+%===================================================================================================%
+\newlength\RootSize
+\setlength\RootSize{30mm}
+\begin{frame}[label=topics]{About GitHub}
+    \hypertarget{TopicsWithLinks}{}
+    % Define experience colors
+    \colorlet{ACTION}{PB}
+    \colorlet{BRANCH}{PT!50!yellow}
+    \colorlet{ISSUE}{PT}
+    \colorlet{FILE}{violet!75}
+    \colorlet{PR}{PP}
+    \colorlet{PROJECT}{PS}
+    \colorlet{RELEASE}{PS!50!yellow}
+    \colorlet{WIKI}{violet}
+    \begin{center}
+        \begin{tikzpicture}[remember picture, overlay]
+            \begin{scope}[
+                small mindmap,
+                every node/.style={
+                    concept, execute at begin node=\hskip0pt%, scale=0.9
+                },
+                root concept/.append style={
+                    concept color=black, fill=white, line width=1.5mm, text width=\the\RootSize
+                },
+                text=white,
+                actions/.style={concept color=ACTION,        faded/.style={concept color=ACTION!50}},
+                branches/.style={concept color=BRANCH,       faded/.style={concept color=BRANCH!50}},
+                files/.style={concept color=FILE,            faded/.style={concept color=FILE!50}},
+                issues/.style={concept color=ISSUE,          faded/.style={concept color=ISSUE!50}},
+                prs/.style={concept color=PR,                faded/.style={concept color=PR!50}},
+                projects/.style={concept color=PROJECT,      faded/.style={concept color=PROJECT!50}},
+                releases/.style={concept color=RELEASE,      faded/.style={concept color=RELEASE!50}},
+                wiki/.style={concept color=WIKI,             faded/.style={concept color=WIKI!50}},
+                grow cyclic,
+                level 1/.append style={
+                    level distance=35mm, font=\footnotesize, clockwise from=135, sibling angle=45, minimum size=18mm, text width=15mm
+                }
+                ]
+
+                \node[root concept] (GH) at ($(current page.center)!0.18!(current page.east)$) {}
+                child [branches] {
+                    node {\TextWithLink{Branches}{BranchFrame}}
+                }
+                child [issues] {
+                    node {\TextWithLink{Issues}{IssueFrame}}
+                }
+                child [prs] {
+                    node {\TextWithLink{Pull\\ requests}{PrFrame}}
+                }
+                child [actions] {
+                    node {\TextWithLink{Actions and CI}{ActionFrame}}
+                }
+                child [releases] {
+                    node {\TextWithLink{Releases}{ReleaseFrame}}
+                }
+                child [projects] {
+                    node {\TextWithLink{Projects}{ProjectFrame}}
+                }
+                child [wiki] {
+                    node {\TextWithLink{Wiki and Webpage}{WikiFrame}}
+                }
+                child [files] {
+                    node (SF) {\TextWithLink{Special\\ files}{FileFrame}}
+                };
+                \node [annotation, left=3mm, text width=15mm, fill=FILE!20, draw=none, text=FILE] at (SF.west)
+                {
+                    \begin{tabular}{@{}l}
+                        $\circ\;$ README.md \\
+                        $\circ\;$ LICENSE \\
+                        $\circ\;$ CHANGELOG.md \\
+                        $\circ\;$ AUTHORS.md \\
+                        $\circ\;$ CONTRIBUTING.md \\
+                        $\circ\;$ CITATION.cff \\
+                    \end{tabular}
+                };
+            \end{scope}
+            \node at (GH) {\includegraphics[width=0.92\RootSize]{Logo-GitHub}};
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+%===================================================================================================%
+\AddLinkToGitHubWheeltrue
+\MakeLabelledSubsectionWithCoverFrame{BranchFrame}{Branches}
+%===================================================================================================%
+\begin{frame}{Branches}
+    \begin{tikzpicture}[remember picture, overlay]
+        \begin{scope}[scope on = <1>]
+            \node (GF) at ($(current page.center)!0.2!(current page.east)$)
+            {\includegraphics[height=\textheight]{Git-model}};
+            \node[left = 5mm of GF, font=\large, text=PS] {
+                \begin{tabular}{c}
+                    Git-flow\\
+                    branching\\
+                    model\\
+                \end{tabular}
+            };
+        \end{scope}
+        \begin{scope}[scope on = <2>]
+            \node (GT) at ([yshift=-7mm]current page.center)
+            {\includegraphics[width=0.9\textwidth]{Git-trunk}};
+            \node[above = 1mm of GT, font=\large, text=PS] {Trunk-based development};
+        \end{scope}
+    \end{tikzpicture}
+    \begin{onlyenv}<3>
+        \vspace{-6mm}
+        \begin{varblock}{alert}[0.8\textwidth]{When does trunk-based development work best?}
+            When you need to iterate quickly\\
+            When you work mostly with senior developers
+        \end{varblock}
+        \begin{varblock}{example}[0.7\textwidth]{When does Git-flow work best?}
+            When you have a lot of junior developers\\
+            When you have an established product\\
+            When you run an open-source project
+        \end{varblock}
+        \begin{varblock}{}[0.72\textwidth]{In academia}
+            Development is rather slow and in small teams
+        \end{varblock}
+    \end{onlyenv}
+    \PrepareURLsymbol[PB]
+    \FrameRemark<3>{If you are interested in a nice comparison of the two development techniques, refer to \URL*{https://www.toptal.com/software/trunk-based-development-git-flow}{this nice overview}.}
+\end{frame}
+%===================================================================================================%
+\MakeLabelledSubsectionWithCoverFrame{IssueFrame}{Issues}
+%===================================================================================================%
+\begin{frame}{Issues}{\alt<1>{A way to organise your (team's) work}{This is how it might look like}}
+    \vspace{-6mm}
+    \begin{varblock}{example}[0.85\textwidth]{When opening the issue}<only@1>
+        \begin{enumerate}
+            \item Choose a descriptive title
+            \item Spend time on description!
+            \item Assign somebody whenever possible
+            \item Consistently use labels for issues properties
+            \item Consistently use types to describe the issue entity
+            \item Assign the issue to a project if reasonable
+            \item Add the issue to a milestone if it makes sense
+        \end{enumerate}
+    \end{varblock}
+    \begin{onlyenv}<2>
+        \begin{center}
+            \includegraphics[width=\textwidth]{GitHub-issues}
+        \end{center}
+    \end{onlyenv}
+    \FrameRemark<1>{Consider issues relationships and associating a dedicate branch, if appropriate.}
+\end{frame}
+%===================================================================================================%
+\MakeLabelledSubsectionWithCoverFrame{PrFrame}{Pull requests}
+%===================================================================================================%
+\begin{frame}{Pull requests}{A way to contribute to a repository}
+    \vspace{-2mm}
+    \begin{varblock}{example}[0.95\textwidth]{A clever merge procedure}
+        \small
+        A pull request is a way to prepare a merge of a Git branch into another one.
+        Through a graphic interface, the changes can be reviewed and actions can be done.
+    \end{varblock}
+    \vspace{2mm}
+    \begin{overlayarea}{\textwidth}{0.5\textheight}
+        \begin{onlyenv}<1>
+            \begin{center}
+                \includegraphics[width=0.8\textwidth]{GitHub-PR}
+            \end{center}
+        \end{onlyenv}
+        \begin{onlyenv}<2>
+            \begin{itemize}
+                \item Always assign at least one reviewer
+                \item A PR can be opened as a \textbf{Draft}
+                \item Use automatic linking to issues in the description
+                \item \alert{Actions automatically start}
+                \item The review is done in the ``Files changed'' tab
+                \item \PB{The reviewer comments on code and can request changes}
+            \end{itemize}
+        \end{onlyenv}
+    \end{overlayarea}
+    \FrameRemark{Assignees are people in charge of merging the PR and may be who opened the PR, but also somebody else.}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\tikzset{
+    space/.style={%
+        thick, draw=#1, fill=#1!10, text=#1, rounded corners=1mm, font=\small, text width=14mm, align=center, minimum height=12mm
+    }
+}
+\begin{frame}{PR reviewing process}{An example of typical workflow}
+    \begin{tikzpicture}[overlay, remember picture]
+        \coordinate (N0) at ($(current page.center)!1.0!(current page.north east)-(0.5,1)$);
+        \foreach \n/\c [count=\i from 0, count=\ip from 1] in {Open PR/PP,
+            Reviewer requests changes/PT,
+            Discuss/PB,
+            Implement changes/PQ}{
+            \begin{scope}[scope on=<\ip->]
+                \node[space=\c, below = 0mm of N\i, xshift=-25mm] (N\ip) {\n};
+                \ifnum\i>0%
+                \path[thick, to] (N\i.west) edge[out=180, in=90] (N\ip.north);
+                \fi
+            \end{scope}
+        }
+        \begin{scope}[scope on=<4->]
+            \path[thick, draw, dotted] (N4.10)  -- ++(1.01,0) edge[out=0, in=270, looseness=1.0, to, dash phase=15pt] (N2.south);
+        \end{scope}
+        \begin{scope}[scope on=<5->]
+            \node[thick, draw=PT, fill=PT!10, text=PT, diamond, font=\small,
+            text width=14mm, align=center, inner sep=0mm, anchor=south] (NA) at (N1 |- N4.south) {Do actions pass?};
+            \draw[thick, to] (N1.south) -- (NA.north);
+            \draw[thick, to] (NA.west) -- ++(-0.3,0) node[pos=0.5, font=\footnotesize, anchor=south] {No} |- (N4.east);
+            \path[thick, draw, dotted] (N4.350) -- ++(1.01,0) edge[out=0, in=270, looseness=0.6, to, dash phase=15pt] (NA.south);
+        \end{scope}
+        \begin{scope}[scope on=<6->]
+            \node[space=PS, below = 0mm of N4, xshift=25mm] (N5) {Reviewer approves};
+            \path[thick, to] (N4.south) edge[out=270, in=180] (N5.west);
+            \draw[thick] (NA.east) -- ++(0.3,0) node[pos=0.5, font=\footnotesize, anchor=south] {Yes} coordinate (yes);
+        \end{scope}
+        \begin{scope}[scope on=<7->]
+            \node[space=PP, below = 0mm of N5, xshift=33mm] (N6) {Merge PR};
+            \path[thick, to] (N5.south) edge[out=270, in=180, looseness=0.8] (N6.west);
+        \end{scope}
+        \begin{scope}[scope on=<7->]
+            \draw[thick, to] (yes) |- (N6.east);
+        \end{scope}
+    \end{tikzpicture}
+\end{frame}
+%===================================================================================================%
+\MakeLabelledSubsectionWithCoverFrame{ActionFrame}{Actions and CI}
+%===================================================================================================%
+\begin{frame}[fragile]{Actions and continuous integration}{\only<1-2>{A world plenty of opportunities!}\only<3-4>{Some typical examples}\only<5>{Standard GitHub-hosted runners for \textbf{public} repositories}}
+    \begin{onlyenv}<1>
+        \begin{center}
+            \includegraphics[width=0.95\textwidth]{Meme-actions}
+        \end{center}
+    \end{onlyenv}
+    \begin{onlyenv}<2>
+        \begin{lstlisting}[style=MyBash]
+            # List of all possible events that can trigger an action
+            branch_protection_rule         page_build
+            check_run                      public
+            check_suite                    pull_request
+            create                         pull_request_comment
+            delete                         pull_request_review
+            deployment                     pull_request_target
+            deployment_status              push
+            discussion                     registry_package
+            discussion_comment             release
+            fork                           repository_dispatch
+            gollum                         schedule
+            issue_comment                  status
+            issues                         watch
+            label                          workflow_call
+            merge_group                    workflow_dispatch
+            milestone                      workflow_run
+        \end{lstlisting}
+        \begin{center}
+            Find out more about \URL[PB]{https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows}{events that trigger a workflow}!
+        \end{center}
+    \end{onlyenv}
+    \begin{onlyenv}<3-4>
+        \definecolor{myCyan}{cmyk}{1,0,0,0}
+        \begin{varblock}{alert}[0.85\textwidth]{}<only@3>
+            \alert{Actions use YAML files to configure what needs to be done!}
+        \end{varblock}
+        \begin{enumerate}
+            \item<only@3> Run tests for default PR activity\\[-1mm]
+            \Remark{The workflow runs when a pull request is opened or reopened or when the head branch of the pull request is updated}
+            \begin{lstlisting}[style=MyBash, xleftmargin=1mm, xrightmargin=25mm, aboveskip=\medskipamount,
+                               moredelim={[is][\color{myCyan}]{|-}{-|}},
+                               moredelim={[is][\color{ForestGreen}]{|=}{=|}}]
+                |-on-|:
+                  |-pull_request-|:
+                    |-branches-|:
+                      - |=main=|
+                      - |=release*=|
+            \end{lstlisting}
+            \item<only@3> Run tests when merged code into some branches
+            \begin{lstlisting}[style=MyBash, xleftmargin=1mm, xrightmargin=25mm,
+                               belowskip=-3mm, aboveskip=\medskipamount,
+                               moredelim={[is][\color{myCyan}]{|-}{-|}},
+                               moredelim={[is][\color{ForestGreen}]{|=}{=|}}]
+                |-on-|:
+                  |-push-|:
+                    |-branches-|: [|=main=|, |=develop=|, |=release*=|]
+            \end{lstlisting}
+            \item<only@4> Selecting GitHub virtual machines and run something
+            \begin{lstlisting}[style=MyBash, xleftmargin=1mm, xrightmargin=25mm,
+                               belowskip=-6mm, aboveskip=1.5\medskipamount,
+                               moredelim={[is][\color{myCyan}]{|-}{-|}},
+                               moredelim={[is][\color{ForestGreen}]{|=}{=|}}]
+                |-jobs-|:
+                  |-Run-on-Ubuntu-|:
+                    |-name-|: "Test on latest Ubuntu"
+                    |-runs-on-|: |=ubuntu-latest=|
+                    |-steps-|:
+                      - |-uses-|: |=actions/checkout@v4=|
+                      - |-name-|: "Print a greeting"
+                        |-env-|:
+                          |-MY_VAR-|: "Hi there"
+                        |-run-|: |
+                          |=echo "${MY_VAR}!"=|
+            \end{lstlisting}
+            \item<only@4> Using \URL[PB]{https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners}{a self-hosted runner}
+            \begin{lstlisting}[style=MyBash, xleftmargin=1mm, xrightmargin=25mm,
+                               belowskip=-8mm, aboveskip=1.5\medskipamount,
+                               moredelim={[is][\color{myCyan}]{|-}{-|}},
+                               moredelim={[is][\color{ForestGreen}]{|=}{=|}}]
+                |-runs-on-|: [|=self-hosted=|, |=linux=|, |=x64=|]
+            \end{lstlisting}
+            \Remark{If you specify an array of strings or variables, your workflow will execute on any runner that matches all of the specified \,\texttt{runs-on}\, values.}
+        \end{enumerate}
+    \end{onlyenv}
+    \begin{onlyenv}<5>
+        \begin{center}
+            \vspace{2mm}
+            \includegraphics[height=0.7\textheight]{GitHub-actions-servers-public}
+        \end{center}
+    \end{onlyenv}
+    \PrepareURLsymbol[PB]
+    \FrameRemark<4-5>{Checkout \URL*{https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions}{the official documentation} to discover how to structure your actions. Check out existing actions, too!}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[t]{Creating your first workflow}{Taken from \URL[PB]{https://docs.github.com/en/actions/writing-workflows/quickstart}{the official actions quick-start}}
+    \vspace{1mm}
+    \begin{overlayarea}{\textwidth}{0.75\textheight}
+        \begin{onlyenv}<1>
+            \quad\MakeEnumerateBox{1}~~Action files need to be placed in the \textbf{.github/workflows} folder\vphantom{\URL{}{}}
+            \begin{center}
+                \includegraphics[width=0.9\textwidth]{GitHub-actions-example-folder}
+            \end{center}
+        \end{onlyenv}
+        \begin{onlyenv}<2>
+            \quad\MakeEnumerateBox{2}~~Action files are written using \URL[PP]{https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions}{YAML workflows syntax}
+            \begin{center}
+                \includegraphics[height=0.6\textheight]{GitHub-actions-example-yaml}
+            \end{center}
+        \end{onlyenv}
+        \begin{onlyenv}<3>
+            \quad\MakeEnumerateBox{3}~~Actions are triggered by the event you chose in the YAML file\vphantom{\URL{}{}}
+            \begin{center}
+                \includegraphics[height=0.6\textheight]{GitHub-actions-example-UI}
+            \end{center}
+        \end{onlyenv}
+        \begin{onlyenv}<4>
+            \quad\MakeEnumerateBox{4}~~Actions log file is available on GitHub\vphantom{\URL{}{}}
+            \begin{center}
+                \includegraphics[height=0.6\textheight]{GitHub-actions-example-log}
+            \end{center}
+        \end{onlyenv}
+    \end{overlayarea}
+\end{frame}
+%===================================================================================================%
+\MakeLabelledSubsectionWithCoverFrame{ReleaseFrame}{Releases}
+%===================================================================================================%
+\begin{frame}{Releases}{An interface to associate metadata to a Git tag}
+    \begin{center}
+        \includegraphics[width=0.95\textwidth]{GitHub-release}
+    \end{center}
+\end{frame}
+%===================================================================================================%
+\MakeLabelledSubsectionWithCoverFrame{ProjectFrame}{Projects}
+%===================================================================================================%
+\begin{frame}{Projects}{Functionality at the Organisation or User level}
+    \begin{center}
+        \only<1>{\includegraphics[width=0.7\textwidth]{GitHub-projects-1}}
+        \only<2>{\includegraphics[width=0.7\textwidth]{GitHub-projects-2}}
+    \end{center}
+\end{frame}
+%===================================================================================================%
+\MakeLabelledSubsectionWithCoverFrame{WikiFrame}{Wiki and webpage}
+%===================================================================================================%
+\begin{frame}{Wiki and webpage}
+    \begin{onlyenv}<1>
+        \begin{varblock}{example}[0.75\textwidth]{Wiki pages}
+            You can enable and create Wiki pages associated to every repository.
+            This is a separate repository with a dedicated UI bound to your main codebase.
+        \end{varblock}
+        \begin{center}
+            \includegraphics[width=0.75\textwidth]{GitHub-wiki}
+        \end{center}
+    \end{onlyenv}
+    \begin{onlyenv}<2>
+        \PrepareURLsymbol[ALERT]
+        \begin{varblock}{alert}[0.75\textwidth]{\URL*{https://pages.github.com}{GitHub pages}}
+            You can create a website associated to your organisation/user or to any repository!
+        \end{varblock}
+        \begin{center}
+            \includegraphics[width=0.75\textwidth]{Fly}
+        \end{center}
+    \end{onlyenv}
+    \PrepareURLsymbol[PB]
+    \FrameRemark<2>{Checkout the \URL*{https://www.mkdocs.org}{MkDocs project} for possible inspiration.}
+\end{frame}
+%===================================================================================================%
+\MakeLabelledSubsectionWithCoverFrame{FileFrame}{Special files}
+%===================================================================================================%
+\begin{frame}{Special files}
+    \begin{description}[\hspace{35mm}]
+        \item[\textbf{README.md}] An overview of your codebase
+        \item[\textbf{LICENSE}] How is your material shipped to the public
+        \item[\textbf{AUTHORS.md}] A list of people that contributed
+        \item[\textbf{CONTRIBUTING.md}] How to become new developers
+        \item[\textbf{CHANGELOG.md}] User-relevant changes between releases
+        \item[\textbf{CITATION.cff}] How to cite your software
+    \end{description}
+    \vspace{3mm}
+    \PrepareURLsymbol[PB]
+    \begin{varblock}{alert}[0.68\textwidth]{Take advantage of this!}
+        Most files usually use \URL*{https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax}{Markdown formatting}
+    \end{varblock}
+\end{frame}
+%===================================================================================================%
+\MakeSubsectionFrametrue
+\AddLinkToGitHubWheelfalse
+% Restore blue colours of Z02 theme for other sections
+\colorlet{PB}{Marine}
+\colorlet{PP}{SkyBlue}
+\colorlet{PS}{BladeOfGrass}
+\colorlet{PT}{CoralRed}
+\colorlet{PQ}{Schizophrenia}
+\colorlet{ALERT}{UnrealFoodPills}
+\colorlet{BGDARK}{Aoi}
+\colorlet{BGLIGHT}{BeachStorm!25}
+\colorlet{TEXT}{Abyss}
