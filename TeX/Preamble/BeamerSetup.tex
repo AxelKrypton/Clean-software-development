@@ -2,6 +2,10 @@
 \newif\ifAddLinkToTOC
 \AddLinkToTOCtrue
 
+% Make subsections frames
+\newif\ifMakeSubsectionFrame
+\MakeSubsectionFrametrue
+
 % Command to define beamer template for TOC. This is basically identical to the beamer template
 % except for what colours are used. The used colors are those defined later in this file: either
 % lecture, exercise or closing.
@@ -41,12 +45,15 @@
     }%
     % New templates to change square and title color in TOC
     \colorlet{lecture}{BGDARK}
+    \colorlet{digression}{Purple}
     \colorlet{exercise}{PS}
     \colorlet{closing}{PQ}
     \setbeamercolor{lecture section}{bg=lecture, fg=BGLIGHT}
+    \setbeamercolor{digression section}{bg=digression, fg=BGLIGHT}
     \setbeamercolor{exercise section}{bg=exercise, fg=BGLIGHT}
     \setbeamercolor{closing section}{bg=closing, fg=BGLIGHT}
     \installTOCbeamertemplate{lecture}
+    \installTOCbeamertemplate{digression}
     \installTOCbeamertemplate{exercise}
     \installTOCbeamertemplate{closing}
     \setbeamercolor{subsection page background canvas}{bg=PB}
@@ -63,10 +70,12 @@
 }
 \AtBeginSubsection[]% <- Empty optional argument, do nothing for \subsection*
 {%
-    \ifnum\beamer@tocsectionnumber>0%
-        \begin{frame}[plain, noframenumbering]{}
-             \subsectionpage
-        \end{frame}
+    \ifMakeSubsectionFrame%
+        \ifnum\beamer@tocsectionnumber>0%
+            \begin{frame}[plain, noframenumbering]{}
+                 \subsectionpage
+            \end{frame}
+        \fi
     \fi
 }
 \makeatother

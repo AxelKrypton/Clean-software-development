@@ -150,7 +150,10 @@ aboveskip=0pt
     commentstyle=\color{comment-color},
     morestring=[b][\color{strings-color}]{"},
     morestring=[d][\color{strings-color}]{'},
-    moredelim=[is][\color{basic-color}]{|+}{+|}, % I will use this for terminal output
+    moredelim=[is][\color{strings-color}]{|-}{-|}, % I will use this for present git branch
+    moredelim=[is][\color{comment-color}]{|*}{*|}, % I will use this for e.g. remote git branches
+    moredelim=[is][\color{environment-color}]{|+}{+|}, % I will use this for terminal output
+    moredelim=[is][\color{functions-color}]{|=}{=|}, % I will use this for highlighting output
     literate={`}{\textasciigrave}1, % https://tex.stackexchange.com/a/466224/128737
     literate={~}{{\textasciitilde}}1,
     alsoletter=0123456789![]/\{\}.:+, % This to mark the symbols in keyword/emph[5] to be highlighted (otherkeywords does not work i.e. it highlights also in comments!) -> manual at page 45
@@ -159,15 +162,9 @@ aboveskip=0pt
     emphstyle=[1]{\color{functions-color}}, %Functions
     emph=[2]{br},
     emphstyle=[2]{\color{variables-color}}, %Variables
-    emph=[4]{PATH, SHELL, IFS, BASH_ALIASES, BASH_REMATCH, PS3, REPLY, HOME, LANGUAGE, EDITOR, PIPESTATUS, PWD, FUNCNEST,
-        DIRSTACK, PWD, OLDPWD, SHELLOPTS, BASHOPTS, TIMEFORMAT, COMP_CWORD, COMP_LINE, COMP_POINT, COMP_TYPE, COMP_KEY,
-        COMP_WORDBREAKS, COMP_WORDS, COMPREPLY, INPUTRC},
+    emph=[4]{},
     emphstyle=[4]{\color{environment-color}}, %Environment variables
-    emph=[5]{alias, bg, bind, break, builtin, cd, command, compgen, complete, continue, declare, dirs, disown, echo, enable, eval,
-        exec, exit, export, false, fc, fg, getopts, hash, help, history, jobs, kill, let, local, logout, popd, printf, pushd, pwd,
-        read, readonly, return, set, shift, shopt, source, suspend, test, times, trap, true, type, typeset, ulimit, umask,
-        % case, if, until, while  % <--- these built-in are keywords and I leave them highlighted as such
-        unalias, unset, wait, :, ., [, ]},
+    emph=[5]{},
     emphstyle=[5]{\color{builtins-color}}, %Shell built-in
     emph=[6]{man, apropos, ls, rm, g++, chmod, cp, awk, sed, cut, perl, args, date, grep, sleep, tput, seq, cat, wc, sort, uniq, tail,
         head, sdiff, tar, mktemp, mkdir, ps, emacs, systemd, timeout, parallel, xargs, gnuplot, pdflatex, vi, ping, bash,
@@ -177,9 +174,22 @@ aboveskip=0pt
     emphstyle=[7]{\color{variables-color}}, %Class for local variables (usually with bad names)
     emph=[8]{},
     emphstyle=[8]{\color{builtins-color}}, %Class for local commands (usually with bad names)
+    emph=[9]{<name>},
+    emph=[10]{<type>},
+    emph=[11]{<remote>},
+    emphstyle=[9]{\color{ForestGreen}},
+    emphstyle=[10]{\color{DarkOrange}},
+    emphstyle=[11]{\color{DarkRed}},
     %
     %Additional customizations
     belowskip=-7mm,
     aboveskip=3pt,
     autogobble=true, % lstautogobble needed!
 }
+
+\lstnewenvironment{Bash}[1][] %I will rarely use this because putting a $ in it as prompt breaks down TeXclipse highlight syntax!
+{\lstset{style=MyBash, #1}}
+{}
+
+\def\bash{\lstinline[style=MyBash, basicstyle=\ttfamily\color{basic-color}]}
+

@@ -4,6 +4,7 @@
 \newcommand{\session}[2]{%
     \IfStrEqCase{#1}{%
         {lecture}{}%
+        {digression}{}%
         {exercise}{}%
         {closing}{}%
     }[\PackageError{}%
@@ -23,6 +24,7 @@
 \newcommand{\inPr}{\parbox{5mm}{\,\textcolor{Gray}{\faCog}}}
 \newcommand{\no}{\parbox{5mm}{\,\textcolor{OrangeRed}{\ding{55}}}}
 %\pgfkeys{/beamer/overlayarea/show frame}
+\newcommand{\BreakFrame}[1]{\AlertFrame[Gray!75]{#1}}
 
 % Command to vertically center emoji
 \newsavebox{\emojibox}
