@@ -84,7 +84,10 @@ Practical sessions have been omitted (refer to the training schedule in the slid
 ### Day 5
 
 1. Code review
-1. What to do, now?
+   - On a technical level
+   - On a more abstract level
+   - Software development in academia
+1. Summary and outlook
 
 ---
 
@@ -95,14 +98,14 @@ Practical sessions have been omitted (refer to the training schedule in the slid
   - [X] Day 2
   - [X] Day 3
   - [ ] Day 4
-  - [ ] Day 5
+  - [X] Day 5
 
 - [ ] Review/improve slides examples
   - [X] Day 1
   - [ ] Day 2
   - [X] Day 3
   - [ ] Day 4
-  - [ ] Day 5
+  - [X] Day 5
 
 - [ ] Practical sessions
   - [ ] Try Day 3 TDD tasks
