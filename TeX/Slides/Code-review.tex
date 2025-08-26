@@ -1,0 +1,93 @@
+%-------------------------------%
+%  Author: Alessandro Sciarra   %
+%    Date: 21 Aug 2025          %
+%-------------------------------%
+
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{On a technical level}
+    \vspace{-1mm}
+    \begin{onlyenv}<1>
+        \begin{enumerate}
+            \item \alert{Focus on important things, first}
+            \item Never forget documentation as part of the review
+            \item If needed, use tools to assist you \Remark{Static code analysis, AI, etc.}\\
+                  \then your brain is the ultimate tool, though
+            \item \PP{Often just reading the code is not enough}\\
+                  \then isolate minimal working examples (MWE) when needed\\
+                  \then consider portability, if appropriate \Remark{E.g.\ run on different OS}\\
+                  \then interact with developers in your team
+            \item \PS{Keep in mind basically everything we discussed this week} \;\emoji{wink}
+        \end{enumerate}
+        \begin{varblock}{alert}[0.7\textwidth]{}
+            \alert{A code review is an investment for your project!}
+        \end{varblock}
+    \end{onlyenv}
+    \begin{onlyenv}<2>
+        \begin{center}
+            \includegraphics[height=0.8\textheight]{Code-review-pyramid}
+        \end{center}
+    \end{onlyenv}
+    \FrameRemark<2>{Taken from \URL*{https://www.morling.dev/blog/the-code-review-pyramid/}{Gunnar Morling's blog}. A high-resolution SVG file is also available there. }
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{On a more abstract level}{Some aspects to keep in mind}
+    \begin{enumerate}
+        \item \PS{Always try to find something positive}
+        \item Listen to your code sense (in the right way)
+        \item \alert{Do not be biased from who wrote the code}
+        \item Try to schedule code reviews as early as possible
+        \item \PP{Consider a code review as an opportunity}\\
+              \then for both who wrote the code and for the reviewer(s)
+    \end{enumerate}
+    \begin{varblock*}{quote}[0.88\textwidth]{We cover for each other}[Uncle Bob as CTO]
+        «I expect that, if I have got a team of 15 people and I decide I have to divide that team in half and take 7 people this way and 8 people that way, the 8 people remaining will still be able to operate.»
+    \end{varblock*}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{Do not get emotional...}
+    \begin{center}
+        \includegraphics[height=0.75\textheight]{Code-review-why}
+    \end{center}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{...but listen to yourself!}
+    \begin{center}
+        \only<1>{\includegraphics[width=0.85\textwidth]{WTF}}
+        \only<2>{\includegraphics<only@2>[width=0.75\textwidth]{Code-review-feeling}}
+    \end{center}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{Receiving a code review}
+    \begin{itemize}
+        \item \alert{The code review evaluates your code, not you}
+        \item It is meant to make the code \textbf{even} better
+        \item \PS{You and reviewer are part of the same team}
+        \item Remember that code review is a dialogue\\
+              \then It is an opportunity to learn for everybody
+    \end{itemize}
+    \begin{varblock}{}[0.75\textwidth]{\URL*{https://swiftandmemes.com/code-review-how-to-write-reviews-your-team-looks-forward-to/}{How to write reviews your team looks forward to?}}
+        A nice write-up worth reading with excellent guidance for both authors and reviewers.
+    \end{varblock}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{A last comment for development in academia}
+    \begin{varblock}{alert}[0.75\textwidth]{If you never did a code review in your group}<1->
+        \itshape\small
+        Do not feel bad.
+        That's not surprising (for me).
+        Consider initiating this habit, if reasonably possible.
+    \end{varblock}
+    \begin{varblock}{quote}[0.9\textwidth]{If you use code reviews in your group}[]<2->
+        That's great.
+        Be greedy to be a reviewer, even if the developer who wrote the code is much more senior than you.
+        A code review should not become a pedagogical lecture, but asking (an appropriate amount of) clarifications questions makes it an excellent opportunity to grow.
+    \end{varblock}
+    \begin{varblock}{example}[0.7\textwidth]{I code alone, what's my take on this?}<3->
+        \itshape\small
+        You'll need to be stricter with yourself.
+        Never miss an opportunity to implement improvements.
+    \end{varblock}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+
+

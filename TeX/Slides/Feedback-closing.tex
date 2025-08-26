@@ -1,0 +1,95 @@
+%-------------------------------%
+%  Author: Alessandro Sciarra   %
+%    Date: 22 Aug 2025          %
+%-------------------------------%
+
+
+%===================================================================================================%
+\subtitle{Feedback and closing}
+\author{
+    \begin{tabular}{c}
+        Alessandro Sciarra\\[1mm]
+        David A. Clarke\\
+    \end{tabular}
+}
+\institute{}
+\titlepagelogo{$\stackrel{\includegraphics[width=24mm]{Logo-FRA}}{\includegraphics[width=24mm]{Logo-BIE}}$}
+\GitHubAuthors{
+    \begin{tabular}{c}
+        \href{https://github.com/AxelKrypton}{\faGithub\,AxelKrypton}\\[1mm]
+        \href{https://github.com/clarkedavida}{\faGithub\,clarkedavida}\\
+    \end{tabular}
+}
+\date{}
+%===================================================================================================%
+
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[plain,noframenumbering]
+    \titlepage
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\AlertFrame{\Huge\textbf{Thank you!}}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{Wrapping up (part of) the advice}
+    \begin{enumerate}
+        \item \PS{Clean software development requires discipline}
+        \item Never be lazy! \Remark{Either do or leave trace (e.g.\ an issue)}
+        \item Every day you have the possibility to become a little better
+        \item \alert{Tests (and documentation) are part of the code}
+        \item Almost all principle belong to all languages
+        \item Your \textbf{code sense} will develop and guide you
+        \item Changing mind is positive and part of the game
+    \end{enumerate}
+    \begin{varblock}{quote}[\textwidth]{Moral of the story}[R. C. Martin]<2->
+        A young violinist got lost on his way to a performance.
+        He stopped an old man on the corner and asked him how to get to Carnegie Hall.
+        The old man looked at the violinist and the violin tucked under his arm and said:
+        \alert{\guillemotleft{}Practice, son. Practice!\guillemotright}
+    \end{varblock}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{A first feedback: How do you feel?}
+    \begin{center}
+        \begin{tikzpicture}[every node/.style={inner sep=0mm}, node distance=3mm]
+            \node[visible on=<2->] (A) {\includegraphics[height=0.33\textheight]{Tired-but-happy}};
+            \node[visible on=<3->, right = of A] (B) {\includegraphics[height=0.33\textheight]{Wonder}};
+            \node[visible on=<4->, right = of B] (C) {\includegraphics[height=0.33\textheight]{Skeptical}};
+            \node[visible on=<5->, below = of A] (D) {\includegraphics[height=0.33\textheight]{Top}};
+            \node[visible on=<6->, below = of B] (E) {\includegraphics[height=0.33\textheight, clip, trim=32mm 0 0 0]{Wow}};
+            \node[visible on=<7->, below = of C, draw, font=\Huge\bfseries, minimum height=0.33\textheight, minimum width=0.275\textwidth] {?};
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}[fragile]{A short Git exercise}
+    \vspace{-2mm}
+    \begin{enumerate}
+        \item Open your terminal in the common repository
+        \item Create a file with a \textbf{unique} filename in the \;\texttt{Feedback}\; folder\\
+              \then E.g.\; {\small\lstinline[style=MyBash, basicstyle=\ttfamily\color{basic-color}]|touch feedback_$(date +'%s.%3N')|}
+        \item Write a feedback sentence into such a file
+        \item Anonymously commit and push\\[1mm]
+              \includegraphics[width=0.75\textwidth]{Git-variables}
+    \end{enumerate}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{Open final discussion}
+    \begin{itemize}
+        \item Do you have any further question?
+        \item \PS{Would you like to share any thought?}
+        \item Is there anything you disliked and would change?
+    \end{itemize}
+    \begin{center}
+        \includegraphics[width=0.45\textwidth]{Wonder}
+    \end{center}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
+\begin{frame}{And now?}
+    \begin{center}
+        \includegraphics[width=0.67\textwidth]{Sunrise-in-Germany}
+    \end{center}
+    \begin{varblock}{quote}[0.8\textwidth]{}[Meister Eckhart]
+        «And suddenly you know: It's time to start something new and trust the magic of beginnings.»
+    \end{varblock}
+\end{frame}
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%
