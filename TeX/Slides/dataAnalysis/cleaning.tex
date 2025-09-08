@@ -9,12 +9,13 @@ people/groups. Possible problems:
 \item Different data formats
 \item Duplicate entries
 \item Damaged/lost/unlabelled files
+\item Straight-up wrong numbers
 \end{itemize}
 \vspace{5mm}
 \centering
 % FAIR paper
-We are in an era where significant effort is put into
-ensuring \\ data can be \textbf{readily used and reproduced}.
+We are in an era where significant effort is put into\\
+ensuring data can be \textbf{readily used and reproduced}.
 }
 
 \frame{\frametitle{Practical goals for your own work}
@@ -30,8 +31,8 @@ What will save you a lot of pain:
 
 
 \frame{\frametitle{Toward these goals}
-\begin{enumerate}
-\item Bring input data into common format
+\begin{itemize}
+\item Bring data into common format
 % Example: Graduate student asks me to analyze data,
 % format different between data sets
 \begin{itemize}
@@ -40,6 +41,11 @@ What will save you a lot of pain:
 \item Opportunity for cross-checks
 \end{itemize}
 \item Stay consistent with conventions
+\begin{itemize}
+\item Label files, parameters, output the same way
+\item Use the same file type whenever reasonable
+% Example: Code outputs hdf5 files, pickle files, plain text
+\end{itemize}
 \item Try to use already-existing data structures (e.g.
 \texttt{yaml} or \texttt{csv})
 \begin{itemize}
@@ -48,7 +54,12 @@ What will save you a lot of pain:
 \end{itemize}
 \item Label your columns
 \item Add \texttt{README.md} for supplemental information
-\end{enumerate}
+\item \textbf{Don't overcomplicate things!}
+% Yes, you will technically save a small amount of disc space
+% if output in a binary format... Your table is 1000 lines long
+% and there's only 10 of them. Was that really necessary? Now
+% I have to write a script just to read your output.
+\end{itemize}
 }
 
 
