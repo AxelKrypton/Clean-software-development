@@ -8,26 +8,41 @@ I think of them as Cross Checks.
 Some are the \textbf{same checks you do in physics}.
 What I use most commonly (no particular order, not exhaustive, not disjoint):
 \begin{enumerate}
-\item Compare against trusted result 
+\item Compare against trusted result
+% can be from literature, another code base, etc 
 \item Compare with an analytic calculation
 \item Compute a result multiple ways
 \item Check for consistency between observables
+% for example if one obs is the derivative of the other,
+% that constrains how they must be related
 \item Check known properties
-\item Verify independence of hyperparameters 
+% probabilities in [0,1]; 2d ising magnetization monotonic in T
+\item Verify independence of hyperparameters
+% dependence on jackknife bin size? solve tolerance? 
 \end{enumerate}
 }
 
 \frame{\frametitle{CC1: Compare against trusted result}
 \begin{itemize}
 \item Often a starting point: \textbf{reproduce something}
-\item Danger: you may \textbf{assume other calculation is correct}
-\item Blinding: 
+% e.g. if you are implementing something new following the method
+% of a paper, start by reproducing what's in that paper
+\item Danger: you \textbf{assume other calculation is correct}
+\begin{itemize}
+\item Has the result already been reproduced?
+\item You could apply some Cross Checks to the trusted result
+\item If you are unsure about trusted result,
+\textbf{blinding} can help against human bias: 
 \begin{enumerate}
 \item Let $r\in[-R,R]$ unknown to you 
-\item Rescale all observables by $r$
-\item Remove $r$ at the end
+\item Rescale your observable by $r$
+\item Remove $r$ when you are confident in your calculation
 \end{enumerate}
+\end{itemize}
 \item Can test against your old results to \textbf{ensure stability}
+\begin{itemize}
+\item Some of your unit tests could work this way
+\end{itemize}
 \end{itemize}
 % Example of CMD? Or maybe the electron whatever thing
 }
@@ -42,12 +57,20 @@ What I use most commonly (no particular order, not exhaustive, not disjoint):
 
 
 \frame{\frametitle{CC3: Compute a result multiple ways}
+There's usually more than one way to solve a problem
+\begin{itemize}
+\item Check optimized implementation against easy-to-understand one
+\item Test different algorithms against each other
+\item Test different models against each other
+\end{itemize}
 % Example of correlator class in GPU
 % Different integration techniques give same result
 }
 
 
 \frame{\frametitle{CC4: Check for consistency between observables}
+Two observables may be constrained by relationships between them.
+Design tests that ensure observables obey these known constraints.
 % Acceleration/velocity?
 % What kinds of checks did Frithjof do?
 % Maybe one of your checks from material params
@@ -55,8 +78,14 @@ What I use most commonly (no particular order, not exhaustive, not disjoint):
 
 
 \frame{\frametitle{CC5: Check known properties}
-% Check RHMC is reversible
-% Covariance matrix is positive semidefinite
+Depending on an observable's interpretation, you may already
+know some properties it must have. Test them! Examples:
+\begin{enumerate}
+\item is your covariance matrix positive semidefinite?
+\item is your unitary matrix actually unitary?
+\item is your RHMC reversible?
+\item is your probability between 0 and 1?
+\end{enumerate}
 }
 
 

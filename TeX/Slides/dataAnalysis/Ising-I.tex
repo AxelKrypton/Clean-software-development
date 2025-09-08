@@ -1,3 +1,53 @@
 
 %===================================================================================================%
 
+\begin{frame}{The 2-$d$ Ising model}
+We are going to practice data cleaning and validation in the context
+of the 2-$d$ Ising model, a model for a magnet.
+\begin{itemize}
+\item One of the simplest magnet models
+\item Analytically solvable (Cross Check 2)
+\item Applications to phase transitions
+\item Pedagogical for phase transitions
+\end{itemize}
+\end{frame}
+
+\begin{frame}{The 2-$d$ Ising model}
+\centering
+\includegraphics[width=0.8\textwidth]{dataAnalysis/isingModel.pdf}
+$$
+H=-J\sum_{\langle ij\rangle} \sigma_i \sigma_j
+~~~~~ ~~~~~ ~~~~~
+\textrm{pr}(C)\sim e^{-H(C)/T}
+$$
+\end{frame}
+
+\begin{frame}{Solving Ising with MCMC}
+Common strategy: Generate $\nconf$ configurations randomly, then
+estimate expectation value of observable $X$
+$$
+  \bar{X}=\frac{1}{\nconf}\sum_{i=1}^{\nconf} X_i
+$$
+Each $X_i$ measured on conf $C_i$ from Markov Chain
+$$
+  C_0\to C_1\to C_2\to...
+$$
+\end{frame}
+
+% unbiased variance
+% assumes uncorrelated data, but they are actually correlated
+% can show variance of correlated data is larger than if one
+%  had estimated it assuming independence; difference is integrated
+%  autocorrelation time
+% can therefore think of tau_int as factor between effectively
+%  independent configurations and actual number of configurations
+% can use this to correct error or to guide strategies to prune data
+% note that correct estimate of tau_int demands requires preserving
+%  Monte Carlo order!
+
+% an observable you might want to estimate: magnetization
+% why? It's the "order parameter" --> properties of |m|/site
+
+% DESCRIBE TASK
+% open-ended question: what kind of checks can you build in
+%  while you're cleaning the data?
