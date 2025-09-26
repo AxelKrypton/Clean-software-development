@@ -6,10 +6,11 @@ We are going to practice data cleaning and validation in the context
 of the 2-$d$ Ising model, a model for a magnet.
 \begin{itemize}
 \item One of the simplest magnet models
-\item Analytically solvable (Cross Check 2)
+\item Analytically solvable 
 \item Applications to phase transitions
 \item Pedagogical for phase transitions
 \end{itemize}
+We follow with an introduction/review so that everyone is on the same page.
 \end{frame}
 
 \begin{frame}{The 2-$d$ Ising model}
@@ -28,10 +29,50 @@ estimate expectation value of observable $X$
 $$
   \bar{X}=\frac{1}{\nconf}\sum_{i=1}^{\nconf} X_i
 $$
-Each $X_i$ measured on conf $C_i$ from Markov Chain
+Each $X_i$ measured on conf $C_i$ from \textbf{Markov Chain}
 $$
   C_0\to C_1\to C_2\to...
 $$
+Each $C_i$ drawn from $\textrm{pr}(C)$
+\end{frame}
+
+\begin{frame}{Physics of the Ising model}
+Order parameter is \textbf{magnetization} $m$
+$$
+m\equiv\frac{1}{V}\sum_i\sigma_i~~~~~~~~
+\chi\equiv\frac{V}{T}\left(\langle|m|^2\rangle-\langle|m|\rangle^2\right)
+$$
+
+\vspace{-3mm}
+In $V\to\infty$ limit, $m$ gets a kink and $\chi$ diverges
+at the \textbf{critical temperature} $T_c$. 
+\vspace{3mm}
+%At finite $V$, kink softens to curve, divergence to peak.
+
+\centering
+\includegraphics[width=0.48\textwidth]{dataAnalysis/example_m.pdf}
+\includegraphics[width=0.48\textwidth]{dataAnalysis/example_chi.pdf}
+\end{frame}
+
+\begin{frame}{Your task}
+Three scientists created 2-$d$ Ising model Markov chains, each managing
+a different $L$. They measured energy density and $m$ on each
+configuration.\\[2mm]
+\begin{enumerate}
+\item Develop code to bring all data to common format
+\item Write tests for your code!
+\item Plot $\langle|m|\rangle$ and $\langle e\rangle$ vs $T$
+\item What other kinds of checks can you do?
+\end{enumerate}
+
+\vspace{3mm}
+
+\centering
+\includegraphics[width=0.3\textwidth]{dataAnalysis/eggwin.jpg}
+\includegraphics[width=0.3\textwidth]{dataAnalysis/beaktrix.jpg}
+\includegraphics[width=0.3\textwidth]{dataAnalysis/siegfried.jpg}\\
+\tiny{Eggwin\hspace{3.1cm}Beaktrix\hspace{3.1cm}Siegfried}
+
 \end{frame}
 
 % unbiased variance
