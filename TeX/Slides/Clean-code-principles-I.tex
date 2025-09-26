@@ -15,12 +15,12 @@
 
                 myVecVec FC(const myVecVec& b)
                 {
-                    myVecVec list;
+                    myVecVec l;
                     for(const std::vector<int>& c : b){
                         if(c[0] == 4)
-                            list.push_back(c);
+                            l.push_back(c);
                     }
-                    return list;
+                    return l;
                 }
             \end{lstlisting}
         \end{onlyenv}
@@ -59,7 +59,7 @@
     \begin{uncoverenv}<2->
         \begin{itemize}
             \setlength{\itemsep}{0mm}
-            \item What kind of object is contained in \alt<2>{\CPP|list|}{\CPP|flaggedCells|}?
+            \item What kind of object is contained in \alt<2>{\CPP|l|}{\CPP|flaggedCells|}?
             \item What does \alt<2>{\PB{0}}{\CPP|STATUS_VALUE|} represent in the \CPP|if|-clause?
             \item What does \alt<2>{\PB{4}}{\CPP|FLAGGED|} mean in the \CPP|if|-clause?
             \item How would I use the object being returned?
@@ -92,20 +92,21 @@
         \vspace{-4mm}
         \begin{varblock}{block example}{Something like this\ldots}<only@2>
             \begin{lstlisting}[style=MyCpp]
+                int s = 0;
                 for(int j = 0; j < 34; j++)
                     s += t[j]*4/5;
             \end{lstlisting}
         \end{varblock}
         \begin{varblock}{block example}[\textwidth]{\ldots{}or something like this?}<only@3>
             \begin{lstlisting}[style=MyCpp]
-                const int realDaysPerIdealWeek = 4;
-                int numberOfTotalRealWeeks = 0;
+                const int effective_days_per_week = 4;
+                const double factor = effective_days_per_week /
+                                      WORKING_DAYS_PER_WEEK;
+                int total_estimate_in_weeks = 0;
+                // Note that the variable 'j' was not renamed!
                 for(int j = 0; j < NUMBER_OF_TASKS; j++)
                 {
-                    const int weeksPerTask  = taskDaysEstimate[j] *
-                                              realDaysPerIdealWeek /
-                                              WORKING_DAYS_PER_WEEK;
-                    numberOfTotalRealWeeks += weeksPerTask;
+                    total_estimate_in_weeks += factor * task_estimate_in_days[j];
                 }
             \end{lstlisting}
         \end{varblock}
@@ -514,34 +515,35 @@
             \begin{lstlisting}[style=MyCpp]
                 class Version {
                   public:
-                    int getMajorVersionNumber();
-                    int getMinorVersionNumber();
-                    int getBuildNumber();
+                    int majorNumber();
+                    int minorNumber();
+                    int buildNumber();
+                  private:
                     // [...]
                 };
             \end{lstlisting}
         \end{varblock}
-        \begin{varblock}{block example}[0.8\textwidth]{Impolite, rude code $\to$ up and down to understand it!}<only@4>
+        \begin{varblock}{block example}[0.85\textwidth]{Impolite, rude code $\to$ up and down to understand it!}<only@4>
             \begin{lstlisting}[style=MyCpp]
-                void MakeCoffee(const Coffee& typeOfCoffee){
+                void Machine::MakeCoffee(const Coffee& typeOfCoffee){
                     auto neededT = temperature(typeOfCoffee);
-                    if(neededT < T)
+                    if(neededT < 100)
                         warmUp(neededT);
-                    while(grinder != nullptr)
+                    while(grinder_ != nullptr)
                         prepareGrinder();
                     grind(calculateGrams(typeOfCoffee));
                     auto neededP = pressure(typeOfCoffee);
                     prepareToBrew(neededT, neededP);
-                    if(status == READY_TO_BREW)
+                    if(status_ == READY_TO_BREW)
                         brew(typeOfCoffee);
                     else
                         throw std::runtime_error("Unable to brew!");
                 }
             \end{lstlisting}
         \end{varblock}
-        \begin{varblock}{block example}[0.71\textwidth]{Single-level-of-abstraction function}<only@5>
+        \begin{varblock}{block example}[0.85\textwidth]{Single-level-of-abstraction function}<only@5>
             \begin{lstlisting}[style=MyCpp]
-                void MakeCoffee(const Coffee& typeOfCoffee){
+                void Machine::MakeCoffee(const Coffee& typeOfCoffee){
                     WarmUpMachineIfNeeded(typeOfCoffee);
                     GrindCoffee(typeOfCoffee);
                     SetPressureAndTemperature(typeOfCoffee);
@@ -557,35 +559,35 @@
         \begin{varblock}{quote}[0.75\textwidth]{How big should a function be?}[Robert C. Martin]<only@1,3>
             \uncover<3>{
                 A function should do one thing.
-                But what's one thing?
-                A function does one thing, if you cannot meaningfully extract another function from it.
+                But what's one thing?\\
+                \alert{A function does one thing, if you cannot meaningfully extract another function from it.}
             }
         \end{varblock}
-        \begin{varblock}{block example}[0.8\textwidth]{Back to our example}<only@2>
+        \begin{varblock}{block example}[0.85\textwidth]{Back to our example}<only@2>
             \begin{lstlisting}[style=MyCpp]
-                void MakeCoffee(const Coffee& typeOfCoffee){
+                void Machine::MakeCoffee(const Coffee& typeOfCoffee){
                     // 1. WarmUpMachineIfNeeded
                     auto neededT = temperature(typeOfCoffee);
-                    if(neededT < T)
+                    if(neededT < 100)
                         warmUp(neededT);
                     // 2. GrindCoffee
-                    while(grinder != nullptr)
+                    while(grinder_ != nullptr)
                         prepareGrinder();
                     grind(calculateGrams(typeOfCoffee));
                     // 3. SetPressureAndTemperature, needs T again
                     auto neededP = pressure(typeOfCoffee);
                     prepareToBrew(neededT, neededP);
                     // 4. BrewCoffee
-                    if(status == READY_TO_BREW)
+                    if(status_ == READY_TO_BREW)
                         brew(typeOfCoffee);
                     else
                         throw std::runtime_error("Unable to brew!");
                 }
             \end{lstlisting}
         \end{varblock}
-        \begin{varblock}{block example}[0.71\textwidth]{Result after extraction}<only@3>
+        \begin{varblock}{block example}[0.85\textwidth]{Result after extraction}<only@3>
             \begin{lstlisting}[style=MyCpp]
-                void MakeCoffee(const Coffee& typeOfCoffee){
+                void Machine::MakeCoffee(const Coffee& typeOfCoffee){
                     WarmUpMachineIfNeeded(typeOfCoffee);
                     GrindCoffee(typeOfCoffee);
                     SetPressureAndTemperature(typeOfCoffee);
