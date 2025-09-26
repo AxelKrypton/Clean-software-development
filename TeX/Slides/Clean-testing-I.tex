@@ -35,7 +35,8 @@
 \begin{frame}{The unfortunate tendency in many cases}
     \vspace{-1mm}
     \begin{itemize}
-        \item \alert{It gives reasonable results $\;\Rightarrow\;$ it works!} \Emoji{face-screaming-in-fear}
+        \setlength{\fboxsep}{0pt}
+        \item \alert{It gives reasonable results $\;\Rightarrow\;$ it works!} \,\Emoji{face-screaming-in-fear}
         \item Manual (and possibly not systematic) testing is unfortunately still common practice in our community!
         \item Even if done in a systematic way, you will never run your tests enough!
     \end{itemize}
@@ -43,10 +44,10 @@
     \begin{overlayarea}{\textwidth}{0.4\textheight}
         \begin{onlyenv}<1-2>
             \vspace{3mm}
-            \begin{varblock}{example}[\textwidth]{An remarkable story about manual testing}
+            \begin{varblock}{example}[\textwidth]{A remarkable story about manual testing}
                 I have been using an own manually tested ``agenda-script'' to track my working time \alert{\textbf{for months}} and then one day it suddenly crashed.\\
                 Where was the problem?
-                \uncover<2>{\PB{I assumed \textbf{every} day has 24 hours\ldots\Emoji{smiling-face-with-halo}}}
+                \uncover<2>{\PB{I assumed \textbf{every} day has 24 hours\ldots \Emoji{smiling-face-with-halo}}}
             \end{varblock}
         \end{onlyenv}
         \begin{onlyenv}<3>
@@ -76,18 +77,25 @@
         }
     \end{varblock}
     \begin{uncoverenv}<3>
-        \begin{varblock}{}[\textwidth]{The scientific method}
+        \vspace{2mm}
+        \begin{varblock}{}[0.95\textwidth]{The scientific method}
             \begin{enumerate}
                 \item Make an hypothesis $\PB{\;\mathcal{C}\;}\to\;$  «My code is correct»
                 \item Tests attempt to show $\PB{\;!\mathcal{C}\;}$
                 \item Confidence in $\;\PB{\mathcal{C}\;}$ tracks thoroughness of tests
             \end{enumerate}
+            \vspace{-2mm}
+            \tikzmark{HL}
+            \vspace{-6mm}
+            \begin{center}
+                \large
+                \alert{Testing code is science} $\;\Leftrightarrow\;$ Popper's falsification principle
+            \end{center}
         \end{varblock}
-        \vspace{-2mm}
-        \begin{varblock}{}[\textwidth]{}
-            \large
-            Testing code is science (cf. Popper's falsification principle)
-        \end{varblock}
+        \begin{tikzpicture}[remember picture, overlay]
+            \pgfmathsetmacro{\tmpFactor}{0.95}
+            \draw[PP, visible on=<3>] (HL) ++(-0.5*\tmpFactor*\textwidth+1pt, 0) -- ++(\tmpFactor*\textwidth, 0);
+        \end{tikzpicture}
     \end{uncoverenv}
 \end{frame}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~%

@@ -28,9 +28,10 @@
 
 % Command to vertically center emoji
 \newsavebox{\emojibox}
-\newcommand{\Emoji}[2][\normalsize]{%
-    \sbox{\emojibox}{#1\emoji{#2}}%
-    \raisebox{-0.33\ht\emojibox}{\usebox{\emojibox}}%
+\NewDocumentCommand{\Emoji}{O{\normalsize} O{0.15} m}{%
+    \sbox{\emojibox}{#1\emoji{#3}}%
+    % shift is a fraction of the strutbox height (≈ font size)
+    \raisebox{-#2\ht\emojibox}{\usebox{\emojibox}}%
 }
 
 
