@@ -193,3 +193,59 @@ aboveskip=0pt
 
 \def\bash{\lstinline[style=MyBash, basicstyle=\ttfamily\color{basic-color}]}
 
+%===================================================================
+%Colors for Python listings
+\colorlet{python-background}{gray!10}
+\colorlet{python-basic}{black}
+\colorlet{python-keywords}{blue!80!black}
+\colorlet{python-strings}{ForestGreen}
+\colorlet{python-comments}{red!70!black}
+\colorlet{python-functions}{NavyBlue}
+\colorlet{python-variables}{DarkOrange}
+\colorlet{python-builtins}{purple!80!black}
+\colorlet{python-decorators}{Magenta}
+\colorlet{python-numbers}{cyan!70!black}
+
+\lstdefinestyle{mypython}{
+breakatwhitespace=false,
+breaklines=true,
+captionpos=b,
+escapeinside={@|}{|@},
+extendedchars=true,
+frame=none,
+numbers=none,
+numbersep=5pt,
+numberstyle=\tiny\color{black},
+rulecolor=\color{black},
+showspaces=false,
+showstringspaces=false,
+showtabs=false,
+stepnumber=2,
+stringstyle=\color{OliveGreen},
+tabsize=2,
+title=\lstname,
+keepspaces=true,
+keywordstyle=\color{Cyan},
+language=Python,
+basicstyle=\ttfamily\scriptsize\color{black},
+keywordstyle=\color{OliveGreen},
+stringstyle=\color{Magenta},
+commentstyle=\color{red},
+deletekeywords={bin},
+morestring=[b][\color{Magenta}]{"},
+morestring=[b][\color{Magenta}]{'},
+emph=[1]{list, tuple, dict, set, array, zeros, ones, arange, linspace, append, extend, 
+         sum, mean, std, var, min, max, sort, reshape, flatten, transpose,
+         cumsum},
+emphstyle=[1]{\color{NavyBlue}},
+emph=[2]{np, numpy, matplotlib, plt, pandas, pd},
+emphstyle=[2]{\color{Purple}},
+emph=[3]{bin},
+emphstyle=[3]{\color{black}},
+autogobble=true,
+belowskip=-7mm,
+aboveskip=0pt
+}
+
+\def\python{\lstinline[style=mypython, basicstyle=\ttfamily\color{python-basic}]}
+

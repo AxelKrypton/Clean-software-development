@@ -34,8 +34,8 @@ What will save you a lot of pain:
 \frame{\frametitle{Toward these goals}
 \begin{itemize}
 \item Bring data into common format
-% Example: Graduate student asks me to analyze data,
-% format different between data sets
+% Example: Ising code that handles all the different input
+% strings of student 
 \begin{itemize}
 \item Makes it easier to write/debug scripts
 \item Helps next person using your work
@@ -45,8 +45,17 @@ What will save you a lot of pain:
 \begin{itemize}
 \item Label files, parameters, output the same way
 \item Use the same file type whenever reasonable
-% Example: Code outputs hdf5 files, pickle files, plain text
+% Example: The perlmutter run having .p, and .h5 input, so separate processing
+% required 
 \end{itemize}
+\item PERFORM CHECKS AS YOU GO
+% What filetype should I use?
+% - use what your group is using
+% - don't compress small files
+% - csv, easiest for small files
+% - xml, json, yaml hierarchical, maybe appropriate for parameter files
+% - p, hdf5 not human readable. former at least is compressed
+% params.yaml actually a nice example
 \item Try to use already-existing data structures (e.g.
 \texttt{yaml} or \texttt{csv})
 \begin{itemize}

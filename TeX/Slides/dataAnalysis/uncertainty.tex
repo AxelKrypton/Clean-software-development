@@ -57,6 +57,9 @@ Can tackle both kinds of problems using \textbf{resampling}
 \end{frame}
 
 \begin{frame}{Resampling: Jackknife}
+\centering
+Create $N$ new samples by dropping a measurement from old sample\\[5mm]
+\includegraphics[width=0.8\textwidth]{dataAnalysis/jackknife.pdf}
 \end{frame}
 
 \begin{frame}{Resampling: Jackknife}
@@ -64,8 +67,8 @@ Can tackle both kinds of problems using \textbf{resampling}
 $$
   X_{J,i}\equiv\frac{1}{N-1}\sum_{j\neq i}X_j
 $$
-Allow us to construct a \textbf{jackknife estimator}
-for the mean $\bar{f}_J$ by
+Construct asymptotically unbiased \textbf{jackknife estimator}
+for the mean $\bar{f}_J$:
 $$
   \bar{f}_J\equiv\frac{1}{N}\sum_{i=1}^N f_{J,i}
   ~~~~ ~~~~ ~~~~ f_{J,i}\equiv f(X_{J,i}) 
@@ -78,14 +81,26 @@ $$
 \end{frame}
 
 \begin{frame}{Resampling: Bootstrap}
+\centering
+\centering
+Create $N_{\textrm{boot}}$ new samples by drawing \\ with replacement
+from original sample $N$ times \\[5mm]
+\includegraphics[width=0.8\textwidth]{dataAnalysis/bootstrap.pdf}
 \end{frame}
 
 \begin{frame}{Resampling: Bootstrap}
-We construct the \textbf{bootstrap} mean in sample $i$ by
+We construct the \textbf{bootstrap bin} by
+
+\vspace{-3mm}
+
 $$
 X_{B,i}\equiv\frac{1}{N}\sum_{j=1}^Nn_{ij}X_j
 $$
-Just like jackknife, the \textbf{bootstrap estimator} is
+where $X_j$ appears $n_{ij}$ times in bin $i$.
+As with jackknife, the \textbf{bootstrap estimator}
+of the mean $\bar{f}_B$ is
+\vspace{-3mm}
+
 $$
   \bar{f}_B\equiv\frac{1}{N_{\textrm{boot}}}\sum_{i=1}^{N_{\textrm{boot}}} f_{B,i},
 ~~~~ ~~~~ ~~~~
