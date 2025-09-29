@@ -102,7 +102,8 @@ aboveskip=0pt
 %Colors for bash listings
 \colorlet{background-color}{gray!20}
 \colorlet{basic-color}{black}
-\colorlet{keywords-color}{Goldenrod}
+%\colorlet{keywords-color}{Goldenrod}
+\colorlet{keywords-color}{Cyan}
 \colorlet{comment-color}{red!95!black}
 \colorlet{strings-color}{ForestGreen}
 \colorlet{builtins-color}{MediumBlue!90!black}
@@ -116,7 +117,7 @@ aboveskip=0pt
 \savebox\mypostbreak{\raisebox{-1.5pt}[0ex][0ex]{\ensuremath{\color{gray}\hookrightarrow\space}}}
 
 \lstdefinestyle{MyBash}{
-    backgroundcolor=\color{background-color},
+    %backgroundcolor=\color{background-color},
     breakatwhitespace=false,
     breaklines=true,
     postbreak=\usebox\mypostbreak,

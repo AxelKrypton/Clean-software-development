@@ -5,14 +5,14 @@
 \frame{\frametitle{Validation strategies}
 \justifying
 Here are some ideas to check consistency of code output.
-I think of them as Cross Checks.
+I think of them as Cross Checks (CC).
 Some are the \textbf{same checks you do in physics}.
 What I use most commonly (no particular order, not exhaustive, not disjoint):
 \begin{enumerate}
 \item Compare against trusted result
 % can be from literature, another code base, etc 
 \item Compute a result multiple ways
-\item Check for consistency between observables
+\item Check for consistency between outputs
 % for example if one obs is the derivative of the other,
 % that constrains how they must be related
 \item Check known properties
@@ -28,7 +28,7 @@ Often a starting point:
 \begin{varblock}{example}[\textwidth]{Particularly nice example:}
 Bayesian model averaging gives a way to systematically incorporate systematic
 uncertainty from model choice (e.g. choice of fit function, number of discarded data)
-into total uncertainty. Linked paper gives a mock example that you can
+into total uncertainty. Linked paper above gives a mock example that you can
 directly reproduce.\\[2mm] 
 \includegraphics[width=0.8\linewidth]{dataAnalysis/BMAPaperExample.pdf}
 \end{varblock}
@@ -70,7 +70,7 @@ Other sources of ``trusted" results:
 \item If you already went through the trouble of doing one of these comparisons,
 \textbf{you may as well add it to your tests}
 \end{itemize}
-\begin{varblock}{example}[\textwidth]{Examples:}
+\begin{varblock}{example}[\textwidth]{Examples}
 \begin{itemize}
 \item LQCD: work out result for small lattice with all matrices set to
 1
@@ -123,30 +123,81 @@ acintj[1:] = np.cumsum(2*acorj[1:]/acorj[0],axis=0) + 1
 \end{varblock}
 \end{frame}
 
-\frame{\frametitle{CC3: Check for consistency between observables}
-Two observables may be constrained by relationships between them.
+
+\frame{\frametitle{CC3: Check for consistency between outputs}
+Observables may be constrained by relationships between them.
 Design tests that ensure observables obey these known constraints.
-% Acceleration/velocity?
-% What kinds of checks did Frithjof do?
-% Maybe one of your checks from material params
-% "round-trip" checks
+\begin{varblock}{example}[\textwidth]{Examples}
+\begin{itemize}
+\item Speed, velocity, acceleration
+\item $n_B$ and $p$ as function of $\mu_B$
+\item Gibbs-Duhem: $Ts=\epsilon+p-\sum_i\mu_in_i$
+\item $f\left(f^{-1}\left(x\right)\right)=x$
+\end{itemize}
+\end{varblock}
 }
 
 
-\frame{\frametitle{CC4: Check known properties}
-Depending on an observable's interpretation, you may 
-already know some properties it must have. Test them!
+\begin{frame}[fragile]{CC3: Check for consistency between outputs}
+\begin{varblock}{example}[\textwidth]{Ex: Round-trip test}
+Sometimes you will transform your data, for example when switching
+between different formats. A \textbf{round-trip} test checks that
+data remain consistent and accurate through these transformations.
+\vspace{3mm}
+\begin{lstlisting}[style=mypython]
+# Make test table
+ref = latexTable()
+ref.append(['1','2','3'])
+ref.append(['1','2','3'])
+ref.writeTable('testInterface.tex')
 
-\begin{varblock}{example}[\textwidth]{Examples:}
+# Round-trip test
+convertTable('testInterface.tex','testInterface.csv',
+             targetDelimiter=',')
+test.readTable('testInterface.csv',delimiter=',')
+lpass *= test==ref
+\end{lstlisting}
+\end{varblock}
+\end{frame}
+
+
+\frame{\frametitle{CC4: Check known properties}
+\centering
+Depending on an observable's interpretation, you may 
+already \\ know some properties it must have. Test them!
+\begin{varblock}{example}[\textwidth]{Examples}
 \begin{itemize}
 \item is your covariance matrix positive semidefinite?
 \item is your unitary matrix actually unitary?
 \item is your RHMC reversible?
 \item is your probability between 0 and 1?
+\item are physical observables at physical parameters real?
 \end{itemize}
 \end{varblock}
-
 }
+
+
+\begin{frame}[fragile]{CC4: Check known properties} 
+\begin{varblock}{example}[\textwidth]{Ex: A check for SU$(N)$ class methods} 
+\begin{lstlisting}[style=mypython]
+class SUN(np.ndarray):
+    ...
+    def isSUN(self) -> bool:
+        """ Check that I have det=1 and am unitary. """
+        if not (isSpecial(self) and isUnitary(self)):
+            return False
+        return True
+
+class SU3(SUN):
+    ...
+
+g = SU3()
+g.setToRandom()
+
+lpass *= g.isSUN()
+\end{lstlisting}
+\end{varblock}
+\end{frame}
 
 
 \frame{\frametitle{CC5: Verify independence of hyperparameters}
@@ -170,5 +221,10 @@ already know some properties it must have. Test them!
 \end{itemize}
 }
 
+
+\frame{\frametitle{CC5: Verify independence of hyperparameters}
+\centering
+%\includegraphics[width=0.8\linewidth]{dataAnalysis/jackknife_plateau.pdf}
+}
 
 
