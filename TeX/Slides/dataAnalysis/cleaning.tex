@@ -22,11 +22,12 @@ ensuring data can be \textbf{readily used and reproduced}.\\[5mm]
 \frame{\frametitle{Practical goals for your own work}
 What will save you a lot of pain:
 \begin{itemize}
-\item You know where your data is
+\item You know where your data are
 \item You can read your old data
-\item Sufficient metadata to know what your data means
+\item Sufficient metadata to know what your data mean
 \item You can tell if your data got damaged 
-\item Your data is homogeneous and/or well organized
+\item Your data are homogeneous and/or well organized
+\item Your data don't burden supercomputers
 \end{itemize}
 }
 
@@ -39,16 +40,15 @@ What will save you a lot of pain:
 \begin{itemize}
 \item Makes it easier to write/debug scripts
 \item Helps next person using your work
-\item Opportunity for cross-checks
 \end{itemize}
 \item Stay consistent with conventions
 \begin{itemize}
 \item Label files, parameters, output the same way
 \item Use the same file type whenever reasonable
+\item Follow your group's conventions
 % Example: The perlmutter run having .p, and .h5 input, so separate processing
 % required 
 \end{itemize}
-\item PERFORM CHECKS AS YOU GO
 % What filetype should I use?
 % - use what your group is using
 % - don't compress small files
@@ -62,14 +62,109 @@ What will save you a lot of pain:
 \item Everyone can leverage already-existing tools
 \item Lots of information about format structure 
 \end{itemize}
-\item Label your columns
-\item Add \texttt{README.md} for supplemental information
-\item \textbf{Don't overcomplicate things!}
-% Yes, you will technically save a small amount of disc space
-% if output in a binary format... Your table is 1000 lines long
-% and there's only 10 of them. Was that really necessary? Now
-% I have to write a script just to read your output.
 \end{itemize}
 }
+
+
+\frame{\frametitle{Toward these goals}
+\begin{itemize}
+\item Select a format appropriate for the data
+\begin{itemize}
+\item There is value in data being human-readable
+\item Does a 300KB file really need to be a binary?
+\item Do you really need to invent a file format from scratch?
+\item Parameter files: \texttt{yaml}, \texttt{xml}, \texttt{json}
+\item Large data files: \texttt{npy} or group's preferred binary
+\end{itemize}
+\item \texttt{tar} together large collections of small files
+\item Add \texttt{README.md} for supplemental information
+\item \textbf{Perform Cross Checks as you go along!} 
+\end{itemize}
+\vspace{6mm}
+
+\centering
+In general, \textbf{don't overcomplicate things!}
+}
+
+\begin{frame}[fragile]{Inconsistent conventions}
+\begin{varblock}{example}[\textwidth]{Ex: Unifying different labels}
+\begin{lstlisting}[style=mypython]
+# 3 models, 3 different labels for the scaling layer
+if MLmodel == 'Bachtis-Aarts-Lucini-Model':
+    SL = f'ScaleT{int(scalingLayer)}'
+elif MLmodel == 'Fixedparam':
+    SL = f'Results_ScaleT{scalingLayer}'
+elif MLmodel == 'BBased':
+    SL = f'Scale{int(scalingLayer)}'
+
+confs  , Ps = readTable(f'{MLmodel}/{SL}/{T}.d')
+confs_E, Es = readTable(f'energy/{T}.d')
+
+for i,conf_M in enumerate(confs_M): # RW needs correct MCMC order
+    if conf_M != confs_P[i]:
+        logger.TBError(f'MCMC order incorrect for T={T}')
+...
+
+# Make SL convention consistent; don't make a new label
+writeTable(f'prediction_{MLmodel}_Scale{SL}_T{T}',
+           confs, Ps, header=['conf','P'])
+\end{lstlisting}
+\end{varblock}
+\end{frame}
+
+
+\begin{frame}[fragile]{Responsible bookkeeping}
+\begin{varblock}{example}[\textwidth]{Ex: Where are the data?}
+\begin{lstlisting}[style=mypython]
+repo = repository()
+repo.append(ensemble(Nt=6, Ns=36, beta=5.85, location='JUWELS',
+                     folder='/p/arch2/bipardata/schmidt3',
+                     notes='imaginary mu', kind='conf',
+                     Nf='2+1', ml=0.00347, ms=0.0938,
+                     date='30-06-2025', creator='BiePar'))
+...
+repo.table()
+
+# Nf  ml/ms  Nt   beta   location folder
+ 2+1  phys   4    5.85   JUWELS   /p/arch2/bipardata/clarke1
+ 2+1  phys   4    5.9    JUWELS   /p/arch2/bipardata/clarke1
+ 2+1  phys   6    5.85   JUWELS   /p/largedata2/bipardata/schmidt3
+ 2+1  phys   6    6.17   JUWELS   /p/largedata2/bipardata/clarke1
+ 2+1  phys   6    6.325  JUWELS   /p/largedata2/bipardata/clarke1
+ 2+1  phys   8    6.135  JUWELS   /p/largedata2/bipardata/schmidt3
+\end{lstlisting}
+\vspace{3mm}
+
+\centering
+Can use \URL*{https://rmp.physik.uni-bielefeld.de/}{Redmine} if you're in the CRC.
+\end{varblock}
+\end{frame}
+
+
+\begin{frame}[fragile]{Responsible data management}
+\begin{varblock}{example}[\textwidth]{Ex: Archiving data}
+Aggregating files helps lessen the burden for supercomputers when backing up
+files, storing their location, etc. Anyway you will have a file limit. Good time
+to add a \textbf{checksum} to verify data integrity.
+\vspace{2mm}
+
+\begin{lstlisting}[style=MyBash]
+function _archive { # _archive subfolder
+  local subfolder=$1
+  if [ -d ${subfolder} ]; then 
+    tar -cf ${subfolder}.tar ${subfolder}
+    md5sum ${subfolder}.tar > ${subfolder}.md5
+  fi
+}
+
+function _unarchive { # _unarchive subfolder.tar
+  local archive=$1
+  if [ -f ${archive}.md5 ]; then md5sum -c ${archive}.md5; fi
+  _checkForFail $? "md5sum"
+  tar -xf ${archive}
+}
+\end{lstlisting}
+\end{varblock}
+\end{frame}
 
 
