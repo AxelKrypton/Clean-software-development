@@ -20,6 +20,11 @@ You will need the [Yanone Kaffeesatz font](https://fonts.google.com/specimen/Yan
 There is a _Makefile_ in the ***TeX*** folder and the `lualatex` compiler (and a TeX distribution not older than 2020) is required to compile the documents.
 Use e.g. `DAY=1 make slide` from within the ***TeX*** folder to compile Day 1 material.
 
+## License
+
+The [LICENSE file](LICENSE) included in this repository refer to authors original material and work.
+Third-party content included in the slides with respective source might undergo to different licenses and the reader is expected to verify this aspect and comply with those.
+
 ---
 
 ## Table of content
@@ -107,6 +112,6 @@ Practical sessions have been omitted (refer to the training schedule in the slid
   - [ ] Day 4
   - [X] Day 5
 
-- [ ] Practical sessions
-  - [ ] Try some Day 3 TDD tasks
-  - [ ] Solve Day 4 tasks
+- [X] Practical sessions
+  - [X] Try some Day 3 TDD tasks
+  - [X] Solve Day 4 tasks
