@@ -23,6 +23,28 @@
 \end{onlyenv}
 \end{frame}
 
+
+\begin{frame}[fragile]{Ex: Are these data consistent?}
+\begin{varblock}{example}[\textwidth]{Ex: Are these data consistent?}
+Hard to tell looking at raw data. Much easier to see with plots.
+In Python, \texttt{matplotlib} naturally integrates with your scripts,
+but use whatever you are comfortable with, e.g. \texttt{gnuplot}. 
+\begin{lstlisting}[style=mypython]
+
+# Custom wrappers for common matplotlib tasks
+ax1, ax2 = getTwinAxes()
+plot_lines(t,speed,marker=None,color='red' ,label='$v$',ax=ax1)
+plot_lines(t,accel,marker=None,color='blue',label='$a$',ax=ax2)
+
+# Save people effort decoding your graph by labelling axes
+set_params(xlabel='$t$ [s]',ylabel='[m/s]'    ,ax=ax1)
+set_params(                 ylabel='[m/s$^2$]',ax=ax2)
+
+plt.show()
+\end{lstlisting}
+\end{varblock}
+\end{frame}
+
 % maybe work out pressure and baryon number example:
 % - used webplotdigitizer to get HRG data from hotqcd
 % - wrote test to compare pressure against that
@@ -32,4 +54,41 @@
 \centering
 \includegraphics[width=0.8\textwidth]{dataAnalysis/speed_accel.pdf}
 \end{frame}
+
+
+\begin{frame}{Extracting data from a plot}
+Sometimes need data from a plot that has no corresponding table.
+Here, I wanted to cross check my HRG energy density against RHS figure.
+
+\vspace{3mm}
+\centering
+\includegraphics[width=0.8\textwidth]{dataAnalysis/EoSpaperPressurePlot.pdf}\\
+\vspace{3mm}
+Can use tools like \URL*{https://automeris.io/}{WebPlotDigitizer}
+\end{frame}
+
+
+\begin{frame}{Ex: WebPlotDigitizer}
+\centering
+\includegraphics[width=\textwidth]{dataAnalysis/webPlotDigitizer.png}
+\end{frame}
+
+
+\begin{frame}[fragile]{Ex: WebPlotDigitizer}
+\small
+\begin{verbatim}
+        #          T [MeV]              e/T^4
+        130                 2.325581395348838
+        135.35885167464113  2.691029900332227
+        140.33492822966508  2.990033222591364
+        145.31100478468898  3.355481727574751
+        ...
+\end{verbatim}
+
+\centering
+\includegraphics[width=0.5\textwidth]{dataAnalysis/e_div_T4.pdf}
+
+\end{frame}
+
+
 

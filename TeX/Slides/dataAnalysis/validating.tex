@@ -222,9 +222,22 @@ lpass *= g.isSUN()
 }
 
 
-\frame{\frametitle{CC5: Verify independence of hyperparameters}
-\centering
-%\includegraphics[width=0.8\linewidth]{dataAnalysis/jackknife_plateau.pdf}
-}
+\begin{frame}[fragile]{CC5: Verify independence of hyperparameters}
+\begin{varblock}{example}[\textwidth]{Ex: Convergence of fitter}
+\begin{lstlisting}[style=mypython]
+#    tol           res[0]     chi^2/d.o.f.
+ 1.0e+00  -1.34121869e+00   5.76571040e-01
+ 5.0e-01  -1.94341345e+00   2.59652760e-01
+ 1.0e-01  -1.94341345e+00   2.59652760e-01
+ 1.0e-02  -1.94341345e+00   2.59652760e-01
+\end{lstlisting}
+\end{varblock}
+\end{frame}
 
+
+\begin{frame}[fragile]{CC5: Verify independence of hyperparameters}
+\begin{varblock}{example}[\textwidth]{Ex: Jackknife bins}
+\includegraphics[width=0.7\linewidth]{dataAnalysis/jackknife_plateau.pdf}
+\end{varblock}
+\end{frame}
 
