@@ -56,11 +56,13 @@ Susceptibility $\chi$ is already a variance. How to get its uncertainty?\\[5mm]
 Can tackle both kinds of problems using \textbf{resampling}
 \end{frame}
 
+
 \begin{frame}{Resampling: Jackknife}
 \centering
 Create $N$ new samples by dropping a measurement from old sample\\[5mm]
 \includegraphics[width=0.8\textwidth]{dataAnalysis/jackknife.pdf}
 \end{frame}
+
 
 \begin{frame}{Resampling: Jackknife}
 \textbf{Jackknifed} data are defined by
@@ -79,6 +81,40 @@ $$
   \bar\sigma^2_{f_J}=\frac{N-1}{N}\sum_{i=1}^N(f_{J,i}-\bar{f}_J)^2
 $$
 \end{frame}
+
+
+\begin{frame}[fragile]{Resampling: Jackknife}
+\begin{varblock}{example}[\textwidth]{Ex: Susceptibility}
+$
+\chi\equiv(V/T)\left(\langle|m|^2\rangle-\langle|m|\rangle^2\right)
+$
+
+\vspace{2mm}
+Can be handled by thinking of $|m|^2$ and $|m|$
+as two separate variables $x$ and $y$. Alternatively can think
+of susceptibility function $f$ as
+\vspace{2mm}
+
+$
+f(m)\,\propto\, \langle|m|^2\rangle-\langle|m|\rangle^2
+$
+
+\vspace{2mm}
+
+Either way, the important feature is $|m|^2$ and $|m|$\\
+\textbf{are divided into the exact same bins}. 
+
+\vspace{6mm}
+
+\begin{lstlisting}[style=mypython]
+def susc(m,V,T):
+    return (V/T)*( np.mean(m**2) - np.mean(m)**2 )
+
+chi, chi_err = jackknife(susc, M, args=(V,T), numb_blocks=20)
+\end{lstlisting}
+\end{varblock}
+\end{frame}
+
 
 \begin{frame}{Resampling: Bootstrap}
 \centering
