@@ -112,6 +112,6 @@ Practical sessions have been omitted (refer to the training schedule in the slid
   - [ ] Day 4
   - [X] Day 5
 
-- [ ] Practical sessions
-  - [ ] Try some Day 3 TDD tasks
-  - [ ] Solve Day 4 tasks
+- [X] Practical sessions
+  - [X] Try some Day 3 TDD tasks
+  - [X] Solve Day 4 tasks
