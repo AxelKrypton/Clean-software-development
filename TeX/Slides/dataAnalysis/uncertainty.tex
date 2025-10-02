@@ -2,58 +2,68 @@
 %===================================================================================================%
 
 \begin{frame}{Reminder: Mean and uncertainty}
-$$
-  C_0\to C_1\to C_2\to...
-$$
-Mean and variance estimated via
-$$
-  \bar{X}=\frac{1}{\nconf}\sum_{i=1}^{\nconf} X_i
-~~~~ ~~~~ ~~~~
-\sigma^2=\frac{1}{\nconf-1}\sum_{i=1}^{\nconf}\left(X_i^2-\bar{X}^2\right)
-$$
-Problem: $C_i$ is generated as deformation of $C_{i-1}$. Hence $X_i$ and
-$X_{i-1}$ are correlated, and one can show 
-$$
-\sigma^2_X  
-= \tau_{\textrm{int}}\frac{\sigma^2}{\nconf}
-\neq \frac{\sigma^2}{\nconf}
-$$
-with \textbf{integrated autocorrelation time} $\tau_{\textrm{int}}$.
+    \vspace{-3mm}
+    \begin{varblock}{example}[0.9\textwidth]{$C_0\to C_1\to C_2\to...$}
+        Mean and variance estimated via
+        \vspace{-3mm}
+        $$
+          \bar{X}=\frac{1}{\nconf}\sum_{i=1}^{\nconf} X_i
+        ~~~~ ~~~~ ~~~~
+        \sigma^2=\frac{1}{\nconf-1}\sum_{i=1}^{\nconf}\left(X_i^2-\bar{X}^2\right)
+        $$
+    \end{varblock}
+    \begin{varblock}{alert}[\textwidth]{Problem:}
+        $C_i$ is generated as deformation of $C_{i-1}$. Hence $X_i$ and
+        $X_{i-1}$ are correlated: %, and one can show
+        \begin{equation*}
+            \sigma^2_X
+            = \tau_{\textrm{int}}\frac{\sigma^2}{\nconf}
+            \neq \frac{\sigma^2}{\nconf}
+        \end{equation*}
+        with \textbf{integrated autocorrelation time} $\tau_{\textrm{int}}$.
+    \end{varblock}
 \end{frame}
 
 \begin{frame}{Autocorrelation}
-$$
-\sigma^2_X  
-= \tau_{\textrm{int}}\frac{\sigma^2}{\nconf}
-$$
-Shows there are effectively $\nconf/\tau_{\textrm{int}}$ independent
-measurements. \\[3mm]
-
-Solutions? Let $M\in\mathbb{N}$ s.t. $M>\tau_{\textrm{int}}$
-\begin{itemize}
-\item \textbf{Decimation}: Keep only measurements $X_0$,
-$X_M$, $X_{2M}$, etc. 
-\item \textbf{Binning}: Construct $Y_0$ as average over first $M$ measurements,
-$Y_1$ as average over the next $M$, etc.
-\end{itemize}
+    \begin{varblock*}{alert}[0.93\textwidth]{}
+        The relation
+        $$
+        \sigma^2_X
+        = \tau_{\textrm{int}}\frac{\sigma^2}{\nconf}
+        $$
+        shows there are effectively $\nconf/\tau_{\textrm{int}}$ independent
+        measurements.
+    \end{varblock*}
+    \begin{varblock*}{example}[0.88\textwidth]{Solutions?}
+        Let $M\in\mathbb{N}$ s.t. $M>\tau_{\textrm{int}}$
+        \begin{itemize}
+            \item \textbf{Decimation}: Keep only measurements $X_0$,
+            $X_M$, $X_{2M}$, etc.
+            \item \textbf{Binning}: Construct $Y_0$ as average over first $M$ measurements,
+            $Y_1$ as average over the next $M$, etc.
+        \end{itemize}
+    \end{varblock*}
 \end{frame}
 
 \begin{frame}{Tricky uncertainties}
+\begin{columns}
+    \begin{column}{0.9\textwidth}
+        Given $\{X_1,...,X_N\}$. Consider some function $f(X)$
+        \begin{itemize}
+        \item How to get unbiased estimate of $\langle f(X)\rangle$?
+        \item What if $f$ is too complicated for error propagation?
+        \end{itemize}
 
-Given $\{X_1,...,X_N\}$. Consider some function $f(X)$
-\begin{itemize}
-\item How to get unbiased estimate of $\langle f(X)\rangle$?
-\item What if $f$ is too complicated for error propagation?
-\end{itemize} 
+        \vspace{5mm}
 
-\vspace{5mm}
+        $$
+        \chi\equiv\frac{V}{T}\left(\langle|m|^2\rangle-\langle|m|\rangle^2\right)
+        $$
+        Susceptibility $\chi$ is already a variance. How to get its uncertainty?\\[5mm]
 
-$$
-\chi\equiv\frac{V}{T}\left(\langle|m|^2\rangle-\langle|m|\rangle^2\right)
-$$
-Susceptibility $\chi$ is already a variance. How to get its uncertainty?\\[5mm]
-
-Can tackle both kinds of problems using \textbf{resampling}
+        Can tackle both kinds of problems using \textbf{resampling}
+    \end{column}
+\end{columns}
 \end{frame}
 
 
@@ -73,9 +83,9 @@ Construct asymptotically unbiased \textbf{jackknife estimator}
 for the mean $\bar{f}_J$:
 $$
   \bar{f}_J\equiv\frac{1}{N}\sum_{i=1}^N f_{J,i}
-  ~~~~ ~~~~ ~~~~ f_{J,i}\equiv f(X_{J,i}) 
+  ~~~~ ~~~~ ~~~~ f_{J,i}\equiv f(X_{J,i})
 $$
-The jackknife estimator for the 
+The jackknife estimator for the
 variance of $\bar{f}_J$ is
 $$
   \bar\sigma^2_{f_J}=\frac{N-1}{N}\sum_{i=1}^N(f_{J,i}-\bar{f}_J)^2
@@ -102,7 +112,7 @@ $
 \vspace{2mm}
 
 Either way, the important feature is $|m|^2$ and $|m|$\\
-\textbf{are divided into the exact same bins}. 
+\textbf{are divided into the exact same bins}.
 
 \vspace{6mm}
 
@@ -118,7 +128,6 @@ chi, chi_err = jackknife(susc, M, args=(V,T), numb_blocks=20)
 
 \begin{frame}{Resampling: Bootstrap}
 \centering
-\centering
 Create $N_{\textrm{boot}}$ new samples by drawing \\ with replacement
 from original sample $N$ times \\[5mm]
 \includegraphics[width=0.8\textwidth]{dataAnalysis/bootstrap.pdf}
@@ -126,9 +135,7 @@ from original sample $N$ times \\[5mm]
 
 \begin{frame}{Resampling: Bootstrap}
 Data are {\it bootstrapped} as
-
-\vspace{-3mm}
-
+\vspace{-4mm}
 $$
 X_{B,i}\equiv\frac{1}{N}\sum_{j=1}^Nn_{ij}X_j
 $$
@@ -150,15 +157,18 @@ $$
 \end{frame}
 
 \begin{frame}{Synthesis}
-When some function $f$ of data $X_i$ from a time series
-\begin{enumerate}
-\item Bin the $X_i$ into $X_{B,j}$
-\item Resample the $X_{B,j}$ (can be combined with first step)
-\item Compute $f(X_{B,j})$ in each resample
-\end{enumerate}
-
-\vspace{9mm}
-
-\centering
-\textbf{Question for you: How can we validate these results?}
+    \begin{varblock*}{}[0.82\textwidth]{When some function $f$ of data $X_i$ from a time series}
+        \begin{enumerate}
+        \item Bin the $X_i$ into $X_{B,j}$
+        \item Resample the $X_{B,j}$ (can be combined with first step)
+        \item Compute $f(X_{B,j})$ in each resample
+        \end{enumerate}
+    \end{varblock*}
+    \begin{center}
+        \Emoji[\Huge]{raised-hands}
+    \end{center}
+    \vspace{-3mm}
+    \begin{varblock}{alert}[0.7\textwidth]{Question for you}
+        \large\textbf{How can we validate these results?}
+    \end{varblock}
 \end{frame}

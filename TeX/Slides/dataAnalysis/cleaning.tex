@@ -2,8 +2,13 @@
 %===================================================================================================%
 
 \begin{frame}[fragile]{The issue}
-Eventually you will come across data from many different
-people/groups. Possible problems:
+\vspace{-3mm}
+\begin{center}
+    \textbf{Eventually you will come across data from many different
+people/groups.}
+\end{center}
+\vspace{-3mm}
+\begin{varblock}{alert}[0.6\textwidth]{Possible problems:}
 \begin{itemize}
 \item Different conventions
 \item Different data formats
@@ -11,24 +16,25 @@ people/groups. Possible problems:
 \item Damaged/lost/unlabelled files
 \item Straight-up wrong numbers
 \end{itemize}
-\vspace{5mm}
-\centering
-We are in an era where significant effort is put into\\
-ensuring data can be \textbf{readily used and reproduced}.\\[5mm]
-\centering
-\URL*{https://www.nature.com/articles/sdata201618}{~The FAIR guiding princple}
+\end{varblock}
+\begin{varblock}{}[0.75\textwidth]{}
+    We are in an era where significant effort is put into\\
+    ensuring data can be \textbf{readily used and reproduced}.\\[1mm]
+    \URL*{https://www.nature.com/articles/sdata201618}{~The FAIR guiding princple}
+\end{varblock}
 \end{frame}
 
 \frame{\frametitle{Practical goals for your own work}
-What will save you a lot of pain:
+\begin{varblock}{example}[0.85\textwidth]{What will save you a lot of pain:}
 \begin{itemize}
 \item You know where your data are
 \item You can read your old data
 \item Sufficient metadata to know what your data mean
-\item You can tell if your data got damaged 
+\item You can tell if your data got damaged
 \item Your data are homogeneous and/or well organized
 \item Your data don't burden supercomputers
 \end{itemize}
+\end{varblock}
 }
 
 
@@ -36,7 +42,7 @@ What will save you a lot of pain:
 \begin{itemize}
 \item Bring data into common format
 % Example: Ising code that handles all the different input
-% strings of student 
+% strings of student
 \begin{itemize}
 \item Makes it easier to write/debug scripts
 \item Helps next person using your work
@@ -47,7 +53,7 @@ What will save you a lot of pain:
 \item Use the same file type whenever reasonable
 \item Follow your group's conventions
 % Example: The perlmutter run having .p, and .h5 input, so separate processing
-% required 
+% required
 \end{itemize}
 % What filetype should I use?
 % - use what your group is using
@@ -60,7 +66,7 @@ What will save you a lot of pain:
 \texttt{yaml} or \texttt{csv})
 \begin{itemize}
 \item Everyone can leverage already-existing tools
-\item Lots of information about format structure 
+\item Lots of information about format structure
 \end{itemize}
 \end{itemize}
 }
@@ -78,12 +84,11 @@ What will save you a lot of pain:
 \end{itemize}
 \item \texttt{tar} together large collections of small files
 \item Add \texttt{README.md} for supplemental information
-\item \textbf{Perform Cross Checks as you go along!} 
+\item \textbf{Perform Cross Checks as you go along!}
 \end{itemize}
-\vspace{6mm}
-
-\centering
-In general, \textbf{don't overcomplicate things!}
+\begin{varblock}{alert}[0.8\textwidth]{}
+    \Large\alert{In general, \textbf{don't overcomplicate things!}}
+\end{varblock}
 }
 
 \begin{frame}[fragile]{Inconsistent conventions}
@@ -142,29 +147,28 @@ Can use \URL*{https://rmp.physik.uni-bielefeld.de/}{Redmine} if you're in the CR
 
 
 \begin{frame}[fragile]{Responsible data management}
+\vspace{-2mm}
 \begin{varblock}{example}[\textwidth]{Ex: Archiving data}
 Aggregating files helps lessen the burden for supercomputers when backing up
 files, storing their location, etc. Anyway you will have a file limit. Good time
 to add a \textbf{checksum} to verify data integrity.
-\vspace{2mm}
-
-\begin{lstlisting}[style=MyBash]
+\begin{lstlisting}[style=MyBash, aboveskip=3mm, belowskip=-8mm]
 function _archive { # _archive subfolder
   local subfolder=$1
-  if [ -d ${subfolder} ]; then 
-    tar -cf ${subfolder}.tar ${subfolder}
-    md5sum ${subfolder}.tar > ${subfolder}.md5
+  if [ -d "${subfolder}" ]; then
+    tar -cf "${subfolder}.tar" "${subfolder}"
+    md5sum "${subfolder}.tar" > "${subfolder}.md5"
   fi
 }
-
 function _unarchive { # _unarchive subfolder.tar
   local archive=$1
-  if [ -f ${archive}.md5 ]; then md5sum -c ${archive}.md5; fi
+  if [ -f "${archive}.md5" ]; then md5sum -c "${archive}.md5"; fi
   _checkForFail $? "md5sum"
-  tar -xf ${archive}
+  tar -xf "${archive}"
 }
 \end{lstlisting}
 \end{varblock}
+\FrameRemark{Large tarballs can also be split in chuncks and later recombined.}
 \end{frame}
 
 

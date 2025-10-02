@@ -102,8 +102,8 @@ aboveskip=0pt
 %Colors for bash listings
 \colorlet{background-color}{gray!20}
 \colorlet{basic-color}{black}
-%\colorlet{keywords-color}{Goldenrod}
-\colorlet{keywords-color}{Cyan}
+\colorlet{keywords-color}{Goldenrod}
+%\colorlet{keywords-color}{Cyan}
 \colorlet{comment-color}{red!95!black}
 \colorlet{strings-color}{ForestGreen}
 \colorlet{builtins-color}{MediumBlue!90!black}
@@ -159,9 +159,9 @@ aboveskip=0pt
     literate={~}{{\textasciitilde}}1,
     alsoletter=0123456789![]/\{\}.:+, % This to mark the symbols in keyword/emph[5] to be highlighted (otherkeywords does not work i.e. it highlights also in comments!) -> manual at page 45
     morekeywords={if, then, else, elif, fi, case, esac, for, select, while, until, do, done, in, function, time, [[, ]], \{, \}, !, coproc}, %https://askubuntu.com/a/513712
-    emph=[1]{},
+    emph=[1]{_archive, _unarchive, _checkForFail},
     emphstyle=[1]{\color{functions-color}}, %Functions
-    emph=[2]{br},
+    emph=[2]{br, archive, subfolder},
     emphstyle=[2]{\color{variables-color}}, %Variables
     emph=[4]{},
     emphstyle=[4]{\color{environment-color}}, %Environment variables
@@ -169,7 +169,7 @@ aboveskip=0pt
     emphstyle=[5]{\color{builtins-color}}, %Shell built-in
     emph=[6]{man, apropos, ls, rm, g++, chmod, cp, awk, sed, cut, perl, args, date, grep, sleep, tput, seq, cat, wc, sort, uniq, tail,
         head, sdiff, tar, mktemp, mkdir, ps, emacs, systemd, timeout, parallel, xargs, gnuplot, pdflatex, vi, ping, bash,
-        egrep, shuf, stat, find, fgrep, bc, tr, paste, expr, diff, touch, git},
+        egrep, shuf, stat, find, fgrep, bc, tr, paste, expr, diff, touch, git, md5sum},
     emphstyle=[6]{\color{external-color}}, %(External) commands
     emph=[7]{},
     emphstyle=[7]{\color{variables-color}}, %Class for local variables (usually with bad names)
@@ -235,7 +235,7 @@ commentstyle=\color{red},
 deletekeywords={bin},
 morestring=[b][\color{Magenta}]{"},
 morestring=[b][\color{Magenta}]{'},
-emph=[1]{list, tuple, dict, set, array, zeros, ones, arange, linspace, append, extend, 
+emph=[1]{list, tuple, dict, set, array, zeros, ones, arange, linspace, append, extend,
          sum, mean, std, var, min, max, sort, reshape, flatten, transpose,
          cumsum},
 emphstyle=[1]{\color{NavyBlue}},

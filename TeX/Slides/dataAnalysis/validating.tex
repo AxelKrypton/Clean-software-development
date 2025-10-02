@@ -3,23 +3,29 @@
 
 
 \frame{\frametitle{Validation strategies}
-\justifying
-Here are some ideas to check consistency of code output.
-I think of them as Cross Checks (CC).
-Some are the \textbf{same checks you do in physics}.
-What I use most commonly (no particular order, not exhaustive, not disjoint):
-\begin{enumerate}
-\item Compare against trusted result
-% can be from literature, another code base, etc 
-\item Compute a result multiple ways
-\item Check for consistency between outputs
-% for example if one obs is the derivative of the other,
-% that constrains how they must be related
-\item Check known properties
-% probabilities in [0,1]; 2d ising magnetization monotonic in T
-\item Verify independence of hyperparameters
-% dependence on jackknife bin size? solve tolerance? 
-\end{enumerate}
+\begin{varblock}{alert}[0.8\textwidth]{}
+    Here are some ideas to check consistency of code output.\\
+    \alert{I think of them as Cross Checks (CC).}\\
+    Some are the \textbf{same checks you do in physics}.
+\end{varblock}
+\begin{varblock}{}[0.7\textwidth]{What I use most commonly:}
+    \begin{enumerate}
+    \item Compare against trusted result
+    % can be from literature, another code base, etc
+    \item Compute a result multiple ways
+    \item Check for consistency between outputs
+    % for example if one obs is the derivative of the other,
+    % that constrains how they must be related
+    \item Check known properties
+    % probabilities in [0,1]; 2d ising magnetization monotonic in T
+    \item Verify independence of hyperparameters
+    % dependence on jackknife bin size? solve tolerance?
+    \end{enumerate}
+\end{varblock}
+\begin{center}
+    \footnotesize
+    The list above is not meant to have a particular order, is not exhaustive and not disjoint!
+\end{center}
 }
 
 \frame{\frametitle{CC1: Compare against trusted result}
@@ -29,40 +35,43 @@ Often a starting point:
 Bayesian model averaging gives a way to systematically incorporate systematic
 uncertainty from model choice (e.g. choice of fit function, number of discarded data)
 into total uncertainty. Linked paper above gives a mock example that you can
-directly reproduce.\\[2mm] 
-\includegraphics[width=0.8\linewidth]{dataAnalysis/BMAPaperExample.pdf}
+directly reproduce.\\[2mm]
+\includegraphics[width=0.7\linewidth]{dataAnalysis/BMAPaperExample.pdf}
 \end{varblock}
 }
 
 \frame{\frametitle{CC1: Compare against trusted result}
-Danger with reproducing: you \textbf{assume other calculation is correct}
+\begin{varblock}{alert}[0.9\textwidth]{Danger with reproducing: you \textbf{assume other calculation is correct}}
 \begin{itemize}
 \item Has the result already been reproduced?
 \item You could apply some Cross Checks to the trusted result
-\item 
+\item
 \URL*{https://www.annualreviews.org/content/journals/10.1146/annurev.nucl.55.090704.151521}{Blinding}
-can help against human bias: 
+can help against human bias:
 \begin{enumerate}
-\item Let $r\in[-R,R]$ unknown to you 
+\item Let $r\in[-R,R]$ unknown to you
 \item Rescale your observable by $r$
 \item Remove $r$ when you are confident in your calculation
 \end{enumerate}
 \end{itemize}
-\centering
-\vspace{1mm}
-\includegraphics[width=0.4\linewidth]{dataAnalysis/speedOfLight.pdf}
-~~~~~
-\includegraphics[width=0.4\linewidth]{dataAnalysis/epemToHadrons.pdf}
+\end{varblock}
+\begin{center}
+    \includegraphics[height=0.33\textheight]{dataAnalysis/speedOfLight.pdf}
+    \hspace{6mm}
+    \includegraphics[height=0.33\textheight]{dataAnalysis/epemToHadrons.pdf}
+\end{center}
 }
 
 \frame{\frametitle{CC1: Compare against trusted result}
+\begin{columns}
+\begin{column}{\dimexpr\paperwidth-20mm}
 Other sources of ``trusted" results:
 \begin{itemize}
 \item Can test against your old results to \textbf{ensure stability}
 \item Construct simple case you can \textbf{work out by hand}
 \begin{itemize}
 \item Set pieces of the test case to 0 or 1
-% LGT context: cold field 
+% LGT context: cold field
 \item Reduce the size of the test case
 % LGT context: small lattice
 % statistical context: sample with 4 measurements
@@ -70,6 +79,8 @@ Other sources of ``trusted" results:
 \item If you already went through the trouble of doing one of these comparisons,
 \textbf{you may as well add it to your tests}
 \end{itemize}
+\end{column}
+\end{columns}
 \begin{varblock}{example}[\textwidth]{Examples}
 \begin{itemize}
 \item LQCD: work out result for small lattice with all matrices set to
@@ -83,14 +94,31 @@ only.
 
 
 \begin{frame}[fragile]{CC2: Compute a result multiple ways}
-There's usually more than one way to solve a problem
-\begin{itemize}
-\item Check optimized implementation against easy-to-understand one
-\item Test different algorithms against each other
-\item Test different models against each other
-\end{itemize}
+\vspace{-5mm}
+\begin{varblock}{}[0.96\textwidth]{There's usually more than one way to solve a problem}
+    \setlength{\leftmargini}{6mm}
+    \begin{itemize}
+    \item Check optimized implementation against easy-to-understand one
+    \item Test different algorithms against each other
+    \item Test different models against each other
+    \end{itemize}
+\end{varblock}
 % Example of correlator class in GPU
 % Different integration techniques give same result
+\begin{columns}
+    \hfill
+    \begin{column}{0.35\textwidth}
+        \begin{center}
+            \includegraphics[width=\textwidth]{Rome-roads}
+        \end{center}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+        \begin{varblock*}{quote}[0.95\textwidth]{}[Augustus]
+            «Omnes viae Romam ducunt»\\ \then All roads lead to Rome
+        \end{varblock*}
+    \end{column}
+    \hfill
+\end{columns}
 \end{frame}
 
 \begin{frame}[fragile]{CC2: Compute a result multiple ways}
@@ -107,8 +135,8 @@ acintj = [[1.]*Nbins]
 for t in range(1,Nt+1):
     tauintbins = []
     for bin in range(Nbins):
-        tauintbins.append(  
-            acintj[t-1][bin] + 2*acorj[t][bin]/acorj[0][bin] 
+        tauintbins.append(
+            acintj[t-1][bin] + 2*acorj[t][bin]/acorj[0][bin]
         )
     acintj.append(tauintbins)
 \end{lstlisting}
@@ -127,7 +155,7 @@ acintj[1:] = np.cumsum(2*acorj[1:]/acorj[0],axis=0) + 1
 \frame{\frametitle{CC3: Check for consistency between outputs}
 Observables may be constrained by relationships between them.
 Design tests that ensure observables obey these known constraints.
-\begin{varblock}{example}[\textwidth]{Examples}
+\begin{varblock}{example}[0.7\textwidth]{Examples}
 \begin{itemize}
 \item Speed, velocity, acceleration
 \item $n_B$ and $p$ as function of $\mu_B$
@@ -163,9 +191,9 @@ lpass *= test==ref
 
 \frame{\frametitle{CC4: Check known properties}
 \centering
-Depending on an observable's interpretation, you may 
+Depending on an observable's interpretation, you may
 already \\ know some properties it must have. Test them!
-\begin{varblock}{example}[\textwidth]{Examples}
+\begin{varblock}{example}[0.85\textwidth]{Examples}
 \begin{itemize}
 \item is your covariance matrix positive semidefinite?
 \item is your unitary matrix actually unitary?
@@ -177,8 +205,8 @@ already \\ know some properties it must have. Test them!
 }
 
 
-\begin{frame}[fragile]{CC4: Check known properties} 
-\begin{varblock}{example}[\textwidth]{Ex: A check for SU$(N)$ class methods} 
+\begin{frame}[fragile]{CC4: Check known properties}
+\begin{varblock}{example}[0.85\textwidth]{Ex: A check for SU$(N)$ class methods}
 \begin{lstlisting}[style=mypython]
 class SUN(np.ndarray):
     ...
@@ -205,17 +233,17 @@ lpass *= g.isSUN()
 \item Parameter: Directly \textbf{model-relevant} number
 \begin{itemize}
 \item Temperature, volume, particle mass, coupling constant
-\item Fit parameters 
+\item Fit parameters
 \end{itemize}
 \item Hyperparameter: Needed \textbf{only for computational strategy}
 \begin{itemize}
 \item Jackknife bins, bootstrap samples
 \item Initial guess of a fitter
-\item Max iterations, solve tolerance, CNN kernel size 
+\item Max iterations, solve tolerance, CNN kernel size
 \end{itemize}
 \item Often only independent of hyperparameter \textbf{in some region}
 \begin{itemize}
-\item Number of jackknife bins until error bar plateaus 
+\item Number of jackknife bins until error bar plateaus
 \item Initial guesses leading to reasonable $\chi^2/{\rm d.o.f.}$
 \end{itemize}
 \end{itemize}
@@ -223,21 +251,34 @@ lpass *= g.isSUN()
 
 
 \begin{frame}[fragile]{CC5: Verify independence of hyperparameters}
-\begin{varblock}{example}[\textwidth]{Ex: Convergence of fitter}
+\begin{varblock}{example}[0.75\textwidth]{Ex: Convergence of fitter}
 \begin{lstlisting}[style=mypython]
-#    tol           res[0]     chi^2/d.o.f.
- 1.0e+00  -1.34121869e+00   5.76571040e-01
- 5.0e-01  -1.94341345e+00   2.59652760e-01
- 1.0e-01  -1.94341345e+00   2.59652760e-01
- 1.0e-02  -1.94341345e+00   2.59652760e-01
+#       tol           res[0]     chi^2/d.o.f.
+    1.0e+00  -1.34121869e+00   5.76571040e-01
+    5.0e-01  -1.94341345e+00   2.59652760e-01
+    1.0e-01  -1.94341345e+00   2.59652760e-01
+    1.0e-02  -1.94341345e+00   2.59652760e-01
 \end{lstlisting}
+\end{varblock}
+\begin{varblock}{example}[0.56\textwidth]{Another example}<uncover@2>
+    \begin{columns}
+        \hfill
+        \begin{column}{0.8\textwidth}
+            \includegraphics[width=\textwidth]{Logarithmic-convergence}
+        \end{column}
+        \begin{column}{0.08\textwidth}
+            \rotatebox{90}{
+                \Remark{Taken from \URL*{https://en.wikiversity.org/wiki/File:LogarithmicConvergence.png}{Wikipedia}}
+            }
+        \end{column}
+    \end{columns}
 \end{varblock}
 \end{frame}
 
 
 \begin{frame}[fragile]{CC5: Verify independence of hyperparameters}
-\begin{varblock}{example}[\textwidth]{Ex: Jackknife bins}
-\includegraphics[width=0.7\linewidth]{dataAnalysis/jackknife_plateau.pdf}
+\begin{varblock}{example}[0.8\textwidth]{Ex: Jackknife bins}
+\includegraphics[width=0.95\linewidth]{dataAnalysis/jackknife_plateau.pdf}
 \end{varblock}
 \end{frame}
 
