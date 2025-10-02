@@ -157,16 +157,13 @@ $$
 \end{frame}
 
 \begin{frame}{Synthesis}
-    \begin{varblock*}{}[0.82\textwidth]{When some function $f$ of data $X_i$ from a time series}
+    \begin{varblock*}{}[0.82\textwidth]{Computing some function $f$ of data $X_i$ from a time series}
         \begin{enumerate}
         \item Bin the $X_i$ into $X_{B,j}$
         \item Resample the $X_{B,j}$ (can be combined with first step)
         \item Compute $f(X_{B,j})$ in each resample
         \end{enumerate}
     \end{varblock*}
-    \begin{center}
-        \Emoji[\Huge]{raised-hands}
-    \end{center}
     \vspace{-3mm}
     \begin{varblock}{alert}[0.7\textwidth]{Question for you}
         \large\textbf{How can we validate these results?}
