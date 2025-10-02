@@ -2,38 +2,53 @@
 %===================================================================================================%
 
 \begin{frame}{The 2-$d$ Ising model}
-We are going to practice data cleaning and validation in the context
-of the 2-$d$ Ising model, a model for a magnet.
-\begin{itemize}
-\item One of the simplest magnet models
-\item Analytically solvable 
-\item Applications to phase transitions
-\item Pedagogical for phase transitions
-\end{itemize}
-We follow with an introduction/review so that everyone is on the same page.
+    \begin{varblock}{}[0.8\textwidth]{Our context}
+        We are going to practice data cleaning and validation in the context
+        of the 2-$d$ Ising model, a model for a magnet.
+    \end{varblock}
+
+    \begin{varblock}{example}[0.6\textwidth]{}
+    \setlength{\leftmargini}{7mm}
+    \begin{itemize}
+    \item One of the simplest magnet models
+    \item Analytically solvable
+    \item Applications to phase transitions
+    \item Pedagogical for phase transitions
+    \end{itemize}
+    \end{varblock}
+    \begin{center}
+        We follow with an introduction/review\\
+        so that everyone is on the same page.
+    \end{center}
 \end{frame}
 
 \begin{frame}{The 2-$d$ Ising model}
-\centering
-\includegraphics[width=0.8\textwidth]{dataAnalysis/isingModel.pdf}
-$$
-H=-J\sum_{\langle ij\rangle} \sigma_i \sigma_j
-~~~~~ ~~~~~ ~~~~~
-\textrm{pr}(C)\sim e^{-H(C)/T}
-$$
+    \vspace{5mm}
+    \centering
+    \includegraphics[width=0.8\textwidth]{dataAnalysis/isingModel.pdf}
+    $$
+    H=-J\sum_{\langle ij\rangle} \sigma_i \sigma_j
+    ~~~~~ ~~~~~ ~~~~~
+    \textrm{pr}(C)\sim e^{-H(C)/T}
+    $$
 \end{frame}
 
 \begin{frame}{Solving Ising with MCMC}
-Common strategy: Generate $\nconf$ configurations randomly, then
-estimate expectation value of observable $X$
-$$
-  \bar{X}=\frac{1}{\nconf}\sum_{i=1}^{\nconf} X_i
-$$
-Each $X_i=X(C_i)$ measured on $C_i$ from \textbf{Markov Chain}
-$$
-  C_0\to C_1\to C_2\to...
-$$
-Each $C_i$ drawn from $\textrm{pr}(C)$
+    \begin{varblock*}{example}[0.9\textwidth]{Common strategy:}
+        \hspace{0.05\textwidth}
+        \begin{minipage}{0.8\textwidth}
+            Generate $\nconf$ configurations randomly,\\
+            \then then estimate expectation value of observable $X$
+            $$
+              \bar{X}=\frac{1}{\nconf}\sum_{i=1}^{\nconf} X_i
+            $$
+            Each $X_i=X(C_i)$ measured on $C_i$ from \textbf{Markov Chain}
+            $$
+              C_0\to C_1\to C_2\to...
+            $$
+            Each $C_i$ drawn from $\textrm{pr}(C)$
+        \end{minipage}
+    \end{varblock*}
 \end{frame}
 
 \begin{frame}{Physics of the Ising model}
@@ -45,7 +60,7 @@ $$
 
 \vspace{-3mm}
 In $V\to\infty$ limit, $m$ gets a kink and $\chi$ diverges
-at the \textbf{critical temperature} $T_c$. 
+at the \textbf{critical temperature} $T_c$.
 \vspace{3mm}
 %At finite $V$, kink softens to curve, divergence to peak.
 
@@ -55,23 +70,31 @@ at the \textbf{critical temperature} $T_c$.
 \end{frame}
 
 \begin{frame}{Your task}
-Three scientists created 2-$d$ Ising model Markov chains, each managing
-a different $L$. They measured energy density and $m$ on each
-configuration.\\[2mm]
-\begin{enumerate}
-\item Develop code to bring all data to common format
-\item Write tests for your code!
-\item Calculate $\langle|m|\rangle$ and $\langle e\rangle$ $\forall~T$
-\item What other kinds of checks can you do?
-\end{enumerate}
-
-\vspace{3mm}
-
-\centering
-\includegraphics[width=0.3\textwidth]{dataAnalysis/eggwin.jpg}
-\includegraphics[width=0.3\textwidth]{dataAnalysis/beaktrix.jpg}
-\includegraphics[width=0.3\textwidth]{dataAnalysis/siegfried.jpg}\\
-\tiny{Eggwin\hspace{3.1cm}Beaktrix\hspace{3.1cm}Siegfried}
-
+    Three scientists created 2-$d$ Ising model Markov chains, each managing
+    a different $L$. They measured energy density and $m$ on each
+    configuration.\\[2mm]
+    \begin{enumerate}
+        \item Develop code to bring all data to common format
+        \item Write tests for your code!
+        \item Calculate $\langle|m|\rangle$ and $\langle e\rangle$ $\forall~T$
+        \item What other kinds of checks can you do?
+    \end{enumerate}
+    \vspace{2mm}
+    \begin{center}
+        \parbox[t]{0.26\textwidth}{
+            \centering\includegraphics[width=0.275\textwidth]{dataAnalysis/eggwin.jpg}\\[-3mm]
+            {\tiny Eggwin}
+        }
+        \hspace{2mm}
+        \parbox[t]{0.26\textwidth}{
+            \centering\includegraphics[width=0.275\textwidth]{dataAnalysis/beaktrix.jpg}\\[-3mm]
+            {\tiny Beaktrix}
+        }
+        \hspace{2mm}
+        \parbox[t]{0.26\textwidth}{
+            \centering\includegraphics[width=0.275\textwidth]{dataAnalysis/siegfried.jpg}\\[-3mm]
+            {\tiny Siegfried}
+        }
+    \end{center}
 \end{frame}
 

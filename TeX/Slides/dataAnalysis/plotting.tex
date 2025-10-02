@@ -8,9 +8,9 @@
 \item Gives further opportunities for cross checks!
 \end{itemize}
 \begin{onlyenv}<1>
-\begin{varblock}{example}[\textwidth]{Ex: Are these data consistent?}
+\begin{varblock}{example}[0.8\textwidth]{Ex: Are these data consistent?}
 \small
-\begin{verbatim}
+\begin{lstlisting}[style=MyPython]
 #          t [ms]      speed [m/s]    accel [m/s^2]
    0.00000000e+00   0.00000000e+00   0.00000000e+00
    1.00000000e+00   5.00000000e-01   1.00000000e+00
@@ -18,7 +18,7 @@
    3.00000000e+00   4.50000000e+00   3.00000000e+00
    4.00000000e+00   8.00000000e+00   4.00000000e+00
    5.00000000e+00   1.25000000e+01   5.00000000e+00
-\end{verbatim}
+\end{lstlisting}
 \end{varblock}
 \end{onlyenv}
 \end{frame}
@@ -28,7 +28,7 @@
 \begin{varblock}{example}[\textwidth]{Ex: Are these data consistent?}
 Hard to tell looking at raw data. Much easier to see with plots.
 In Python, \texttt{matplotlib} naturally integrates with your scripts,
-but use whatever you are comfortable with, e.g. \texttt{gnuplot}. 
+but use whatever you are comfortable with, e.g. \texttt{gnuplot}.
 \begin{lstlisting}[style=mypython]
 
 # Custom wrappers for common matplotlib tasks
@@ -75,19 +75,19 @@ Can use tools like \URL*{https://automeris.io/}{WebPlotDigitizer}
 
 
 \begin{frame}[fragile]{Ex: WebPlotDigitizer}
-\small
-\begin{verbatim}
-        #          T [MeV]              e/T^4
-        130                 2.325581395348838
-        135.35885167464113  2.691029900332227
-        140.33492822966508  2.990033222591364
-        145.31100478468898  3.355481727574751
-        ...
-\end{verbatim}
-
-\centering
-\includegraphics[width=0.5\textwidth]{dataAnalysis/e_div_T4.pdf}
-
+    \begin{varblock}{example}[0.58\textwidth]{}
+        \begin{lstlisting}[style=MyPython]
+             #          T [MeV]              e/T^4
+             130                 2.325581395348838
+             135.35885167464113  2.691029900332227
+             140.33492822966508  2.990033222591364
+             145.31100478468898  3.355481727574751
+             ...
+        \end{lstlisting}
+    \end{varblock}
+    \begin{center}
+        \includegraphics[width=0.5\textwidth]{dataAnalysis/e_div_T4.pdf}
+    \end{center}
 \end{frame}
 
 
