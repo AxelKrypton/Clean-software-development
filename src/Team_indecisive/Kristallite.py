@@ -22,7 +22,7 @@ from susi2 import susi2
     #lambda_=1.5406 #Wavelength in Angström
     #t=30 # thickness of the crystal in mu m
 #%%
-def crystallite(datdatei,lambda_,t):
+def crystallite(datdatei,lambda_,t,nseed):
 
     #incident beam along z-axis (normiert)
     Einfall=np.array([0, 0, 1])
@@ -34,7 +34,7 @@ def crystallite(datdatei,lambda_,t):
     a1,a2,a3,A=base_vector_tricline(aK,bK,cK,alpha,beta,gamma)
     
     # random orientation base vectors
-    random_rot = Rotation.random()
+    random_rot = Rotation.random(rng=nseed)
     Rotationsmatrix=random_rot.as_matrix()
     A_rotiert=Rotationsmatrix @ A
     
@@ -289,4 +289,5 @@ if __name__=="__main__":
     datdatei = os.path.join(os.path.dirname(__file__), "DATA/SILIZIUM.DAT")
     lambda_=1.5406 #Wavelength in Angström
     t=30 # thickness of the crystal in mu m
-    print(crystallite(datdatei,lambda_,t))
+    nseed=10
+    print(crystallite(datdatei,lambda_,t,nseed))
