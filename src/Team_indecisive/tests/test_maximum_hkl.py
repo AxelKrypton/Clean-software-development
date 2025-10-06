@@ -8,20 +8,17 @@ Created on Mon Oct  6 21:03:04 2025
 import os
 import sys
 
-import numpy as np
 import pytest
 
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), ".."))
-from someDefs import calculate_volume
 from someDefs import maximum_hkl
 from test_data import testdata_maximum_hkl
 
+
 @pytest.mark.parametrize(("inp", "expected"), testdata_maximum_hkl.testdata)
 def test_maximum_hkl(
-    inp: tuple[str,float],
+    inp: tuple[str, float],
     expected: int,
 ) -> None:
     result: int = maximum_hkl(*inp)
-    np.testing.assert_allclose(
-        result, expected, atol=0.0, equal_nan=False, strict=True
-    )
+    assert result == expected
