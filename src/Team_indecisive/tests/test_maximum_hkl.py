@@ -18,8 +18,8 @@ from test_data import testdata_maximum_hkl
 
 @pytest.mark.parametrize(("inp", "expected"), testdata_maximum_hkl.testdata)
 def test_maximum_hkl(
-    inp: list[float],
-    expected: tuple[int],
+    inp: tuple[str,float],
+    expected: int,
 ) -> None:
     result: tuple[float] = maximum_hkl(*inp)
     np.testing.assert_allclose(
