@@ -1,8 +1,13 @@
-using Test
 using Powerweek
+using Test
 
-function runtests()
-	@testset "Running some tests.." begin
-		@test 1 == 1
-	end
+@testset "Running some tests.." begin
+	@test 1 == 1
+	@test 1 < 2
 end
+
+@testset "Running some more tests.." begin
+	@test 1 != 2
+end
+
+
