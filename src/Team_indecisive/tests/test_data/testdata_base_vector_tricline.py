@@ -2,7 +2,11 @@ import numpy as np
 
 testdata: list[list, tuple] = []
 
-inp: list = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-expected: tuple = (np.array([0.0,0.0,0.0]), np.array([0.0,0.0,0.0]), np.array([0.0,0.0,0.0]), np.array([[0.0,0.0,0.0],[0.0,0.0,0.0],[0.0,0.0,0.0]]))
+input_0: list = [1.0, 1.0, 1.0, 90.0, 90.0, 90.0]
+expected_0: tuple = (np.array([1., 0., 0.]), 
+                     np.array([6.123234e-17, 1.000000e+00, 0.000000e+00]), 
+                     np.array([6.123234e-17, 6.123234e-17, 1.000000e+00]), 
+                     np.array([[1.000000e+00, 6.123234e-17, 6.123234e-17], [0.000000e+00, 1.000000e+00, 6.123234e-17], [0.000000e+00, 0.000000e+00, 1.000000e+00]]))
 
-testdata.append((inp, expected))
+
+testdata.append((input_0, expected_0))
