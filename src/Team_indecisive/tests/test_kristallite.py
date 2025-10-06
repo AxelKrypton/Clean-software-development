@@ -1,13 +1,21 @@
 import os
 import sys
+import numpy as np
+
+import pytest
 from math import isclose
+
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), ".."))
 from Kristallite import crystallite
+from test_data import testdata_crystallite
 
-def functional_test():
-    datdatei = os.path.join(os.path.dirname(__file__), "DATA/SILIZIUM.DAT")
-    lambda_=1.5406 #Wavelength in Angström
-    t=30 # thickness of the crystal in mu m
-    nseed = 10
-    assert isclose(cristallite(datdatei,lambda_,t,nseed),-3.6059854189874456e-34,abs_tol=0.0001)
+@pytest.mark.parametrize(("inp","expected"),testdata_crystallite.testdata)
+def test_crystallite(
+        inp:tuple,
+        expected:float
+        )-> None:
+    result: float = crystallite(*inp)
+    np.testing.assert_allclose(result, expected, rtol=1e-7,atol=0.0, 
+                               equal_nan=False,err_msg="Mismatch in tuple element",
+                               strict=True)
     
