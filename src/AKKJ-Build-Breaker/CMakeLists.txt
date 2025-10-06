@@ -9,6 +9,5 @@ project(SU2)
 include_directories(external)
 add_subdirectory(src)
 
-# add_executable(pow test_pow.cpp su2.cpp)
 enable_testing()
 add_subdirectory(tests)
