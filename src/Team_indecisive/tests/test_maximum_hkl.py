@@ -21,7 +21,7 @@ def test_maximum_hkl(
     inp: tuple[str,float],
     expected: int,
 ) -> None:
-    result: tuple[float] = maximum_hkl(*inp)
+    result: int = maximum_hkl(*inp)
     np.testing.assert_allclose(
-        result, expected, rtol=1e-7, atol=0.0, equal_nan=False, strict=True
+        result, expected, atol=0.0, equal_nan=False, strict=True
     )
