@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Jul 18 09:54:09 2025
 
-@author: judith
-"""
 
 import os
 
