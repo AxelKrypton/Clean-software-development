@@ -2,10 +2,9 @@ import subprocess
 import sys
 import os
 
-#Windows
-gnuplot_path = 'c:/Program_Files/gnuplot/bin/gnuplot.exe' #change this according to your gnuplot installation
-#Linux
-#gnuplot_path = gnuplot
+#Let it work on Windows or Unix
+if "-win" in sys.argv: gnuplot_path = 'c:/Program_Files/gnuplot/bin/gnuplot.exe'
+else: gnuplot_path = "gnuplot"
 
 script_path = os.path.dirname(__file__) + "/The_Script/D15.48_pr_NEW.gp"
 
