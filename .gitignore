@@ -312,6 +312,9 @@ TSWLatexianTemp*
 # VSCode
 .vscode/
 
+# cache files
+.cache
+
 # expex forward references with \gathertags
 *-tags.tex
 
