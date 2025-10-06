@@ -1,6 +1,6 @@
-testdata: list[list, tuple] = []
+testdata: list[list[float], tuple[float]] = []
 
-inp: list = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-expected: tuple = (0.0, 0.0, 0.0,0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+input_0: list[float] = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+expected_0: tuple[float] = (0.0, 0.0, 0.0,0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 
-testdata.append((inp, expected))
+testdata.append((input_0, expected_0))
