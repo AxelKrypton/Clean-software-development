@@ -11,7 +11,7 @@ from test_data import testdata_calculate_volume
 @pytest.mark.parametrize(
     ("input", "expected"), testdata_calculate_volume.testdata
 )
-def test_accepted_rings(
+def test_calculate_volume(
     input,
     expected,
 ) -> None:
