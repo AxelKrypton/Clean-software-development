@@ -27,10 +27,6 @@ function parse_commandline()
 	return parse_args(s)
 end
 
-const args = parse_commandline()
-const base_path = args["base-path"]
-const output_path = args["base-path"]
-
 """
 	Recursively searches for files matching the given pattern `pattern_string` in the specified directory `dir`.
 	Returns a nested list of file paths that match the pattern.
@@ -195,7 +191,7 @@ function bootstrap(df, attributes; num_resamples = 1000)
 	return result
 end
 
-function save_to_file(result, file_attr)
+function save_to_file(result, file_attr, output_path)
 	D = file_attr["D"]
 	N = file_attr["N"]
 	T = file_attr["T"]
@@ -251,6 +247,10 @@ function save_to_file(result, file_attr)
 end
 
 function main()
+	args = parse_commandline()
+	base_path = args["base-path"]
+	output_path = args["output-path"]
+
 	paths = rdir(base_path, "*.h5") # Recursively search for all .h5 files in the base path. And return a nested list of file paths.
 
 	for files in paths
@@ -260,7 +260,7 @@ function main()
 
 		original_data, attributes = readfiles(files)
 		bootstrap_result = bootstrap(original_data, attributes, num_resamples = 1000)
-		save_to_file(bootstrap_result, attributes)
+		save_to_file(bootstrap_result, attributes, output_path)
 	end
 
 	return true
