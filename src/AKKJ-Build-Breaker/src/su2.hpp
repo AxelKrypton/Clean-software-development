@@ -24,6 +24,8 @@ public:
 
   SU2_mat unit();
 
+  SU2_mat pow(int);
+
   double trace();
 
   double det();
