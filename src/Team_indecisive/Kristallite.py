@@ -12,8 +12,14 @@ import numpy as np
 #from someDefs import Auswahlregel_Beryllium
 #from someDefs import Auswahlregel_Silizium
 from scipy.spatial.transform import Rotation
-from someDefs import read_crystal_parameters_uni,base_vector_tricline,reciprocal_vector,G_surface
+from someDefs import (
+    G_surface,
+    base_vector_tricline,
+    read_crystal_parameters_uni,
+    reciprocal_vector,
+)
 from susi2 import susi2
+
 #from math import gcd
 #from functools import reduce
 
@@ -22,7 +28,7 @@ from susi2 import susi2
     #lambda_=1.5406 #Wavelength in Angström
     #t=30 # thickness of the crystal in mu m
 #%%
-def crystallite(datdatei,lambda_,t,nseed=None):
+def kristallite(datdatei,lambda_,t,nseed=None):
 
     #incident beam along z-axis (normiert)
     Einfall=np.array([0, 0, 1])
@@ -289,4 +295,4 @@ if __name__=="__main__":
     datdatei = os.path.join(os.path.dirname(__file__), "DATA/SILIZIUM.DAT")
     lambda_=1.5406 #Wavelength in Angström
     t=30 # thickness of the crystal in mu m
-    print(crystallite(datdatei,lambda_,t,nseed))
+    print(kristallite(datdatei,lambda_,t,nseed))
