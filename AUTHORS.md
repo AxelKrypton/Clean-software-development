@@ -21,7 +21,7 @@ It is intended that the person has a working knowledge of the "Programming langu
 |  7 | Jannik Petersen | `jpeter02` | `VHDL` |
 |  8 | Judith Görs | `jugo43` | `Python`, `MATLAB` |
 |  9 | Karina Scharmann | `KScharmann` | `C++` |
-| 10 | Keiwan Jamaly | `keiwanjamaly` | `C++`, `Mathematica`, `Python`, `LaTeX` |
+| 10 | Keiwan Jamaly | `keiwanjamaly` | `C++`, `Mathematica`, `Python`, `LaTeX`, `Haskell`, `JavaScript`, `TypeScript`, ... |
 | 11 | Leon Sieke | `leonsieke` | `Julia` |
 | 12 | Martin Beyer | `MaB700` | `C++`, `Python` |
 | 13 | Michael Eichberg | `EhDings` | `C++`, `Python` |
