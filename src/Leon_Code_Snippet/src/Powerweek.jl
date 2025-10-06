@@ -21,7 +21,7 @@ function parse_commandline()
 		"--output-path", "-o"
 		help = "Path where the output directory is located"
 		arg_type = String
-		default = nothing # If not specified, the output path will be set to base_path/averaged
+		default = "./output"
 	end
 
 	return parse_args(s)
@@ -29,7 +29,7 @@ end
 
 const args = parse_commandline()
 const base_path = args["base-path"]
-const output_path = eval(args["output-path"] === nothing ? joinpath(base_path, "averaged") : args["output-path"])
+const output_path = args["base-path"]
 
 """
 	Recursively searches for files matching the given pattern `pattern_string` in the specified directory `dir`.
