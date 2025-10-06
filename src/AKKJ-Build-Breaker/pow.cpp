@@ -3,7 +3,7 @@
 
 int main() {
   // take power of a su2 matrix
-  SU2_mat a(0.0, 1.0, 0.0, 0.0);
+  SU2_mat a(1.0, 0.0, 0.0, 0.0);
   a = a * a; // should be -1,0,0,0
 
   // formatted output of su2 matrix
