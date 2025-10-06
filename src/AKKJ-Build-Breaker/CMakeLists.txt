@@ -4,6 +4,6 @@ project(SU2)
 
 include_directories(external)
 
-# add_executable(test1 tests/test.cpp)
+add_executable(pow pow.cpp su2.cpp)
 enable_testing()
 add_subdirectory(tests)
