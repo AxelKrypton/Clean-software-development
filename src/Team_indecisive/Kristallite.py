@@ -18,9 +18,10 @@ from susi2 import susi2
 #from math import gcd
 #from functools import reduce
 
-datdatei = os.path.join(os.path.dirname(__file__), "DATA/SILIZIUM.DAT")
-lambda_=1.5406 #Wavelength in Angström
-t=30 # mu m? thickness of the crystal
+#possible input:
+    #datdatei = os.path.join(os.path.dirname(__file__), "DATA/SILIZIUM.DAT")
+    #lambda_=1.5406 #Wavelength in Angström
+    #t=30 # mu m? thickness of the crystal
 #%%
 def crystallite(datdatei,lambda_,t):
     #incident beam along z-axis (normiert)
