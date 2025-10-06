@@ -33,3 +33,79 @@ The `SU2_mat` class provides several operations on the `(c0, c1, c2, c3)` compon
 *   **Trace (`trace()`)**: Returns `2*c0`, which is the trace of the matrix.
 *   **Determinant (`det()`)**: Returns `c0^2 + c1^2 + c2^2 + c3^2`, the determinant of the matrix.
 *   **Projection (`project_to_sun()`)**: Normalizes the matrix to have determinant 1 by dividing all components by `sqrt(det)`. This projects the matrix onto the SU(2) group.
+*   
+
+# Running this project on a Windows 11 machine
+
+## Setting up CMake and GCC on Windows 11
+
+These steps describe how to set up a working **CMake + GCC (MinGW)** build environment on **Windows 11** using **PowerShell** and **MSYS2**.  
+This allows you to build C/C++ projects similarly to how you would on Linux systems.
+
+---
+
+### 1. Install CMake
+
+Open **PowerShell** and run:
+
+```powershell
+winget install Kitware.CMake
+```
+After installation, verify that it works:
+```powershell
+cmake --version
+```
+If you see a version number, CMake is correctly installed.
+
+### 2. Install MSYS2 (for GCC and Make)
+
+MSYS2 provides a Linux-like environment and the GCC compiler toolchain for Windows.
+
+Install it using:
+```powershell
+winget install MSYS2.MSYS2
+```
+
+Then open the MSYS2 MinGW 64-bit terminal (MSYS2MINGW64) from the Windows Start Menu.
+
+### 3. Update MSYS2 and install the compiler
+
+Inside the MSYS2 MinGW 64-bit terminal, run the following commands:
+```bash
+pacman -Syu
+# If prompted, close and reopen the terminal, then run again:
+pacman -Syu
+pacman -S mingw-w64-x86_64-gcc make
+```
+
+If it tells you to close the terminal and restart, do that, then run again.
+
+You can verify the compiler installation from this terminal with:
+```bash
+gcc --version
+```
+
+### 4. Add MinGW to the Windows PATH
+
+To use gcc and make directly from PowerShell, add their location to your system PATH.
+
+Run this once in PowerShell:
+```powershell 
+setx PATH "$($env:PATH);C:\msys64\mingw64\bin"
+```
+
+Then close and reopen PowerShell, and verify:
+
+```powershell 
+gcc --version
+```
+
+### 5. Configure and build your project with CMake
+
+Now you can use CMake from PowerShell to configure and build your project:
+
+```powershell 
+cmake -G "MinGW Makefiles" -S . -B build
+cmake --build build
+```
+If everything is configured correctly, CMake will automatically use GCC from your MSYS2 installation.
