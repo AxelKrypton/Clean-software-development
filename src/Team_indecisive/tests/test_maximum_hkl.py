@@ -18,8 +18,8 @@ from someDefs import maximum_hkl
 
 def test_maximum_hkl(
     datdatei= os.path.join(os.path.dirname(__file__), "../DATA/SILIZIUM.DAT"),
-    lambda_=1.54
+    lambda_=1.54,
+    expected=7
 ) -> None:
     result: tuple[float] = maximum_hkl(datdatei,lambda_)
-    expected=7
-    result==7
+    result==expected
