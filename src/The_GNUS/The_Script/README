@@ -1,0 +1,4 @@
+Run "./D15.48_NEW.sh" in the terminal
+Then a file called "D15.48_me_NEW" should be created in this directory
+Also a graphic called "D15.48_pr_NEW.pdf" in the "Plots" folder should be created
+You find the supposed outcome in the folder "Supposed_Outcome"
