@@ -1,2 +1,5 @@
-add_executable(test1 test.cpp)
-add_test(NAME test1 COMMAND test1)
+add_executable(test_pow test_pow.cpp ../src/su2.cpp)
+add_test(NAME test_pow COMMAND test_pow)
+
+add_executable(test_dummy test.cpp ../src/su2.cpp)
+add_test(NAME test_dummy COMMAND test_dummy)

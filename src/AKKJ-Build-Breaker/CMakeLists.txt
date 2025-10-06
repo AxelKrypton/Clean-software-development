@@ -7,7 +7,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 project(SU2)
 
 include_directories(external)
+include_directories(src)
 
-add_executable(pow pow.cpp su2.cpp)
+# add_executable(pow test_pow.cpp su2.cpp)
 enable_testing()
 add_subdirectory(tests)

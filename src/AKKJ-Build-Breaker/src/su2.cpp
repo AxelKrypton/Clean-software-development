@@ -76,3 +76,5 @@ SU2_mat operator*(double const &i, SU2_mat const &obj) { return obj * i; }
 SU2_mat operator/(SU2_mat const &obj, double const &i) {
   return SU2_mat(obj.c0 / i, obj.c1 / i, obj.c2 / i, obj.c3 / i);
 }
+
+SU2_mat SU2_mat::pow(int n) { return *this; }
