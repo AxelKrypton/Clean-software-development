@@ -111,7 +111,36 @@ def read_crystal_parameters_uni(datdatei):
              
     return name, rho, nue, alpha, beta, gamma, aK, bK, cK, Element, nha, oz, ez, Mrel, lamk, xh, xk, xl, tf_anzahl, tf_gleiche, tfk, a, o
                
-         
+def base_vector_tricline(aK,bK,cK,alpha,beta,gamma):
+    #base vectors triclinic crystal
+    a1=np.array([aK,0,0])
+    a2=np.array([bK*np.cos(np.radians(gamma)),bK*np.sin(np.radians(gamma)),0])
+    a3_x=cK*np.cos(np.radians(beta))
+    a3_y=cK*(np.cos(np.radians(alpha))-np.cos(np.radians(beta))*np.cos(np.radians(gamma)))/np.sin(np.radians(gamma))
+    a3_z=np.sqrt(cK**2-a3_x**2-a3_y**2)
+    a3=np.array([a3_x,a3_y,a3_z])
+
+    #matrix base vectors
+    A=np.column_stack([a1,a2,a3]) 
+    return a1,a2,a3,A 
+
+def reciprocal_vector(a1_R,a2_R,a3_R):
+    #reciprocal lattice vectors
+    Vc=np.dot(a1_R,(np.cross(a2_R,a3_R)))
+
+    b1=2*np.pi/Vc*(np.cross(a2_R,a3_R)) 
+    b2=2*np.pi/Vc*(np.cross(a3_R,a1_R))
+    b3=2*np.pi/Vc*(np.cross(a1_R,a2_R))
+
+    B=np.column_stack([b1,b2,b3]) #reciprocal base of the oriented crystal
+    return b1,b2,b3,B 
+
+def G_surface(hkl_raw,b1,b2,b3):
+    # check orientation of G_surface
+    G_surface = hkl_raw[0]*b1 + hkl_raw[1]*b2 + hkl_raw[2]*b3
+    G_surface_unit= G_surface/np.linalg.norm(G_surface)
+    return G_surface, G_surface_unit
+          
 
 #Berechnen des Einheitszellenvolumens und Netebenenabstandes
 def calculate_volume_and_dhkl(alpha, beta, gamma, a, b, c, h, k, l):

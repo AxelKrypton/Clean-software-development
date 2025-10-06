@@ -12,7 +12,7 @@ import numpy as np
 #from someDefs import Auswahlregel_Beryllium
 #from someDefs import Auswahlregel_Silizium
 from scipy.spatial.transform import Rotation
-from someDefs import read_crystal_parameters_uni
+from someDefs import read_crystal_parameters_uni,base_vector_tricline,reciprocal_vector,G_surface
 from susi2 import susi2
 
 #from math import gcd
@@ -32,20 +32,7 @@ def crystallite(datdatei,lambda_,t):
     #read crystal data
     name, rho, nue, alpha, beta, gamma, aK, bK, cK, Element, nha, oz, ez, Mrel, lamk, xh, xk, xl, tf_anzahl, tf_gleiche, tfk, a, o =read_crystal_parameters_uni(datdatei)
     
-    def base_vector_tricline(aK,bK,cK):
-        #base vectors triclinic crystal
-        a1=np.array([aK,0,0])
-        a2=np.array([bK*np.cos(np.radians(gamma)),bK*np.sin(np.radians(gamma)),0])
-        a3_x=cK*np.cos(np.radians(beta))
-        a3_y=cK*(np.cos(np.radians(alpha))-np.cos(np.radians(beta))*np.cos(np.radians(gamma)))/np.sin(np.radians(gamma))
-        a3_z=np.sqrt(cK**2-a3_x**2-a3_y**2)
-        a3=np.array([a3_x,a3_y,a3_z])
-    
-        #matrix base vectors
-        A=np.column_stack([a1,a2,a3]) 
-        return a1,a2,a3,A 
-    
-    a1,a2,a3,A=base_vector_tricline(aK, bK, cK)
+    a1,a2,a3,A=base_vector_tricline(aK,bK,cK,alpha,beta,gamma)
     
     # random orientation base vectors
     random_rot = Rotation.random()
@@ -57,16 +44,6 @@ def crystallite(datdatei,lambda_,t):
     a2_R=A_rotiert[1,:]
     a3_R=A_rotiert[2,:]
     
-    def reciprocal_vector(a1_R,a2_R,a3_R):
-        #reciprocal lattice vectors
-        Vc=np.dot(a1_R,(np.cross(a2_R,a3_R)))
-    
-        b1=2*np.pi/Vc*(np.cross(a2_R,a3_R)) 
-        b2=2*np.pi/Vc*(np.cross(a3_R,a1_R))
-        b3=2*np.pi/Vc*(np.cross(a1_R,a2_R))
-    
-        B=np.column_stack([b1,b2,b3]) #reciprocal base of the oriented crystal
-        return b1,b2,b3,B 
     
     b1,b2,b3,B=reciprocal_vector(a1_R,a2_R,a3_R)
     #%% latticeplane of the surface (antiparallel to incident beam) 
@@ -77,13 +54,8 @@ def crystallite(datdatei,lambda_,t):
     solution = Vt[-1, :]  # [h, k, l, const]
     
     hkl_raw = solution[:3] / solution[3]  #  geteilt duch const
-    def G_surface(hkl_raw):
-        # check orientation of G_surface
-        G_surface = hkl_raw[0]*b1 + hkl_raw[1]*b2 + hkl_raw[2]*b3
-        G_surface_unit= G_surface/np.linalg.norm(G_surface)
-        return G_surface, G_surface_unit
-    
-    G_surface,G_surface_unit=G_surface(hkl_raw)
+
+    G_surface_vec,G_surface_unit=G_surface(hkl_raw,b1,b2,b3)
     
     cos_theta_surface = np.dot(G_surface_unit, Einfall)
     theta_surface = np.degrees(np.arccos(np.clip(cos_theta_surface, -1, 1)))
