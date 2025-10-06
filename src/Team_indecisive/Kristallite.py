@@ -24,6 +24,7 @@ from susi2 import susi2
     #t=30 # thickness of the crystal in mu m
 #%%
 def crystallite(datdatei,lambda_,t):
+
     #incident beam along z-axis (normiert)
     Einfall=np.array([0, 0, 1])
     Einfall = Einfall / np.linalg.norm(Einfall)
@@ -312,4 +313,10 @@ def crystallite(datdatei,lambda_,t):
         delta = np.angle(psi_total_pi) - np.angle(psi_total_sigma)
        
     return delta
+    
+if __name__=='_main_':
+    datdatei = os.path.join(os.path.dirname(__file__), "DATA/SILIZIUM.DAT")
+    lambda_=1.5406 #Wavelength in Angström
+    t=30 # thickness of the crystal in mu m
+    crystallite(datdatei,lambda_,t)
     
