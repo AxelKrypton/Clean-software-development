@@ -14,12 +14,14 @@ import pytest
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), ".."))
 from someDefs import calculate_volume
 from someDefs import maximum_hkl
+from test_data import testdata_maximum_hkl
 
-
+@pytest.mark.parametrize(("inp", "expected"), testdata_maximum_hkl.testdata)
 def test_maximum_hkl(
-    datdatei= os.path.join(os.path.dirname(__file__), "../DATA/SILIZIUM.DAT"),
-    lambda_=1.54,
-    expected=7
+    inp: list[float],
+    expected: tuple[int],
 ) -> None:
-    result: tuple[float] = maximum_hkl(datdatei,lambda_)
-    result==expected
+    result: tuple[float] = maximum_hkl(*inp)
+    np.testing.assert_allclose(
+        result, expected, rtol=1e-7, atol=0.0, equal_nan=False, strict=True
+    )
