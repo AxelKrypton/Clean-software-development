@@ -6,7 +6,7 @@ import os
 if "-win" in sys.argv: gnuplot_path = 'c:/Program_Files/gnuplot/bin/gnuplot.exe'
 else: gnuplot_path = "gnuplot"
 
-script_path = os.path.dirname(__file__) + "/The_Script/D15.48_pr_NEW.gp"
+script_path = os.path.join(os.path.dirname(__file__),"The_Script","D15.48_pr_NEW.gp")
 
 BINSIZE = [6.9e-3,2.9e-3,2.9e-3,4.3e-3,12.4e-3,9.6e-3,5.5e-3,3.8e-3,3.4e-3,4.4e-3]
 
@@ -23,7 +23,7 @@ proc = subprocess.Popen([gnuplot_path,'-e', f"binsize1={BINSIZE[0]}",
 									  '-e', 'gf=0',
 									  '-e', "alt=0", script_path],
                         shell=True,
-                        stdin=subprocess.PIPE,
+                        stdin=subprocess.PIPE
                         )
 
 
