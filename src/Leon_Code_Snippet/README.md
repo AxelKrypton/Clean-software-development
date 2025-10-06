@@ -6,3 +6,7 @@ Run the code using:
 ```bash
 $ julia --project src/Powerweek.jl 
 ```
+Run the tests ("Magic Button"):
+```bash
+$ julia --project -e "using Pkg; Pkg.test()"
+```
