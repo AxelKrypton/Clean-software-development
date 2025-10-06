@@ -14,7 +14,6 @@ import numpy as np
 from scipy.spatial.transform import Rotation
 from someDefs import read_crystal_parameters_uni,base_vector_tricline,reciprocal_vector,G_surface
 from susi2 import susi2
-
 #from math import gcd
 #from functools import reduce
 
