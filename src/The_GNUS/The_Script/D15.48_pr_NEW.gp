@@ -549,7 +549,7 @@ set key at graph 0.7, graph 0.9
 plot "+" u (1/0):(1/0):(1/0):(1/0) with xyerrorbars pt POINTTYPE lc palette cb 1.3333 title sprintf('\footnotesize$T=%.0f(%.0f)\,\upright{MeV}$',1/(18*a),a_err/(18*a*a)), "+" u (scaling_factor*x8/a):(f8(x8)):(scaling_factor*x8_err/a) with xerrorbars title sprintf('\footnotesize$\lambda_\upright{c}=%.0f(%.0f)\,\upright{MeV}$',scaling_factor*x8/a,scaling_factor*x8_err/a) lw 1.5 ps 1.5 pt 6 lc "red"
 set multiplot previous
 #set key at graph 0.986, graph 0.85 box height +3.25 width -50.5 opaque
-set key at graph 0.986, graph 0.9  box height +2.9 width -50.0 opaque
+set key at graph 0.986, graph 0.9  box height +2.9 width -51.0 opaque
 plot 1/0 lc LINECOLOR title sprintf('\scriptsize\shortstack[r]{$\chi^2/\upright{d.o.f.}=%.2f$\\$\Delta\lambda=%.1f\,\upright{MeV}$\\$\lambda_\upright{l}=%.0f\,\upright{MeV}$\\$\lambda_\upright{r}=%.0f\,\upright{MeV}$}',redchisqr8,scaling_factor*binsize8/a,scaling_factor*xl8/a,scaling_factor*xr8/a)
 
 set ytics 0,0.2,0.8
@@ -599,7 +599,7 @@ set key at graph 0.7, graph 0.9
 plot "+" u (1/0):(1/0):(1/0):(1/0) with xyerrorbars pt POINTTYPE lc palette cb 1.7143 title sprintf('\footnotesize$T=%.0f(%.0f)\,\upright{MeV}$',1/(14*a),a_err/(14*a*a)), "+" u (scaling_factor*x6/a):(f6(x6)):(scaling_factor*x6_err/a) with xerrorbars title sprintf('\footnotesize$\lambda_\upright{c}=%.0f(%.0f)\,\upright{MeV}$',scaling_factor*x6/a,scaling_factor*x6_err/a) lw 1.5 ps 1.5 pt 6 lc "red"
 set multiplot previous
 #set key at graph 0.986, graph 0.85 box height +3.25 width -51.5 opaque
-set key at graph 0.986, graph 0.9  box height +2.9 width -51.0 opaque
+set key at graph 0.986, graph 0.9  box height +2.9 width -52.0 opaque
 plot 1/0 lc LINECOLOR title sprintf('\scriptsize\shortstack[r]{$\chi^2/\upright{d.o.f.}=%.2f$\\$\Delta\lambda=%.1f\,\upright{MeV}$\\$\lambda_\upright{l}=%.0f\,\upright{MeV}$\\$\lambda_\upright{r}=%.0f\,\upright{MeV}$}',redchisqr6,scaling_factor*binsize6/a,scaling_factor*xl6/a,scaling_factor*xr6/a)
 
 set ytics 0,0.2,0.8
