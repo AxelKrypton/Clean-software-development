@@ -1,0 +1,6 @@
+-Install gnuplot if you do not have already: on Linux run "sudo apt install gnuplot" in the terminal, on Mac run "brew install gnuplot", do NOT use Windows!
+-Optionally install TeX Live if you do not have already: on Linux run "sudo apt-get install texlive" (if this is not enough: "sudo apt-get install texlive-latex-extra")
+-Move to "The_Script"
+-Run "python exampleTest.py" in the terminal and check if the test passed
+-Then the files "D15.48_me_NEW" and "D15.48_pr_NEW.pdf" (if pdflatex is installed) should be created 
+-Compare the PDF file in the folder "Supposed_Outcome"
