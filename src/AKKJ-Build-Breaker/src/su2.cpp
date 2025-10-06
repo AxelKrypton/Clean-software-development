@@ -1,7 +1,5 @@
 #include "su2.hpp"
 
-SU2_mat::SU2_mat() {}
-
 SU2_mat::SU2_mat(SU2_mat const &obj) {
   c0 = obj.c0;
   c1 = obj.c1;
@@ -50,6 +48,10 @@ void SU2_mat::operator=(SU2_mat const &obj) {
   c3 = obj.c3;
 }
 
+bool SU2_mat::operator==(SU2_mat const &obj) const {
+  return (c0 == obj.c0) && (c1 == obj.c1) && (c2 == obj.c2) && (c3 == obj.c3);
+}
+
 SU2_mat SU2_mat::dag() { return SU2_mat(c0, -c1, -c2, -c3); }
 
 SU2_mat SU2_mat::unit() { return SU2_mat(1.0, 0.0, 0.0, 0.0); }
@@ -77,4 +79,10 @@ SU2_mat operator/(SU2_mat const &obj, double const &i) {
   return SU2_mat(obj.c0 / i, obj.c1 / i, obj.c2 / i, obj.c3 / i);
 }
 
-SU2_mat SU2_mat::pow(int n) { return *this; }
+SU2_mat SU2_mat::pow(int n) {
+  SU2_mat result = SU2_mat::unit();
+  for (int i = 0; i < n; ++i) {
+    result *= *this;
+  }
+  return result;
+}
