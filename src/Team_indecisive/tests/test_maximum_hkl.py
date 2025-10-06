@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Oct  6 21:03:04 2025
-
-@author: judith
-"""
-
 import os
 import sys
 
