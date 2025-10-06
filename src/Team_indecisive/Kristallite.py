@@ -318,5 +318,5 @@ if __name__=='_main_':
     datdatei = os.path.join(os.path.dirname(__file__), "DATA/SILIZIUM.DAT")
     lambda_=1.5406 #Wavelength in Angström
     t=30 # thickness of the crystal in mu m
-    crystallite(datdatei,lambda_,t)
+    print(crystallite(datdatei,lambda_,t))
     
