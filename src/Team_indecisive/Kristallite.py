@@ -21,7 +21,7 @@ from susi2 import susi2
 #possible input:
     #datdatei = os.path.join(os.path.dirname(__file__), "DATA/SILIZIUM.DAT")
     #lambda_=1.5406 #Wavelength in Angström
-    #t=30 # mu m? thickness of the crystal
+    #t=30 # thickness of the crystal in mu m
 #%%
 def crystallite(datdatei,lambda_,t):
     #incident beam along z-axis (normiert)
@@ -86,8 +86,6 @@ def crystallite(datdatei,lambda_,t):
     
     cos_theta_surface = np.dot(G_surface_unit, Einfall)
     theta_surface = np.degrees(np.arccos(np.clip(cos_theta_surface, -1, 1)))
-    #print(hkl_raw)
-    #print("Winkel Oberfläche:", theta_surface)  # Sollte ≈ 0° oder 180° sein
     
     #%% 
     #Array with all hkl combinations
@@ -95,15 +93,15 @@ def crystallite(datdatei,lambda_,t):
     h_values = np.arange(-max_, max_ + 1)
     k_values = np.arange(-max_, max_+ 1)
     l_values = np.arange(-max_, max_ + 1)
-    h, k, l = np.meshgrid(h_values, k_values, l_values, indexing='ij') #Gitter mit allen Werten
-    hkl = np.stack([h.flatten(), k.flatten(), l.flatten()], axis=-1) #array
-    hkl = hkl[~np.all(hkl == 0, axis=1)] #Nullvektor entfernen
+    h, k, l = np.meshgrid(h_values, k_values, l_values, indexing='ij') 
+    hkl = np.stack([h.flatten(), k.flatten(), l.flatten()], axis=-1) 
+    hkl = hkl[~np.all(hkl == 0, axis=1)] 
     
     #G for all combinations
     h_allg=hkl[:,0][:, np.newaxis]
     k_allg=hkl[:,1][:, np.newaxis]
     l_allg=hkl[:,2][:, np.newaxis]
-    G_allg=h_allg*b1+k_allg*b2+l_allg*b3 #alle G vektoren (ohne Bragg Einschränkung)
+    G_allg=h_allg*b1+k_allg*b2+l_allg*b3 #alle G vectors
     G_allg_norm = np.linalg.norm(G_allg, axis=1) 
     G_allg_unit=G_allg/G_allg_norm[:, np.newaxis] #Normalisierte G-Vektoren
     
@@ -121,7 +119,7 @@ def crystallite(datdatei,lambda_,t):
     theta_bragg_deg = np.degrees(theta_bragg_rad)
     
     #Angle between incident beam and G
-    theta_E_rad=np.arccos(np.dot(G_valid_unit,Einfall)) # theta_E=arccos(k*G/|G|) ,da |k|=1
+    theta_E_rad=np.arccos(np.dot(G_valid_unit,Einfall)) # theta_E=arccos(k*G/|G|) ,because|k|=1
     theta_E_deg=np.degrees(theta_E_rad)
     #Angle only 0- 90 deg, side of the crystal does not matter
     theta_E_0bis90 = np.minimum(theta_E_deg, 180 - theta_E_deg) 
@@ -142,8 +140,6 @@ def crystallite(datdatei,lambda_,t):
     
     #Gammafactor
     gammafak=np.cos(np.radians(phi_minus_theta_b))/ np.cos(np.radians(phi_plus_theta_b))
-    # #nur Laue-fall betrachten
-    # mask_gammafak=gammafak>0
     #%%
     #result arrayof all valid combinations (h,k,l,d_hkl (Netebenenabstand),Braggwinkel,Einfallswinkel auf Netzebene,Abstand Einfallswinkel zu Braggwinkel, Gammafaktor,Phi)
     result=np.column_stack((hkl_valid,d_hkl_valid,theta_bragg_deg,theta,delta_theta,gammafak,phi_0bis90,G_valid_unit))
@@ -164,17 +160,14 @@ def crystallite(datdatei,lambda_,t):
     gammafak_min=rows_with_min[0][7]
     phi_min=rows_with_min[0][8]
     G_unit_min=np.array([rows_with_min[0][9],rows_with_min[0][10],rows_with_min[0][11]])
-    #print(rows_with_min)
-    #print(delta_theta_min)
-    #print('Gammafaktor',gammafak_min)
+
     #%%
-    #Winkel gestreuter Strahl und Oberflächennormale
+    #Angle scattered beam and surface
     Ausfall=Einfall+G_unit_min
     Ausfall_unit=Ausfall/np.linalg.norm(Ausfall)
-    # print(G_surface)
     theta_exit_rad = np.arccos(np.dot(-G_surface_unit,Ausfall_unit))  # Winkel zw. Austritt und Oberfläche
-    #print(theta_exit_rad)
-    T=t/np.cos(theta_exit_rad)#Weg durch Kristall
+    
+    T=t/np.cos(theta_exit_rad)
     #print(T)
     #%% 
     tf=np.zeros((nue,max(tf_anzahl)))
@@ -201,7 +194,7 @@ def crystallite(datdatei,lambda_,t):
     #print(tf)
     valid_tf = tf[j, :tf_anzahl[j]]
     
-    n=4  #n gleich immer 4 oder woraus lesen??????
+    n=4  
     
     s = np.sin(np.radians(theta_min)) / lambda_
     
@@ -309,10 +302,7 @@ def crystallite(datdatei,lambda_,t):
             
         # Extinctionlength
         ext_depth=np.abs(ext_depth) / 2 / np.pi / 10000
-        # psi_0_array[:, 0]  # π transmittiert
-        # psi_0_array[:, 1]  # σ transmittiert
-        # psi_h_array[:, 0]  # π reflektiert
-        # psi_h_array[:, 1]  # σ reflektiert
+
         
         # Fullfield
         psi_total_pi = psi_0_array[:, 0] + psi_h_array[:, 0]
@@ -320,8 +310,6 @@ def crystallite(datdatei,lambda_,t):
     
         # Phasedifference π – σ
         delta = np.angle(psi_total_pi) - np.angle(psi_total_sigma)
-        #print('Phasechange', delta_phi_total)
-        # # Optional: Glätten der Phase über kontinuierliche Parameter (z. B. Energie)
-        # delta_phi_total = np.unwrap(delta_phi_total)
+       
     return delta
     
