@@ -46,17 +46,17 @@ with open(supposed_fit) as f:
 
 
 
-tol = 1e-8
+rtol = 1e-8
 for i, line in enumerate(this_fit_parameters.splitlines()):
     if i>0:  #skip first line with comments
         for k, entry in enumerate(line.split()):
             entry = float(entry)
             comp_entry = float(supposed_fit_parameters.splitlines()[i].split()[k])
-            if not np.isclose(entry, comp_entry, rtol=tol):
+            if not np.isclose(entry, comp_entry, rtol=rtol, atol=0):
                 print('================')
                 print(output)
                 print('================')
-                print(f"The test has failed. These fit parameters differ from the supposed outcome by the tolerance of {tol}.")
+                print(f"The test has failed. These fit parameters differ from the supposed outcome by the tolerance of {rtol}.")
                 print(f"Entry {k} in line {i} ({entry}) differs from supposed outcome ({comp_entry}).")
                 sys.exit(1)
 
