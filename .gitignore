@@ -309,6 +309,9 @@ TSWLatexianTemp*
 ./auto/*
 *.el
 
+# VSCode
+.vscode/
+
 # expex forward references with \gathertags
 *-tags.tex
 
