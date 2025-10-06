@@ -12,9 +12,9 @@ from test_data import testdata_base_vector_tricline
 @pytest.mark.parametrize(("inp", "expected"), testdata_base_vector_tricline.testdata)
 def test_base_vector_tricline(
     inp: list[float],
-    expected: tuple[np.ndarray],
+    expected: tuple[np.ndarray, ...],
 ) -> None:
-    result: tuple[np.ndarray] = base_vector_tricline(*inp)
+    result: tuple[np.ndarray, ...] = base_vector_tricline(*inp)
 
     # Compare each array element-wise
     for r, e in zip(result, expected):
