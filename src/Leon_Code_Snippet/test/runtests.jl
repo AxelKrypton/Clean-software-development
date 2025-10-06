@@ -125,6 +125,7 @@ end
     @test all(x -> all(>(-1e-12), x), (res.M_var, res.M_abs_var, res.χ_var, res.κ3_var, res.κ4_var))
 end
 
+
 @testset "save_to_file writes expected dataset + attrs (temp cwd)" begin
     mktempdir() do tmp
         cd(tmp) do
@@ -132,15 +133,29 @@ end
             df = mock_df(120, 9)
             res = Powerweek.bootstrap(df, attrs; num_resamples=20)
 
-            Powerweek.save_to_file(res, attrs)
-
+            # compute expected filename
             D = attrs["D"]; N = attrs["N"]; T = attrs["T"]; q = attrs["t_delta"]; ΔJ = attrs["J_delta"]
             Tc = D == 2 ? 4.4629 : 9.37074
             τ = round((T - Tc) / Tc, digits = 6)
             Δt = Int(q)
             outfile = "$(D)D_N$(N)_τ$(τ)_dt$(Δt)_dJ$(round(ΔJ, digits=6)).h5"
-            fullpath = joinpath("data", "averaged", outfile)
 
+            # try 2-arg; if it errors, call 3-arg with an explicit outdir
+            wrote_dir = nothing
+            try
+                Powerweek.save_to_file(res, attrs)
+                wrote_dir = joinpath("data", "averaged")
+            catch e
+                if e isa MethodError
+                    outdir = mkpath(joinpath(tmp, "data", "averaged"))
+                    Powerweek.save_to_file(res, attrs, outdir)  # 3-arg form
+                    wrote_dir = outdir
+                else
+                    rethrow()
+                end
+            end
+
+            fullpath = joinpath(wrote_dir, outfile)
             @test isfile(fullpath)
 
             h5open(fullpath, "r") do f
@@ -152,7 +167,8 @@ end
                     @test haskey(g, name)
                     @test length(read(g[name])) == 120
                 end
-                # read attribute values
+                # attrs helper
+                attv(g, key) = read(HDF5.attributes(g)[key])
                 @test attv(g, "D")       == attrs["D"]
                 @test attv(g, "N")       == attrs["N"]
                 @test attv(g, "T")       == attrs["T"]
@@ -163,7 +179,6 @@ end
         end
     end
 end
-
 @testset "readfiles + bootstrap from real HDF5 inputs (end-to-end)" begin
     mktempdir() do tmp
         data_dir = joinpath(tmp, "inputs")

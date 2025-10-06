@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <vir/test.h>
 
 TEST(test_name) {
