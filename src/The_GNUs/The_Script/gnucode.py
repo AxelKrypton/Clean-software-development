@@ -34,10 +34,29 @@ def define_fit_model_functions(num_fit_functions):
         string += f"f{i}(x)=y{i}+a{i}*(x-x{i})+b{i}*(x-x{i})**3+c{i}*(x-x{i})**4\n"
     return string + "\n"
 
+
+def define_fit_function(index):
+    return f'''
+        a{index}=100.0
+        b{index}=-1000.0
+        c{index}=10000.0
+        f{index}(x)=y{index}+a{index}*(x-x{index})+b{index}*(x-x{index})**3+c{index}*(x-x{index})**4
+'''
+
 #TODO
-def perform_fits(gf: bool, alt: bool):
+def perform_fits(index, x_range, starting_values, source):
+    bla = f'''
+        # start values will be ignored during fitting
+        x{index}={starting_values[0]}
+        y{index}={starting_values[1]}
+        xl{index}={x_range[0]}
+        xr{index}={x_range[1]}
+        fit [xl{index}:xr{index}] f{index}(x) {source} using 1:2:3:4 xyerrors via x{index},y{index},a{index},b{index},c{index}
+        redchisqr{index}=FIT_STDFIT**2
+        '''
+    return bla
     #TODO: generate the code to perform fits here
-    raise NotImplementedError()
+    # raise NotImplementedError()
     
 #TODO
 def configure_multiplot():
@@ -51,67 +70,25 @@ def create_multiplot_with_data_and_fit_curve():
 def get_gnuplot_code():
 
     gnucode=r'''
-#set terminal epslatex size 15.11787cm,20cm standalone header "\\usepackage{amsmath,amstext,amssymb} \n \\usepackage[utf8]{inputenc} \n \\usepackage[outdir=./]{epstopdf} \n \
-#\\renewcommand{\\bar}[1]{\\mkern 1.5mu\\overline{\\mkern-1.5mu#1\\mkern-1.5mu}\\mkern 1.5mu} \n \\graphicspath{{../}}  \n \\newcommand{\\upright}[1]{\\mathrm{#1}}" font ",11" 
     set terminal epslatex size 15.11787cm,20cm standalone header "\\usepackage{amsmath,amstext,amssymb} \n \\usepackage[utf8]{inputenc} \n \\usepackage[outdir=./]{epstopdf} \n \
     \\renewcommand{\\bar}[1]{\\mkern 1.5mu\\overline{\\mkern-1.5mu#1\\mkern-1.5mu}\\mkern 1.5mu} \n \\graphicspath{{../}}  \n \\newcommand{\\upright}[1]{\\mathsf{#1}} \n \
     \\renewcommand{\\familydefault}{\\sfdefault} \n \\usepackage{sfmath}" font ",11" linewidth 4 
+    ''' + \
+    define_fit_function(index=1) + \
+    define_fit_function(index=2) + \
+    define_fit_function(index=3) + \
+    define_fit_function(index=4) + \
+    define_fit_function(index=5) + \
+    define_fit_function(index=6) + \
+    define_fit_function(index=7) + \
+    define_fit_function(index=8) + \
+    define_fit_function(index=9) + \
+    define_fit_function(index=10) + \
+    r'''
 
-#a10=a9=a8=a7=a6=a5=a4=a3=a2=a1=1.0
-#b10=b9=b8=b7=b6=b5=b4=b3=b2=b1=-1.0
-#c10=c9=c8=c7=c6=c5=c4=c3=c2=c1=0.1
-#d10=d9=d8=d7=d6=d5=d4=d3=d2=d1=-1000.0
-
-    a10=a9=a8=a7=a6=a5=a4=a3=a2=a1=100.0
-    b10=b9=b8=b7=b6=b5=b4=b3=b2=b1=-1000.0
-    c10=c9=c8=c7=c6=c5=c4=c3=c2=c1=10000.0
-    d10=d9=d8=d7=d6=d5=d4=d3=d2=d1=-1000.0
-
-# x5              = 0.0980358      
-# y5              = 0.268468        
-# a5              = 8.89385        
-# b5              = -2318.88        
-# c5              = 22077.4         
-
-# x4              = 0.14063        
-# y4              = 0.228367        
-# a4              = 9.3508          
-# b4              = -2566.99
-# c4              = 29645.1           
-
-# x3              = 0.213053         
-# y3              = 0.186509     
-# a3              = 10.4047       
-# b3              = -6163.14      
-# c3              = 135889              
-
-# x2              = 0.366082     
-# y2              = 0.257704        
-# a2              = 9.95757        
-# b2              = -2236.91  
-# c2              = 11565.5           
-
-# x1              = 0.69661       
-# y1              = 0.266759       
-# a1              = 13.8935        
-# b1              = -10035.6     
-# c1              = -131990               
-
-    f10(x)=y10+a10*(x-x10)+b10*(x-x10)**3+c10*(x-x10)**4 #+ d10*(x-x10)**5
-    f9(x)=y9+a9*(x-x9)+b9*(x-x9)**3+c9*(x-x9)**4 #+ d9*(x-x9)**5
-    f8(x)=y8+a8*(x-x8)+b8*(x-x8)**3+c8*(x-x8)**4 #+ d8*(x-x8)**5
-    f7(x)=y7+a7*(x-x7)+b7*(x-x7)**3+c7*(x-x7)**4 #+ d7*(x-x7)**5
-    f6(x)=y6+a6*(x-x6)+b6*(x-x6)**3+c6*(x-x6)**4 #+ d6*(x-x6)**5
-    f5(x)=y5+a5*(x-x5)+b5*(x-x5)**3+c5*(x-x5)**4 #+ d5*(x-x5)**5
-    f4(x)=y4+a4*(x-x4)+b4*(x-x4)**3+c4*(x-x4)**4 #+ d4*(x-x4)**5
-    f3(x)=y3+a3*(x-x3)+b3*(x-x3)**3+c3*(x-x3)**4 #+ d3*(x-x3)**5
-    f2(x)=y2+a2*(x-x2)+b2*(x-x2)**3+c2*(x-x2)**4 #+ d2*(x-x2)**5
-    f1(x)=y1+a1*(x-x1)+b1*(x-x1)**3+c1*(x-x1)**4 #+ d1*(x-x1)**5
 
     if (gf==1) {
     if (alt==1) {
-        x10=0.05
-        y10=0.1
         x9=0.05
         y9=0.1
         x8=0.05
@@ -131,61 +108,70 @@ def get_gnuplot_code():
         x1=0.6
         y1=0.1
 
-
-        xl10=0.0					
-        xr10=0.0735
-        fit [xl10:xr10] f10(x) "../Data/D15.48/relvol.Nt24_t1.500000_ALTERNATING" using 1:2:3:4 xyerrors via x10,y10,a10,b10,c10 #, d10
-        redchisqr10=FIT_STDFIT**2
-
-        xl9=0.0	
-        xr9=0.0638				
-        fit [xl9:xr9] f9(x) "../Data/D15.48/relvol.Nt20_t1.500000_ALTERNATING" using 1:2:3:4 xyerrors via x9,y9,a9,b9,c9 #, d9
-        redchisqr9=FIT_STDFIT**2
-        
-        xl8=0.0	
-        xr8=0.0494	
-        fit [xl8:xr8] f8(x) "../Data/D15.48/relvol.Nt18_t1.500000_ALTERNATING" using 1:2:3:4 xyerrors via x8,y8,a8,b8,c8 #, d8
-        redchisqr8=FIT_STDFIT**2
-                        
-        xl7=0.013									
-        xr7=0.091	
-        fit [xl7:xr7] f7(x) "../Data/D15.48/relvol.Nt16_t1.500000_ALTERNATING" using 1:2:3:4 xyerrors via x7,y7,a7,b7,c7 #, d7
-        redchisqr7=FIT_STDFIT**2
-        
-        xl6=0.0103							
-        xr6=0.1236		
-        fit [xl6:xr6] f6(x) "../Data/D15.48/relvol.Nt14_t1.500000_ALTERNATING" using 1:2:3:4 xyerrors via x6,y6,a6,b6,c6 #, d6
-        redchisqr6=FIT_STDFIT**2
-        
-        xl5=0.0684			
-        xr5=0.1254								
-        fit [xl5:xr5] f5(x) "../Data/D15.48/relvol.Nt12_t1.500000_ALTERNATING" using 1:2:3:4 xyerrors via x5,y5,a5,b5,c5 #, d5
-        redchisqr5=FIT_STDFIT**2
-
-        xl4=0.1104				
-        xr4=0.1872			
-        fit [xl4:xr4] f4(x) "../Data/D15.48/relvol.Nt10_t1.500000_ALTERNATING" using 1:2:3:4 xyerrors via x4,y4,a4,b4,c4 #, d4
-        redchisqr4=FIT_STDFIT**2
-
-        xl3=0.1845		
-        xr3=0.2419		
-        fit [xl3:xr3] f3(x) "../Data/D15.48/relvol.Nt8_t1.500000_ALTERNATING" using 1:2:3:4 xyerrors via x3,y3,a3,b3,c3 #, d3
-        redchisqr3=FIT_STDFIT**2
-
-        xl2=0.3096							
-        xr2=0.3528				
-        fit [xl2:xr2] f2(x) "../Data/D15.48/relvol.Nt6_t1.500000_ALTERNATING" using 1:2:3:4 xyerrors via x2,y2,a2,b2,c2 #, d2
-        redchisqr2=FIT_STDFIT**2
-
-        xl1=0.5635			
-        xr1=0.588
-        fit [xl1:xr1] f1(x) "../Data/D15.48/relvol.Nt4_t1.500000_ALTERNATING" using 1:2:3:4 xyerrors via x1,y1,a1,b1,c1 #, d1
-        redchisqr1=FIT_STDFIT**2
+''' + perform_fits(
+            index = 10, 
+            x_range = [0.0, 0.0735], 
+            starting_values = [0.05, 0.1], 
+            source = r'"../Data/D15.48/relvol.Nt24_t1.500000_ALTERNATING"'
+        )+ \
+        perform_fits(
+            index = 9, 
+            x_range = [0.0, 0.0638], 
+            starting_values = [0.05, 0.1], 
+            source = r'"../Data/D15.48/relvol.Nt20_t1.500000_ALTERNATING"'
+        )+ \
+        perform_fits(
+            index = 8, 
+            x_range = [0.0, 0.0494], 
+            starting_values = [0.05, 0.1], 
+            source = r'"../Data/D15.48/relvol.Nt18_t1.500000_ALTERNATING"'
+        )+ \
+        perform_fits(
+            index = 7, 
+            x_range = [0.013, 0.091], 
+            starting_values = [0.05, 0.1], 
+            source = r'"../Data/D15.48/relvol.Nt16_t1.500000_ALTERNATING"'
+        )+ \
+        perform_fits(
+            index = 6, 
+            x_range = [0.0103, 0.1236], 
+            starting_values = [0.05, 0.1], 
+            source = r'"../Data/D15.48/relvol.Nt14_t1.500000_ALTERNATING"'
+        )+ \
+        perform_fits(
+            index = 5, 
+            x_range = [0.0684, 0.1254], 
+            starting_values = [0.1, 0.1], 
+            source = r'"../Data/D15.48/relvol.Nt12_t1.500000_ALTERNATING"'
+        )+ \
+        perform_fits(
+            index = 4, 
+            x_range = [0.1104, 0.1872], 
+            starting_values = [0.15, 0.1], 
+            source = r'"../Data/D15.48/relvol.Nt10_t1.500000_ALTERNATING"'
+        )+ \
+        perform_fits(
+            index = 3, 
+            x_range = [0.1845, 0.2419], 
+            starting_values = [0.2, 0.1], 
+            source = r'"../Data/D15.48/relvol.Nt8_t1.500000_ALTERNATING"'
+        )+ \
+        perform_fits(
+            index = 2, 
+            x_range = [0.3096, 0.3528], 
+            starting_values = [0.3, 0.1], 
+            source = r'"../Data/D15.48/relvol.Nt6_t1.500000_ALTERNATING"'
+        )+ \
+        perform_fits(
+            index = 1, 
+            x_range = [0.5635, 0.588], 
+            starting_values = [0.6, 0.1], 
+            source = r'"../Data/D15.48/relvol.Nt4_t1.500000_ALTERNATING"'
+        )+ \
+        r'''
     }
     else {
 
-        x10=0.05
-        y10=0.1
         x9=0.05
         y9=0.1
         x8=0.05
@@ -206,9 +192,10 @@ def get_gnuplot_code():
         y1=0.1
 
 
+        x10=0.05
+        y10=0.1
         xl10=0.0					
         xr10=0.0837
-        #xr10=0.0432
         fit [xl10:xr10] f10(x) "../Data/D15.48/relvol.Nt24_t1.500000" using 1:2:3:4 xyerrors via x10,y10,a10,b10,c10 #, d10
         redchisqr10=FIT_STDFIT**2
 
