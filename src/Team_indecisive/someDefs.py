@@ -291,8 +291,14 @@ def Auswahlregel_Beryllium(h,k,l):
         # optional: immer erlauben wenn keine spezielle Regel greift
         return True
     
+def isSumEven(h,k,l):
+    return (h + k + l) % 2 == 0
+
+def isSameParity(h,k,l):
+    return (h % 2 == k % 2) and (k % 2 == l % 2)
+
+def isSumDivisibleByFour(h,k,l):
+    return (h + k + l) % 4 == 0
+
 def Auswahlregel_Silizium(h, k, l):
-    hkl_sum_even = (h + k + l) % 2 == 0
-    same_parity = (h % 2 == k % 2) & (k % 2 == l % 2)
-    divisible_by_4 = (h + k + l) % 4 == 0
-    return hkl_sum_even & same_parity & divisible_by_4
+    return isSumEven(h,k,l) and isSameParity(h,k,l) and isSumDivisibleByFour(h,k,l)
