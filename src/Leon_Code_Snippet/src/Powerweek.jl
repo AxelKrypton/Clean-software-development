@@ -152,6 +152,7 @@ end
 
 function average_and_variance(ensemble_of_observable)
     ensemble_size = size(ensemble_of_observable, 2)
+    # TODO: isin't there a built-in function for this?
     average = reduce(+, eachcol(ensemble_of_observable)) ./ ensemble_size
     variance = reduce(+, eachcol((ensemble_of_observable .- average) .^ 2)) ./ (ensemble_size - 1)
 
