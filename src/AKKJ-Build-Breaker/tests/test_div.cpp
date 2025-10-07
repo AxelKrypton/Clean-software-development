@@ -1,5 +1,4 @@
 #include "su2.hpp"
-#include <cstdint>
 #include <vir/test.h>
 
 TEST(test_div) {

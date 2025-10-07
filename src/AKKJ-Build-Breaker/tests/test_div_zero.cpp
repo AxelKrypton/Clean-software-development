@@ -1,6 +1,6 @@
 #include "su2.hpp"
-#include <cstdint>
 #include <vir/test.h>
+#include <stdexcept>
 
 TEST_CATCH(test_div_zero, std::invalid_argument) {
   SU2_mat input_obj_0(1.0, 1.0, 1.0, 1.0);
