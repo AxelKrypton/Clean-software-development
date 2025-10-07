@@ -152,8 +152,9 @@ cmake --build build
 
 Tests are located in the `tests` folder. Assuming the project is built:
 
-### Using VS Code
-- Use the **CMake Tools** extension for a GUI to run tests.
+### Using CMake Tools extension for VS Code
+Again, one can use the CMake Tools extension to run the tests. On the screenshot, one can see the Erlenmeyer flask in the tool bar on the left-hand side. Clicking on it opens its options. There one simply click the button which is highlighted and all tests should be run. 
+![cmake_tools_testing](pictures\screenshot_vscode_cmake_tools_testing.png)
 
 ### Using the Terminal
 1. Navigate to the `build` folder.

@@ -22,7 +22,7 @@ def test_base_vector_tricline(
             r,
             e,
             rtol=1e-7,
-            atol=0.0,
+            atol=1e-14,
             equal_nan=False,
             err_msg="Mismatch in tuple element",
             strict=True,

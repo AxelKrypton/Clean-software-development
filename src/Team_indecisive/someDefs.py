@@ -108,7 +108,19 @@ def base_vector_tricline(aK,bK,cK,alpha,beta,gamma):
     A=np.column_stack([a1,a2,a3]) 
     return a1,a2,a3,A 
 
+
+def check_colinear(a, b):
+    norm_a = np.sqrt(np.sum(np.asarray(a) ** 2))
+    norm_b = np.sqrt(np.sum(np.asarray(b) ** 2))
+    u = np.asarray(a) / norm_a
+    v = np.asarray(b) / norm_b
+    zeros = np.zeros(u.shape[0])
+    return np.allclose(u - v, zeros) or np.allclose(u + v, zeros)
+
+
 def reciprocal_vector(a1_R,a2_R,a3_R):
+    if check_colinear(a1_R, a2_R) or check_colinear(a1_R, a3_R) or check_colinear(a2_R, a3_R):
+        raise RuntimeError("Colinear vectors in reciprocal_vector!")
     #reciprocal lattice vectors
     Vc=np.dot(a1_R,(np.cross(a2_R,a3_R)))
 
@@ -126,51 +138,66 @@ def G_surface(hkl_raw,b1,b2,b3):
     return G_surface, G_surface_unit
           
 
-def calculate_volume_and_dhkl(alpha, beta, gamma, a, b, c, h, k, l):    #TODO: merge with function below  
-    # Calculate Volume and dhkl
-    sin_alpha = np.sin(np.radians(alpha))
-    sin_beta = np.sin(np.radians(beta))
-    sin_gamma = np.sin(np.radians(gamma))
-    cos_alpha = np.cos(np.radians(alpha))
-    cos_beta = np.cos(np.radians(beta))
-    cos_gamma = np.cos(np.radians(gamma))
-    s11 = b**2 * c**2 * (sin_alpha)**2
-    s22 = a**2 * c**2 * (sin_beta)**2
-    s33 = a**2 * b**2 * (sin_gamma)**2
-    s12 = a * b * c**2 * (cos_alpha * cos_beta - cos_gamma)
-    s23 = a**2 * b * c * (cos_beta * cos_gamma - cos_alpha)
-    s13 = a * b**2 * c * (cos_gamma * cos_alpha - cos_beta)
-    s=min(min(s11,s22),s33)
-    
-    Vsq = (a**2 * b**2 * c**2 * (1 - cos_alpha**2 - cos_beta**2 - cos_gamma**2 
-                                  + 2 * cos_alpha * cos_beta * cos_gamma))
-    Volume = np.sqrt(Vsq)
-    dhkl = np.sqrt(Vsq / (s11 * h**2 + s22 * k**2 + s33 * l**2 + 2 * s12 * h * k + 2 * s23 * k * l + 2 * s13 * h * l))
-    
-    return s11,s22,s33,s12,s23,s13,s,Vsq,Volume, dhkl
 
-def calculate_volume(alpha, beta, gamma, a, b, c):    
-    # Calculate Volume and dhkl
-    sin_alpha = np.sin(np.radians(alpha))
-    sin_beta = np.sin(np.radians(beta))
-    sin_gamma = np.sin(np.radians(gamma))
-    cos_alpha = np.cos(np.radians(alpha))
-    cos_beta = np.cos(np.radians(beta))
-    cos_gamma = np.cos(np.radians(gamma))
-    s11 = b**2 * c**2 * (sin_alpha)**2
-    s22 = a**2 * c**2 * (sin_beta)**2
-    s33 = a**2 * b**2 * (sin_gamma)**2
-    s12 = a * b * c**2 * (cos_alpha * cos_beta - cos_gamma)
-    s23 = a**2 * b * c * (cos_beta * cos_gamma - cos_alpha)
-    s13 = a * b**2 * c * (cos_gamma * cos_alpha - cos_beta)
-    s=min(min(s11,s22),s33)
-    
-    Vsq = (a**2 * b**2 * c**2 * (1 - np.cos(np.radians(alpha))**2 - np.cos(np.radians(beta))**2 - np.cos(np.radians(gamma))**2 
-                                  + 2 * np.cos(np.radians(alpha)) * np.cos(np.radians(beta)) * np.cos(np.radians(gamma))))
-    Volume = np.sqrt(Vsq)
-    
-    return s,s11,s22,s33,s12,s23,s13,s,Vsq,Volume
 
+def cell_metrics(alpha, beta, gamma, a, b, c, hkl=None):
+    """
+    Compute unit-cell metric components (s_ij), cell volume, and optionally d_hkl.
+
+    Parameters
+    ----------
+    alpha, beta, gamma : float
+        Cell angles in degrees.
+    a, b, c : float
+        Lattice parameters (same units for all three).
+    hkl : tuple[int, int, int] | None
+        Miller indices (h, k, l). If provided, returns d_hkl.
+
+    Returns
+    -------
+    dict with keys:
+        s11, s22, s33, s12, s23, s13 : float
+        s_min : float                  # min(s11, s22, s33)
+        Vsq : float                    # Volume squared
+        Volume : float                 # Cell volume (same units^3 as a*b*c)
+        dhkl : float | None            # Only if hkl not None, else None
+    """
+    # angles in radians
+    aR, bR, gR = np.radians([alpha, beta, gamma])
+
+    sa, sb, sg = np.sin([aR, bR, gR])
+    ca, cb, cg = np.cos([aR, bR, gR])
+
+    # metric components (covariant G cofactor terms often used in d-spacing formula)
+    s11 = (b**2) * (c**2) * (sa**2)
+    s22 = (a**2) * (c**2) * (sb**2)
+    s33 = (a**2) * (b**2) * (sg**2)
+    s12 = a * b * (c**2) * (ca * cb - cg)
+    s23 = (a**2) * b * c * (cb * cg - ca)
+    s13 = a * (b**2) * c * (cg * ca - cb)
+
+    s_min = min(s11, s22, s33)
+
+    # volume^2 (Niggli form)
+    Vsq = (a**2) * (b**2) * (c**2) * (1 - ca**2 - cb**2 - cg**2 + 2 * ca * cb * cg)
+    Volume = np.sqrt(Vsq)
+
+    # optional d_hkl
+    if hkl is not None:
+        h, k, l = hkl
+        denom = (s11 * h**2 + s22 * k**2 + s33 * l**2 +
+                 2 * s12 * h * k + 2 * s23 * k * l + 2 * s13 * h * l)
+        dhkl = np.sqrt(Vsq / denom)
+    else:
+        dhkl = None
+
+    return {
+        "s11": s11, "s22": s22, "s33": s33,
+        "s12": s12, "s23": s23, "s13": s13,
+        "s_min": s_min,
+        "Vsq": Vsq, "Volume": Volume,
+        "dhkl": dhkl,
+    }
 # TODO: continue with renaming :D
 def azimuth_90degree_to_startdirection(datdatei,startdirection, surfnormal):
     """
@@ -265,14 +292,24 @@ def maximum_hkl(datdatei,lambda_):
     
     name, rho, nue, alpha, beta, gamma, aK, bK, cK, \
         Element, nha, oz, ez, Mrel, lamk, xh, xk, xl, tf_anzahl, tf_gleiche, tfk, a, o =  read_crystal_parameters_uni(datdatei)
-    s,s11,s22,s33,s12,s23,s13,s,Vsq,Volume=calculate_volume(alpha, beta, gamma, aK, bK, cK)
-    
-    i=0
-    for h in range(1, 21):
-        dhkl=np.sqrt(Vsq / (s * h**2))
-        if lambda_ / (2 * dhkl) <= 1:
-            ii = h
-    return ii
+   
+    metrics = cell_metrics(alpha, beta, gamma, aK, bK, cK)
+
+    s      = metrics["s_min"]
+    s11    = metrics["s11"]
+    s22    = metrics["s22"]
+    s33    = metrics["s33"]
+    s12    = metrics["s12"]
+    s23    = metrics["s23"]
+    s13    = metrics["s13"]
+    Vsq    = metrics["Vsq"]
+    Volume = metrics["Volume"]
+
+    h = 1
+    while np.sqrt(Vsq / (s * h**2)) < lambda_ / 2:
+        h += 1
+
+    return h
 
 def Auswahlregel_Beryllium(h,k,l):
     # (00l): nur gerade l erlaubt
@@ -291,8 +328,14 @@ def Auswahlregel_Beryllium(h,k,l):
         # optional: immer erlauben wenn keine spezielle Regel greift
         return True
     
+def isSumEven(h,k,l):
+    return (h + k + l) % 2 == 0
+
+def isSameParity(h,k,l):
+    return (h % 2 == k % 2) and (k % 2 == l % 2)
+
+def isSumDivisibleByFour(h,k,l):
+    return (h + k + l) % 4 == 0
+
 def Auswahlregel_Silizium(h, k, l):
-    hkl_sum_even = (h + k + l) % 2 == 0
-    same_parity = (h % 2 == k % 2) & (k % 2 == l % 2)
-    divisible_by_4 = (h + k + l) % 4 == 0
-    return hkl_sum_even & same_parity & divisible_by_4
+    return isSumEven(h,k,l) and isSameParity(h,k,l) and isSumDivisibleByFour(h,k,l)
