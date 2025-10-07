@@ -19,35 +19,36 @@ from susi2 import susi2
 #from functools import reduce
 
 #possible input:
-    #datdatei = os.path.join(os.path.dirname(__file__), "DATA/SILIZIUM.DAT")
+    #dat_file = os.path.join(os.path.dirname(__file__), "DATA/SILIZIUM.DAT")
     #lambda_=1.5406 #Wavelength in Angström
     #t=30 # thickness of the crystal in mu m
 #%%
-def kristallite(datdatei,lambda_,t,nseed=None):
+def kristallite(dat_file,lambda_,t,nseed=None):
 
-    #incident beam along z-axis (normiert)
-    Einfall=np.array([0, 0, 1])
-    Einfall = Einfall / np.linalg.norm(Einfall)
+    # beam direction (x,y,z)
+    incidence_direction = np.array([0, 0, 1])
+    incidence_direction = incidence_direction / np.linalg.norm(incidence_direction)
     #%%
     #read crystal data
-    name, rho, nue, alpha, beta, gamma, aK, bK, cK, Element, nha, oz, ez, Mrel, lamk, xh, xk, xl, tf_anzahl, tf_gleiche, tfk, a, o =read_crystal_parameters_uni(datdatei)
+    parameters = read_crystal_parameters_uni(dat_file)
+    name, rho, nue, alpha, beta, gamma, aK, bK, cK, Element, nha, oz, ez, Mrel, lamk, xh, xk, xl, tf_anzahl, tf_gleiche, tfk, a, o = parameters
     
-    a1,a2,a3,A=base_vector_tricline(aK,bK,cK,alpha,beta,gamma)
+    _,_,_,base_matrix = base_vector_tricline(aK,bK,cK,alpha,beta,gamma)
     
     # random orientation base vectors
     random_rot = Rotation.random(rng=nseed)
-    Rotationsmatrix=random_rot.as_matrix()
-    A_rotiert=Rotationsmatrix @ A
+    rot_matrix = random_rot.as_matrix()
+    rot_base_matrix = rot_matrix @ base_matrix
     
     #rotadet base vectors
-    a1_R=A_rotiert[0,:]
-    a2_R=A_rotiert[1,:]
-    a3_R=A_rotiert[2,:]
+    a1_R = rot_base_matrix[0,:]
+    a2_R=rot_base_matrix[1,:]
+    a3_R=rot_base_matrix[2,:]
     
     
     b1,b2,b3,B=reciprocal_vector(a1_R,a2_R,a3_R)
     #%% latticeplane of the surface (antiparallel to incident beam) 
-    X = np.column_stack([B, Einfall])
+    X = np.column_stack([B, incidence_direction])
     _, _, Vt = np.linalg.svd(X)
     
     # last vector of V^T
@@ -57,7 +58,7 @@ def kristallite(datdatei,lambda_,t,nseed=None):
 
     G_surface_vec,G_surface_unit=G_surface(hkl_raw,b1,b2,b3)
     
-    cos_theta_surface = np.dot(G_surface_unit, Einfall)
+    cos_theta_surface = np.dot(G_surface_unit, incidence_direction)
     theta_surface = np.degrees(np.arccos(np.clip(cos_theta_surface, -1, 1)))
     
     #%% 
@@ -71,18 +72,18 @@ def kristallite(datdatei,lambda_,t,nseed=None):
     hkl = hkl[~np.all(hkl == 0, axis=1)] 
     
     #G for all combinations
-    h_allg=hkl[:,0][:, np.newaxis]
-    k_allg=hkl[:,1][:, np.newaxis]
-    l_allg=hkl[:,2][:, np.newaxis]
-    G_allg=h_allg*b1+k_allg*b2+l_allg*b3 #alle G vectors
-    G_allg_norm = np.linalg.norm(G_allg, axis=1) 
-    G_allg_unit=G_allg/G_allg_norm[:, np.newaxis] #Normalisierte G-Vektoren
+    h_gen=hkl[:,0][:, np.newaxis]
+    k_gen=hkl[:,1][:, np.newaxis]
+    l_gen=hkl[:,2][:, np.newaxis]
+    G_gen=h_gen*b1+k_gen*b2+l_gen*b3 #alle G vectors
+    G_gen_norm = np.linalg.norm(G_gen, axis=1) 
+    G_gen_unit=G_gen/G_gen_norm[:, np.newaxis] #Normalisierte G-Vektoren
     
     #%% limit hkls: satisfy bragg conditoin
-    d_hkl = 2 * np.pi / G_allg_norm #Netzebenenabstand für alle G die Auswahlregeln genügen
+    d_hkl = 2 * np.pi / G_gen_norm #Netzebenenabstand für alle G die Auswahlregeln genügen
     valid= lambda_ / (2 * d_hkl) <= 1 #Bragg-Bed.
-    G_valid=G_allg[valid]
-    G_valid_unit=G_allg_unit[valid]
+    G_valid=G_gen[valid]
+    G_valid_unit=G_gen_unit[valid]
     hkl_valid=hkl[valid]
     
     #dhkl for all valid hkl
@@ -92,7 +93,7 @@ def kristallite(datdatei,lambda_,t,nseed=None):
     theta_bragg_deg = np.degrees(theta_bragg_rad)
     
     #Angle between incident beam and G
-    theta_E_rad=np.arccos(np.dot(G_valid_unit,Einfall)) # theta_E=arccos(k*G/|G|) ,because|k|=1
+    theta_E_rad=np.arccos(np.dot(G_valid_unit,incidence_direction)) # theta_E=arccos(k*G/|G|) ,because|k|=1
     theta_E_deg=np.degrees(theta_E_rad)
     #Angle only 0- 90 deg, side of the crystal does not matter
     theta_E_0bis90 = np.minimum(theta_E_deg, 180 - theta_E_deg) 
@@ -114,7 +115,7 @@ def kristallite(datdatei,lambda_,t,nseed=None):
     #Gammafactor
     gammafak=np.cos(np.radians(phi_minus_theta_b))/ np.cos(np.radians(phi_plus_theta_b))
     #%%
-    #result arrayof all valid combinations (h,k,l,d_hkl (Netebenenabstand),Braggwinkel,Einfallswinkel auf Netzebene,Abstand Einfallswinkel zu Braggwinkel, Gammafaktor,Phi)
+    #result arrayof all valid combinations (h,k,l,d_hkl (Netebenenabstand),Braggwinkel,incidence_directionswinkel auf Netzebene,Abstand incidence_directionswinkel zu Braggwinkel, Gammafaktor,Phi)
     result=np.column_stack((hkl_valid,d_hkl_valid,theta_bragg_deg,theta,delta_theta,gammafak,phi_0bis90,G_valid_unit))
     
     #%%
@@ -136,9 +137,9 @@ def kristallite(datdatei,lambda_,t,nseed=None):
 
     #%%
     #Angle scattered beam and surface
-    Ausfall=Einfall+G_unit_min
-    Ausfall_unit=Ausfall/np.linalg.norm(Ausfall)
-    theta_exit_rad = np.arccos(np.dot(-G_surface_unit,Ausfall_unit))  # Winkel zw. Austritt und Oberfläche
+    exit_direction=incidence_direction+G_unit_min
+    exit_direction=exit_direction/np.linalg.norm(exit_direction)
+    theta_exit_rad = np.arccos(np.dot(-G_surface_unit,exit_direction))  # Winkel zw. Austritt und Oberfläche
     
     T=t/np.cos(theta_exit_rad)
     #print(T)
@@ -179,9 +180,9 @@ def kristallite(datdatei,lambda_,t,nseed=None):
     positionen_einzelneAtomsorte=[]
     start = 0
     for i in range(nue):
-        ende = start + nha[i]
-        positionen_einzelneAtomsorte.append(positionen[start:ende])
-        start = ende
+        end = start + nha[i]
+        positionen_einzelneAtomsorte.append(positionen[start:end])
+        start = end
     
     for atom_idx in range(nue):
         D = a_list[atom_idx][0:n]
@@ -209,7 +210,7 @@ def kristallite(datdatei,lambda_,t,nseed=None):
     lambda_, theta_b, chi_0r, chi_0i, \
         chi_hr1_pi, chi_hr1_sigma, chi_hr2_pi, chi_hr2_sigma, \
             chi_hi1_pi, chi_hi1_sigma, chi_hi2_pi, chi_hi2_sigma, \
-                vez, mu, error, f2, f0, f1 = susi2(datdatei, h_min, k_min, l_min, lambda_, 2)
+                vez, mu, error, f2, f0, f1 = susi2(dat_file, h_min, k_min, l_min, lambda_, 2)
     Vorsilbe=(lambda_**2*re)/(-np.pi*vez)
     
     chi_h=Vorsilbe*F_h 
@@ -287,7 +288,7 @@ def kristallite(datdatei,lambda_,t,nseed=None):
     return delta
     
 if __name__=="__main__":
-    datdatei = os.path.join(os.path.dirname(__file__), "DATA/SILIZIUM.DAT")
+    dat_file = os.path.join(os.path.dirname(__file__), "DATA/SILIZIUM.DAT")
     lambda_=1.5406 #Wavelength in Angström
     t=30 # thickness of the crystal in mu m
-    print(kristallite(datdatei,lambda_,t,nseed))
+    print(kristallite(dat_file,lambda_,t))
