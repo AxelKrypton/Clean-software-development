@@ -35,7 +35,7 @@ def define_fit_model_functions(num_fit_functions):
     return string + "\n"
 
 #TODO
-def perform_fits(bool: gf, bool: alt):
+def perform_fits(gf: bool, alt: bool):
     #TODO: generate the code to perform fits here
     raise NotImplementedError()
     
