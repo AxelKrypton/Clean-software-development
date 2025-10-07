@@ -1,9 +1,8 @@
 #include "su2.hpp"
 
-#include <cmath>
 #include <array>
-#include <assert.h>
-
+#include <cmath>
+#include <stdexcept>
 
 SU2_mat::SU2_mat(SU2_mat const &obj) {
   c0 = obj.c0;
