@@ -2,6 +2,19 @@ import pytest
 
 from someDefs import *
 
+def test_Auswahlregel_Beryllium():
+    assert Auswahlregel_Beryllium(0,0,3) == False
+    assert Auswahlregel_Beryllium(0,0,4) == True
+    assert Auswahlregel_Beryllium(3,0,4) == False
+    assert Auswahlregel_Beryllium(3,0,3) == True
+    assert Auswahlregel_Beryllium(0,3,4) == False
+    assert Auswahlregel_Beryllium(0,3,3) == True
+    assert Auswahlregel_Beryllium(7,7,0) == True
+    assert Auswahlregel_Beryllium(1,8,0) == False
+    assert Auswahlregel_Beryllium(1,1,1) == True
+    assert Auswahlregel_Beryllium(2,2,2) == True
+    assert Auswahlregel_Beryllium(12,13,14) == True
+
 def test_isSumEven():
     assert isSumEven(0,0,0) == True
     assert isSumEven(1,0,0) == False
