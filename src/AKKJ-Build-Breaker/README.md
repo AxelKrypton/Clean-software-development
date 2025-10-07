@@ -136,6 +136,9 @@ With everything being set up, one can press the build button in the bottom bar a
 
 
 #### 5.2 Using CMake from the PowerShell Terminal
+
+*NOTE:* This is not working yet.
+
 Now you can use CMake from PowerShell to configure and build your project:
 
 ```powershell 
