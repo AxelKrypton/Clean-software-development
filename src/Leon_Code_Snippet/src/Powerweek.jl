@@ -65,25 +65,26 @@ function readfiles(files::Vector{String})
     @assert !isempty(original_data.J) "External field column is empty in $(files[1])"
     @assert !any(isnan.(original_data.J)) "External field column contains NaN in $(files[1])"
 
-    T = h5readattr(files[1], "data")["T"]
-    N = h5readattr(files[1], "data")["N"]
-    mSq = h5readattr(files[1], "data")["mSq"]
-    gamma = h5readattr(files[1], "data")["gamma"]
-    D = h5readattr(files[1], "data")["D"]
-    lambda = h5readattr(files[1], "data")["lambda"]
-    precision = h5readattr(files[1], "data")["precision"]
+    data_attr=data_attr_i
+    T = data_attr["T"]
+    N = data_attr["N"]
+    mSq = data_attr["mSq"]
+    gamma = data_attr["gamma"]
+    D = data_attr["D"]
+    lambda = data_attr["lambda"]
+    precision = data_attr["precision"]
 
     for i in ProgressBar(1:number_of_files, unit="files", printing_delay=1)  # Loop over all files in the folder
         @debug "Reading file $(files[i])"
-
+        data_attr_i = h5readattr(files[i], "data")
         # Check that the parameters are identical for all files
-        @assert h5readattr(files[i], "data")["T"] == T "Temperature mismatch in $(files[i])"
-        @assert h5readattr(files[i], "data")["N"] == N "Lattice size mismatch in $(files[i])"
-        @assert h5readattr(files[i], "data")["mSq"] == mSq "Mass squared mismatch in $(files[i])"
-        @assert h5readattr(files[i], "data")["gamma"] == gamma "Gamma mismatch in $(files[i])"
-        @assert h5readattr(files[i], "data")["D"] == D "Dimension mismatch in $(files[i])"
-        @assert h5readattr(files[i], "data")["lambda"] == lambda "Lambda mismatch in $(files[i])"
-        @assert h5readattr(files[i], "data")["precision"] == precision "Precision mismatch in $(files[i])"
+        @assert data_attr_i["T"] == T "Temperature mismatch in $(files[i])"
+        @assert data_attr_i["N"] == N "Lattice size mismatch in $(files[i])"
+        @assert data_attr_i["mSq"] == mSq "Mass squared mismatch in $(files[i])"
+        @assert data_attr_i["gamma"] == gamma "Gamma mismatch in $(files[i])"
+        @assert data_attr_i["D"] == D "Dimension mismatch in $(files[i])"
+        @assert data_attr_i["lambda"] == lambda "Lambda mismatch in $(files[i])"
+        @assert data_attr_i["precision"] == precision "Precision mismatch in $(files[i])"
         @assert h5read(files[i], "data/t") == original_data.t "Time column mismatch in $(files[i])"
         @assert h5read(files[i], "data/J") == original_data.J "External field column mismatch in $(files[i])"
 
