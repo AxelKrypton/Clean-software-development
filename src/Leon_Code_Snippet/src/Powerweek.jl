@@ -266,7 +266,6 @@ function main()
     return true
 end
 
-# Run the main function if this file is executed directly
 @static if (abspath(PROGRAM_FILE) == @__FILE__)
     main()
 end
