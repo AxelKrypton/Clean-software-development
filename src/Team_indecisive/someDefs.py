@@ -108,7 +108,19 @@ def base_vector_tricline(aK,bK,cK,alpha,beta,gamma):
     A=np.column_stack([a1,a2,a3]) 
     return a1,a2,a3,A 
 
+
+def check_colinear(a, b):
+    norm_a = np.sqrt(np.sum(np.asarray(a) ** 2))
+    norm_b = np.sqrt(np.sum(np.asarray(b) ** 2))
+    u = np.asarray(a) / norm_a
+    v = np.asarray(b) / norm_b
+    zeros = np.zeros(u.shape[0])
+    return np.allclose(u - v, zeros) or np.allclose(u + v, zeros)
+
+
 def reciprocal_vector(a1_R,a2_R,a3_R):
+    if check_colinear(a1_R, a2_R) or check_colinear(a1_R, a3_R) or check_colinear(a2_R, a3_R):
+        raise RuntimeError("Colinear vectors in reciprocal_vector!")
     #reciprocal lattice vectors
     Vc=np.dot(a1_R,(np.cross(a2_R,a3_R)))
 
