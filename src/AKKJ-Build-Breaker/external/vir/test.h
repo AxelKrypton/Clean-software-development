@@ -45,6 +45,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <sstream>
 #include <typeinfo>
 #include <vector>
+#include <cstdint> 
 
 #ifdef HAVE_CXX_ABI_H
 #include <cxxabi.h>
