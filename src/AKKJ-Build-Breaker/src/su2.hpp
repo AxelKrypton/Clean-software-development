@@ -1,10 +1,11 @@
 #pragma once
 
-#include <cmath>
+#include <array>
 
 class SU2_mat {
 public:
   double c0, c1, c2, c3;
+  static constexpr double epsilon{1e-7}; // Epsilon for checking float number "equality"
   SU2_mat(double c0, double c1, double c2, double c3);
   SU2_mat() = delete;
   SU2_mat(SU2_mat const &obj);
@@ -21,7 +22,7 @@ public:
 
   void operator=(SU2_mat const &obj);
 
-  SU2_mat dag();
+  SU2_mat dag(); // Conjugate transpose of matrix
 
   static SU2_mat unit();
 
@@ -31,7 +32,7 @@ public:
 
   double det();
 
-  void mk_dble_array_sun(double u[4]);
+  void mk_dble_array_sun(const std::array<double, 4>& u);
 
   void project_to_sun();
 };
