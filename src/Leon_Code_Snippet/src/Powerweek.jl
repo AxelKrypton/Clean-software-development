@@ -35,26 +35,26 @@ function group_files_by_directory(dir::AbstractString, pattern_string::AbstractS
     @assert isdir(dir) "The specified path $dir does not exist or is not a directory."
     @assert !isempty(pattern_string) "The pattern string cannot be empty."
     pattern = Glob.FilenameMatch(pattern_string)
-    file_paths_matching_pattern = []
+    filePathsMatchingPattern = []
     for (root, _, files) in walkdir(dir)
-        matching_files_in_root = filter!(f -> occursin(pattern, f), joinpath.(root, files))
-        if !isempty(matching_files_in_root)
-            push!(file_paths_matching_pattern, matching_files_in_root)
+        matching_filesInRoot = filter!(f -> occursin(pattern, f), joinpath.(root, files))
+        if !isempty(matchingFilesInRoot)
+            push!(filePathsMatchingPattern, matchingFilesInRoot)
         end
     end
-    return file_paths_matching_pattern
+    return filePathsMatchingPattern
 end
 
 """
 	Reads all HDF5 files in the given list of file paths `files` and returns a single DataFrame containing all the data.
 """
 function readfiles(files::Vector{String})
-    numfiles = length(files)
+    number_of_files = length(files)
     original_data = DataFrame()
 
     #error handling if number of files is larger than 99999
-    @assert numfiles > 0 "No files found in $path"
-    @assert numfiles < 99999 "Number of files is larger than 99999. Exiting."
+    @assert number_of_files > 0 "No files found in $path"
+    @assert number_of_files < 99999 "Number of files is larger than 99999. Exiting."
 
     # Read the first file to get the time t and external field J columns.
     @debug "Reading file $(files[1])"
@@ -73,7 +73,7 @@ function readfiles(files::Vector{String})
     lambda = h5readattr(files[1], "data")["lambda"]
     precision = h5readattr(files[1], "data")["precision"]
 
-    for i in ProgressBar(1:numfiles, unit="files", printing_delay=1)  # Loop over all files in the folder
+    for i in ProgressBar(1:number_of_files, unit="files", printing_delay=1)  # Loop over all files in the folder
         @debug "Reading file $(files[i])"
 
         # Check that the parameters are identical for all files
@@ -108,7 +108,7 @@ function readfiles(files::Vector{String})
         "gamma" => gamma,
         "D" => D,
         "lambda" => lambda,
-        "n" => numfiles,
+        "n" => number_of_files,
     )
 
     return original_data, attributes
