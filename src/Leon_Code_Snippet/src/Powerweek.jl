@@ -28,21 +28,21 @@ function parse_commandline()
 end
 
 """
-	Recursively searches for files matching the given pattern `pattern_string` in the specified directory `dir`.
-	Returns a nested list of file paths that match the pattern.
+	Recursively searches for files matching `pattern_string` in `dir` and groups them by directory.
+	Returns a list of lists of file paths. Each inner list contains all matching files from a single directory.
 """
-function recursiveDirSearch(dir::AbstractString, pattern_string::AbstractString)
+function group_files_by_directory(dir::AbstractString, pattern_string::AbstractString)
     @assert isdir(dir) "The specified path $dir does not exist or is not a directory."
     @assert !isempty(pattern_string) "The pattern string cannot be empty."
     pattern = Glob.FilenameMatch(pattern_string)
-    result = []
+    file_paths_matching_pattern = []
     for (root, _, files) in walkdir(dir)
-        file_paths = filter!(f -> occursin(pattern, f), joinpath.(root, files))
-        if !isempty(file_paths)
-            push!(result, file_paths)
+        matching_files_in_root = filter!(f -> occursin(pattern, f), joinpath.(root, files))
+        if !isempty(matching_files_in_root)
+            push!(file_paths_matching_pattern, matching_files_in_root)
         end
     end
-    return result
+    return file_paths_matching_pattern
 end
 
 """
@@ -252,7 +252,7 @@ function main()
     base_path = args["base-path"]
     output_path = args["output-path"]
 
-    paths = recursiveDirSearch(base_path, "*.h5")
+    paths = group_files_by_directory(base_path, "*.h5")
 
     for files in paths
         path = replace(files[1], r"/[^/]+$" => "/") #Path to the folder containing multiple runs (.h5 files) with the same parameters.
@@ -272,4 +272,4 @@ end
 end
 
 
-end # module Analysis
+end # module Powerweek
