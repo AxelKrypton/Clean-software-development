@@ -305,11 +305,14 @@ def maximum_hkl(datdatei,lambda_):
     Vsq    = metrics["Vsq"]
     Volume = metrics["Volume"]
 
-    h = 1
-    while np.sqrt(Vsq / (s * h**2)) < lambda_ / 2:
-        h += 1
+    ii = 0
+    MAX_ITER = 21
+    for h in range(1, MAX_ITER):
+        dhkl=np.sqrt(Vsq / (s * h**2))
+        if lambda_ / (2 * dhkl) <= 1:
+            ii = h
 
-    return h
+    return ii
 
 def Auswahlregel_Beryllium(h,k,l):
     # (00l): nur gerade l erlaubt
