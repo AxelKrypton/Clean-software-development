@@ -15,21 +15,20 @@ from math import gcd
  #Element: Liste Elemente des Kristalls, nha: Atome pro Einheitszelle für jedes Element, oz: list of atomic numbers, ez: , Mrel: , lamk: Absorptionskanten
  #xh/xk/xl: Atomkoordinaten, tf_anzahl: Zahl der 9er Gruppen, tf_gleiche: , 
 def read_crystal_parameters_uni(datdatei):
-    Element=[]
-    nha = []
-    oz = []
-    ez = []
-    Mrel = []
-    #print(datdatei)
+    element=[]
+    atoms_per_unitcell_per_element = []
+    atomic_numbers = []
+    unitcell = []
+    relative_mass = []
+
     with open(datdatei, "rb") as file:  # Open in binary mode/ in whatever detetected mode
         raw_data = file.read()
         detected = chardet.detect(raw_data)
+
     with open(datdatei, "r", encoding=detected["encoding"]) as fid:
-        name = fid.readline().strip()   #Atomname
+        molecular_name = fid.readline().strip()
         rho = float(fid.readline().strip())  # [g/cm^3] 
-        nue1 = int(fid.readline().strip())  # [stück]
-        nue = nue1
-        #print(nue)
+        number_unique_elements = int(fid.readline().strip())  # TODO check this one
         fid.readline()  # Skip one line
         alpha = float(fid.readline().strip())   # [deg]
         beta = float(fid.readline().strip())   # [deg]
@@ -38,39 +37,32 @@ def read_crystal_parameters_uni(datdatei):
         bK = float(fid.readline().strip())   # [Angström]
         cK = float(fid.readline().strip())   # [Angström]
         
-        lamk = np.zeros((nue, 9)) #Absorptionskanten
-        #xh=np.zeros((30,nue)) #Atomkoordinaten
-        #xk=np.zeros((30,nue))
-        #xl=np.zeros((30,nue))
-        xh,xk, xl = [], [], [] #Atomkoordinaten
+        lambda_k = np.zeros((number_unique_elements, 9)) #Absorption edges TODO: unit?
+        xh, xk, xl = [], [], [] #atomic coordinates
         tf_anzahl = [] #Zahl der 9er Gruppen
         max_size=100 #da tf_anzahl noch nicht bekannt (wenn größer als 100 anpassen :) )
-        #tf_gleiche = []
-        tf_gleiche=np.zeros((nue,max_size)) #matrix initialisieren
-        tfk = np.zeros((nue, 3, 9))
-        a = np.zeros((nue, 9))
-        o = np.zeros((nue, 8))
+        tf_gleiche=np.zeros((number_unique_elements,max_size))
+        tfk = np.zeros((number_unique_elements, 3, 9))
+        a = np.zeros((number_unique_elements, 9))
+        o = np.zeros((number_unique_elements, 8))
         h=1
-        #Element = np.zeros(nue,dtype=object)
-        #print(Element)
         
-        for i in range(nue):
-            Elemen = fid.readline().strip()
-            #print(Elemen)
-            Element.append(Elemen)
-            Element[i]=Elemen
+        for i_mol in range(number_unique_elements):
+            Elemen = fid.readline().strip()     #TODO: squash 3 lines
+            element.append(Elemen)
+            element[i_mol]=Elemen
             nrofatoms = int(fid.readline().strip())  # Atoms per unit cell [stück]
-            nha.append(nrofatoms)
+            atoms_per_unitcell_per_element.append(nrofatoms)
             Z = int(fid.readline().strip())  # Atomic number [stück]
-            oz.append(Z)
-            ez.append(int(fid.readline().strip()))
-            Mrel.append(float(fid.readline().strip()))
+            atomic_numbers.append(Z)
+            unitcell.append(int(fid.readline().strip()))
+            relative_mass.append(float(fid.readline().strip()))
             fid.readline()  # Skip one line
             for j in range(9):
-                lamk[i, j] = float(fid.readline().strip()) #Absorptionskanten
+                lambda_k[i_mol, j] = float(fid.readline().strip())
                 
             fid.readline()  # Skip one line 
-            for j in range(nha[i]): #Atomkoordinaten
+            for j in range(atoms_per_unitcell_per_element[i_mol]): #Atomkoordinaten
                 #xh_wert=float(fid.readline().strip())
                 #xk_wert=float(fid.readline().strip())
                 #xl_wert=float(fid.readline().strip())
@@ -87,29 +79,29 @@ def read_crystal_parameters_uni(datdatei):
             fid.readline()  # Skip one line DWF
             tf_anzahl.append(int(fid.readline().strip()))  # Number of 9-groups 
             count=0 #wird zur Größenbestimmung von tf_gleiche notwendig
-            for j in range(tf_anzahl[i]):
+            for j in range(tf_anzahl[i_mol]):
                  #tf_gleiche_i.append(int(fid.readline().strip()))
                  tf_gleiche_i=int(fid.readline().strip())
                 # tf_gleiche.append(tf_gleiche_i)
-                 tf_gleiche[i,j]=tf_gleiche_i
+                 tf_gleiche[i_mol,j]=tf_gleiche_i
                  count+=1
-            tf_gleiche = tf_gleiche[i, :count].reshape(nue, count) # schneidet nur einträge raus (max-size wird damit unwichtig)
+            tf_gleiche = tf_gleiche[i_mol, :count].reshape(number_unique_elements, count) # schneidet nur einträge raus (max-size wird damit unwichtig)
             fid.readline()  # Skip one line DWF-Koeffizienten
-            for j in range(tf_anzahl[i]):
+            for j in range(tf_anzahl[i_mol]):
                 for g in range(9):
-                    tfk[i, j, g] = float(fid.readline().strip())
+                    tfk[i_mol, j, g] = float(fid.readline().strip())
         
             fid.readline()  # Skip one line Atomstreufaktor
             for j in range(9):
-                a[i, j] = float(fid.readline().strip())
+                a[i_mol, j] = float(fid.readline().strip())
         
             fid.readline()  # Skip one line Abschirmkonstanten
             for j in range(8):
-                o[i, j] = float(fid.readline().strip())
+                o[i_mol, j] = float(fid.readline().strip())
     #print(Element)
     
              
-    return name, rho, nue, alpha, beta, gamma, aK, bK, cK, Element, nha, oz, ez, Mrel, lamk, xh, xk, xl, tf_anzahl, tf_gleiche, tfk, a, o
+    return molecular_name, rho, number_unique_elements, alpha, beta, gamma, aK, bK, cK, element, atoms_per_unitcell_per_element, atomic_numbers, unitcell, relative_mass, lambda_k, xh, xk, xl, tf_anzahl, tf_gleiche, tfk, a, o
                
 def base_vector_tricline(aK,bK,cK,alpha,beta,gamma):
     #base vectors triclinic crystal
