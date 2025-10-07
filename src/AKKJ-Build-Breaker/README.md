@@ -123,6 +123,19 @@ gcc --version
 
 ### 5. Configure and build your project with CMake
 
+#### 5.1 Using CMake Tools extension for VS Code
+
+If you are using VS Code as editor, you install the CMake Tools extension from Microsoft. With that extension it easy and convenient to build a project and execute the tests. 
+In the screenshot below, you can see how to set up the correct build folder. Open the CMake Tools extension settings by clicking on the CMake Tools icon in the tool bar on the left, then click on the settings icon (little gear next to "PROJECT STATUS"). The settings will open and you search for "build". The setting CMake Build Directory needs to be: `${workspaceFolder}/src/AKKJ-Build-Breaker/build`. 
+
+Under "PROJECT STATUS -> Configure" the compiler, that we have installed in the previous steps, needs to be selected. 
+
+With everything being set up, one can press the build button in the bottom bar and the project should be built.
+
+![cmake_tools_setup](pictures\screenshot_vscode_cmake_tools_setup.png)
+
+
+#### 5.2 Using CMake from the PowerShell Terminal
 Now you can use CMake from PowerShell to configure and build your project:
 
 ```powershell 
