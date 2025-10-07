@@ -1,5 +1,9 @@
 #include "su2.hpp"
 
+#include <array>
+#include <cmath>
+#include <stdexcept>
+
 SU2_mat::SU2_mat(SU2_mat const &obj) {
   c0 = obj.c0;
   c1 = obj.c1;
@@ -37,9 +41,12 @@ SU2_mat SU2_mat::operator*(SU2_mat const &obj) {
 
 void SU2_mat::operator*=(SU2_mat const &obj) { *this = *this * obj; }
 
-void SU2_mat::operator*=(double const &i) { return *this = *this * i; }
+void SU2_mat::operator*=(double const &value) { return *this = *this * value; }
 
-void SU2_mat::operator/=(double const &i) { return *this = *this / i; }
+void SU2_mat::operator/=(double const &value) {
+  if (0.0 == value) throw std::invalid_argument("division by 0.0");
+  return *this = *this / value;
+}
 
 void SU2_mat::operator=(SU2_mat const &obj) {
   c0 = obj.c0;
@@ -48,8 +55,13 @@ void SU2_mat::operator=(SU2_mat const &obj) {
   c3 = obj.c3;
 }
 
+// TODO: Currently only total tolerance considered.
+//       Better: combination of relative and total tolerance.
 bool SU2_mat::operator==(SU2_mat const &obj) const {
-  return (c0 == obj.c0) && (c1 == obj.c1) && (c2 == obj.c2) && (c3 == obj.c3);
+  return (std::fabs(c0 - obj.c0) < epsilon) &&
+         (std::fabs(c1 - obj.c1) < epsilon) &&
+         (std::fabs(c2 - obj.c2) < epsilon) &&
+         (std::fabs(c3 - obj.c3) < epsilon);
 }
 
 SU2_mat SU2_mat::dag() { return SU2_mat(c0, -c1, -c2, -c3); }
@@ -58,25 +70,26 @@ SU2_mat SU2_mat::unit() { return SU2_mat(1.0, 0.0, 0.0, 0.0); }
 
 double SU2_mat::trace() { return 2 * c0; }
 
-double SU2_mat::det() { return fabs(c0 * c0 + c1 * c1 + c2 * c2 + c3 * c3); }
+double SU2_mat::det() { return std::fabs(c0 * c0 + c1 * c1 + c2 * c2 + c3 * c3); }
 
-void SU2_mat::mk_dble_array_sun(double u[4]) {
+void SU2_mat::mk_dble_array_sun(const std::array<double, 4>& u) {
   c0 = u[0];
   c1 = u[1];
   c2 = u[2];
   c3 = u[3];
 }
 
-void SU2_mat::project_to_sun() { *this /= sqrt((*this).det()); }
+void SU2_mat::project_to_sun() { *this /= std::sqrt((*this).det()); }
 
-SU2_mat operator*(SU2_mat const &obj, double const &i) {
-  return SU2_mat(obj.c0 * i, obj.c1 * i, obj.c2 * i, obj.c3 * i);
+SU2_mat operator*(SU2_mat const &obj, double const &value) {
+  return SU2_mat(obj.c0 * value, obj.c1 * value, obj.c2 * value, obj.c3 * value);
 }
 
-SU2_mat operator*(double const &i, SU2_mat const &obj) { return obj * i; }
+SU2_mat operator*(double const &value, SU2_mat const &obj) { return obj * value; }
 
-SU2_mat operator/(SU2_mat const &obj, double const &i) {
-  return SU2_mat(obj.c0 / i, obj.c1 / i, obj.c2 / i, obj.c3 / i);
+SU2_mat operator/(SU2_mat const &obj, double const &value) {
+  if (0.0 == value) throw std::invalid_argument("division by 0.0");
+  return SU2_mat(obj.c0 / value, obj.c1 / value, obj.c2 / value, obj.c3 / value);
 }
 
 SU2_mat SU2_mat::pow(int n) {
