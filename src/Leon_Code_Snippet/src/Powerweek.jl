@@ -31,7 +31,7 @@ end
 	Recursively searches for files matching the given pattern `pattern_string` in the specified directory `dir`.
 	Returns a nested list of file paths that match the pattern.
 """
-function rdir(dir::AbstractString, pattern_string::AbstractString)
+function recursiveDirSearch(dir::AbstractString, pattern_string::AbstractString)
     @assert isdir(dir) "The specified path $dir does not exist or is not a directory."
     @assert !isempty(pattern_string) "The pattern string cannot be empty."
     pattern = Glob.FilenameMatch(pattern_string)
@@ -252,7 +252,7 @@ function main()
     base_path = args["base-path"]
     output_path = args["output-path"]
 
-    paths = rdir(base_path, "*.h5") # Recursively search for all .h5 files in the base path. And return a nested list of file paths.
+    paths = recursiveDirSearch(base_path, "*.h5")
 
     for files in paths
         path = replace(files[1], r"/[^/]+$" => "/") #Path to the folder containing multiple runs (.h5 files) with the same parameters.
