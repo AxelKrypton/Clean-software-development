@@ -10,98 +10,90 @@ import chardet
 from fractions import Fraction
 from math import gcd
 
+# Physical constants
+R_E = 2.817696e-5  # Electron radius in Angstrom, TODO: not needed atm
+
 #Laden der Strukturdaten im Uni format
  #RETURN name: KRISTALLNAME, rho: Dichte, nue: Anzahl , alpha/beta/gamma: Winkel Einheitszelle, aK/bK/cK: lattice parameters, 
  #Element: Liste Elemente des Kristalls, nha: Atome pro Einheitszelle für jedes Element, oz: list of atomic numbers, ez: , Mrel: , lamk: Absorptionskanten
  #xh/xk/xl: Atomkoordinaten, tf_anzahl: Zahl der 9er Gruppen, tf_gleiche: , 
-def read_crystal_parameters_uni(datdatei):
+def read_crystal_parameters_uni(file_name):
     element=[]
     atoms_per_unitcell_per_element = []
     atomic_numbers = []
     unitcell = []
     relative_mass = []
 
-    with open(datdatei, "rb") as file:  # Open in binary mode/ in whatever detetected mode
+    with open(file_name, "rb") as file:  # Open in binary mode/ in whatever detetected mode
         raw_data = file.read()
         detected = chardet.detect(raw_data)
 
-    with open(datdatei, "r", encoding=detected["encoding"]) as fid:
-        molecular_name = fid.readline().strip()
-        rho = float(fid.readline().strip())  # [g/cm^3] 
-        number_unique_elements = int(fid.readline().strip())  # TODO check this one
-        fid.readline()  # Skip one line
-        alpha = float(fid.readline().strip())   # [deg]
-        beta = float(fid.readline().strip())   # [deg]
-        gamma = float(fid.readline().strip())   # [deg]
-        aK = float(fid.readline().strip())   # [Angström]
-        bK = float(fid.readline().strip())   # [Angström]
-        cK = float(fid.readline().strip())   # [Angström]
+    with open(file_name, "r", encoding=detected["encoding"]) as input_file:
+        molecular_name = input_file.readline().strip()
+        rho = float(input_file.readline().strip())  # [g/cm^3] 
+        number_unique_elements = int(input_file.readline().strip())  # TODO check this one
+        input_file.readline()  # Skip one line  TODO: refactor
+        alpha = float(input_file.readline().strip())   # [deg]
+        beta = float(input_file.readline().strip())   # [deg]
+        gamma = float(input_file.readline().strip())   # [deg]
+        aK = float(input_file.readline().strip())   # [Angström]
+        bK = float(input_file.readline().strip())   # [Angström]
+        cK = float(input_file.readline().strip())   # [Angström]
         
         lambda_k = np.zeros((number_unique_elements, 9)) #Absorption edges TODO: unit?
         xh, xk, xl = [], [], [] #atomic coordinates
-        tf_anzahl = [] #Zahl der 9er Gruppen
+        tf_amount = [] #Debye-Waller-factor/temperature factor
         max_size=100 #da tf_anzahl noch nicht bekannt (wenn größer als 100 anpassen :) )
-        tf_gleiche=np.zeros((number_unique_elements,max_size))
+        tf_same=np.zeros((number_unique_elements,max_size))
         tfk = np.zeros((number_unique_elements, 3, 9))
-        a = np.zeros((number_unique_elements, 9))
-        o = np.zeros((number_unique_elements, 8))
-        h=1
+        atomic_form_factor = np.zeros((number_unique_elements, 9))
+        shielding_constant = np.zeros((number_unique_elements, 8))
         
-        for i_mol in range(number_unique_elements):
-            Elemen = fid.readline().strip()     #TODO: squash 3 lines
+        for i_element in range(number_unique_elements):
+            Elemen = input_file.readline().strip()     #TODO: squash 3 lines
             element.append(Elemen)
-            element[i_mol]=Elemen
-            nrofatoms = int(fid.readline().strip())  # Atoms per unit cell [stück]
-            atoms_per_unitcell_per_element.append(nrofatoms)
-            Z = int(fid.readline().strip())  # Atomic number [stück]
-            atomic_numbers.append(Z)
-            unitcell.append(int(fid.readline().strip()))
-            relative_mass.append(float(fid.readline().strip()))
-            fid.readline()  # Skip one line
+            element[i_element]=Elemen
+            atoms_per_unitcell = int(input_file.readline().strip())
+            atoms_per_unitcell_per_element.append(atoms_per_unitcell)
+            atomic_numbers.append(int(input_file.readline().strip()))
+            unitcell.append(int(input_file.readline().strip()))
+            relative_mass.append(float(input_file.readline().strip()))
+            input_file.readline()  # Skip one line TODO: refactor
             for j in range(9):
-                lambda_k[i_mol, j] = float(fid.readline().strip())
+                lambda_k[i_element, j] = float(input_file.readline().strip())
                 
-            fid.readline()  # Skip one line 
-            for j in range(atoms_per_unitcell_per_element[i_mol]): #Atomkoordinaten
-                #xh_wert=float(fid.readline().strip())
-                #xk_wert=float(fid.readline().strip())
-                #xl_wert=float(fid.readline().strip())
-                #xh_list.append(xh)
-                #xh[j][i]=xh_wert
-                #xk[j][i]=xh_wert
-                #xl[j][i]=xh_wert
-                xh.append(float(fid.readline().strip()))
-                xk.append(float(fid.readline().strip()))
-                xl.append(float(fid.readline().strip()))
-                h += 1
+            input_file.readline()  # Skip one line TODO: refactor 
+
+            #atomic coordinates
+            for j in range(atoms_per_unitcell_per_element[i_element]):
+                xh.append(float(input_file.readline().strip()))
+                xk.append(float(input_file.readline().strip()))
+                xl.append(float(input_file.readline().strip()))
            
                 
-            fid.readline()  # Skip one line DWF
-            tf_anzahl.append(int(fid.readline().strip()))  # Number of 9-groups 
-            count=0 #wird zur Größenbestimmung von tf_gleiche notwendig
-            for j in range(tf_anzahl[i_mol]):
-                 #tf_gleiche_i.append(int(fid.readline().strip()))
-                 tf_gleiche_i=int(fid.readline().strip())
-                # tf_gleiche.append(tf_gleiche_i)
-                 tf_gleiche[i_mol,j]=tf_gleiche_i
-                 count+=1
-            tf_gleiche = tf_gleiche[i_mol, :count].reshape(number_unique_elements, count) # schneidet nur einträge raus (max-size wird damit unwichtig)
-            fid.readline()  # Skip one line DWF-Koeffizienten
-            for j in range(tf_anzahl[i_mol]):
+            input_file.readline()  # Skip one line DWF TODO: refactor
+            tf_amount.append(int(input_file.readline().strip()))
+            counter=0
+            for j in range(tf_amount[i_element]):
+                 tf_same[i_element,j]=int(input_file.readline().strip())
+                 counter+=1
+            # schneidet nur einträge raus (max-size wird damit unwichtig)   TODO: remove?
+            tf_same = tf_same[i_element, :counter].reshape(number_unique_elements, counter) 
+            input_file.readline()  # Skip one line DWF-Koeffizienten TODO: refactor
+            for j in range(tf_amount[i_element]):
                 for g in range(9):
-                    tfk[i_mol, j, g] = float(fid.readline().strip())
+                    tfk[i_element, j, g] = float(input_file.readline().strip())
         
-            fid.readline()  # Skip one line Atomstreufaktor
+            input_file.readline()  # Skip one line Atomstreufaktor TODO: refactor
             for j in range(9):
-                a[i_mol, j] = float(fid.readline().strip())
+                atomic_form_factor[i_element, j] = float(input_file.readline().strip())
         
-            fid.readline()  # Skip one line Abschirmkonstanten
+            input_file.readline()  # Skip one line Abschirmkonstanten TODO: refactor
             for j in range(8):
-                o[i_mol, j] = float(fid.readline().strip())
-    #print(Element)
+                shielding_constant[i_element, j] = float(input_file.readline().strip())
     
              
-    return molecular_name, rho, number_unique_elements, alpha, beta, gamma, aK, bK, cK, element, atoms_per_unitcell_per_element, atomic_numbers, unitcell, relative_mass, lambda_k, xh, xk, xl, tf_anzahl, tf_gleiche, tfk, a, o
+    return molecular_name, rho, number_unique_elements, alpha, beta, gamma, aK, bK, cK, element, atoms_per_unitcell_per_element, atomic_numbers, unitcell, relative_mass, lambda_k, xh, xk, xl, tf_amount, tf_same, tfk, atomic_form_factor, shielding_constant
                
 def base_vector_tricline(aK,bK,cK,alpha,beta,gamma):
     #base vectors triclinic crystal
@@ -134,38 +126,43 @@ def G_surface(hkl_raw,b1,b2,b3):
     return G_surface, G_surface_unit
           
 
-#Berechnen des Einheitszellenvolumens und Netebenenabstandes
-def calculate_volume_and_dhkl(alpha, beta, gamma, a, b, c, h, k, l):
-    # Physical constants
-    re = 2.817696e-5  # Electron radius in Angstrom
-    
+def calculate_volume_and_dhkl(alpha, beta, gamma, a, b, c, h, k, l):    #TODO: merge with function below  
     # Calculate Volume and dhkl
-    s11 = b**2 * c**2 * (np.sin(np.radians(alpha)))**2
-    s22 = a**2 * c**2 * (np.sin(np.radians(beta)))**2
-    s33 = a**2 * b**2 * (np.sin(np.radians(gamma)))**2
-    s12 = a * b * c**2 * (np.cos(np.radians(alpha)) * np.cos(np.radians(beta)) - np.cos(np.radians(gamma)))
-    s23 = a**2 * b * c * (np.cos(np.radians(beta)) * np.cos(np.radians(gamma)) - np.cos(np.radians(alpha)))
-    s13 = a * b**2 * c * (np.cos(np.radians(gamma)) * np.cos(np.radians(alpha)) - np.cos(np.radians(beta)))
+    sin_alpha = np.sin(np.radians(alpha))
+    sin_beta = np.sin(np.radians(beta))
+    sin_gamma = np.sin(np.radians(gamma))
+    cos_alpha = np.cos(np.radians(alpha))
+    cos_beta = np.cos(np.radians(beta))
+    cos_gamma = np.cos(np.radians(gamma))
+    s11 = b**2 * c**2 * (sin_alpha)**2
+    s22 = a**2 * c**2 * (sin_beta)**2
+    s33 = a**2 * b**2 * (sin_gamma)**2
+    s12 = a * b * c**2 * (cos_alpha * cos_beta - cos_gamma)
+    s23 = a**2 * b * c * (cos_beta * cos_gamma - cos_alpha)
+    s13 = a * b**2 * c * (cos_gamma * cos_alpha - cos_beta)
     s=min(min(s11,s22),s33)
     
-    Vsq = (a**2 * b**2 * c**2 * (1 - np.cos(np.radians(alpha))**2 - np.cos(np.radians(beta))**2 - np.cos(np.radians(gamma))**2 
-                                  + 2 * np.cos(np.radians(alpha)) * np.cos(np.radians(beta)) * np.cos(np.radians(gamma))))
+    Vsq = (a**2 * b**2 * c**2 * (1 - cos_alpha**2 - cos_beta**2 - cos_gamma**2 
+                                  + 2 * cos_alpha * cos_beta * cos_gamma))
     Volume = np.sqrt(Vsq)
     dhkl = np.sqrt(Vsq / (s11 * h**2 + s22 * k**2 + s33 * l**2 + 2 * s12 * h * k + 2 * s23 * k * l + 2 * s13 * h * l))
     
     return s11,s22,s33,s12,s23,s13,s,Vsq,Volume, dhkl
 
-def calculate_volume(alpha, beta, gamma, a, b, c):
-    # Physical constants
-    re = 2.817696e-5  # Electron radius in Angstrom
-    
-    # Calculate Volume 
-    s11 = b**2 * c**2 * (np.sin(np.radians(alpha)))**2
-    s22 = a**2 * c**2 * (np.sin(np.radians(beta)))**2
-    s33 = a**2 * b**2 * (np.sin(np.radians(gamma)))**2
-    s12 = a * b * c**2 * (np.cos(np.radians(alpha)) * np.cos(np.radians(beta)) - np.cos(np.radians(gamma)))
-    s23 = a**2 * b * c * (np.cos(np.radians(beta)) * np.cos(np.radians(gamma)) - np.cos(np.radians(alpha)))
-    s13 = a * b**2 * c * (np.cos(np.radians(gamma)) * np.cos(np.radians(alpha)) - np.cos(np.radians(beta)))
+def calculate_volume(alpha, beta, gamma, a, b, c):    
+    # Calculate Volume and dhkl
+    sin_alpha = np.sin(np.radians(alpha))
+    sin_beta = np.sin(np.radians(beta))
+    sin_gamma = np.sin(np.radians(gamma))
+    cos_alpha = np.cos(np.radians(alpha))
+    cos_beta = np.cos(np.radians(beta))
+    cos_gamma = np.cos(np.radians(gamma))
+    s11 = b**2 * c**2 * (sin_alpha)**2
+    s22 = a**2 * c**2 * (sin_beta)**2
+    s33 = a**2 * b**2 * (sin_gamma)**2
+    s12 = a * b * c**2 * (cos_alpha * cos_beta - cos_gamma)
+    s23 = a**2 * b * c * (cos_beta * cos_gamma - cos_alpha)
+    s13 = a * b**2 * c * (cos_gamma * cos_alpha - cos_beta)
     s=min(min(s11,s22),s33)
     
     Vsq = (a**2 * b**2 * c**2 * (1 - np.cos(np.radians(alpha))**2 - np.cos(np.radians(beta))**2 - np.cos(np.radians(gamma))**2 
@@ -174,7 +171,7 @@ def calculate_volume(alpha, beta, gamma, a, b, c):
     
     return s,s11,s22,s33,s12,s23,s13,s,Vsq,Volume
 
-#
+# TODO: continue with renaming :D
 def azimuth_90degree_to_startdirection(datdatei,startdirection, surfnormal):
     """
     Find 90 degree azimuth
