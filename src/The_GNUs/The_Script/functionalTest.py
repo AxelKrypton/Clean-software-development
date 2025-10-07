@@ -48,7 +48,8 @@ def shell(*args):
     return process.stderr
 #!/bin/bash
 
-if shutil.which('pdflatex'): shell('pdflatex Plots/D15.48_pr_NEW.tex')
+# TODO: uncomment
+# if shutil.which('pdflatex'): shell('pdflatex Plots/D15.48_pr_NEW.tex')
 
 this_fit = os.path.join(os.path.dirname(__file__), "D15.48_me_NEW")
 with open(this_fit) as f:
@@ -74,3 +75,16 @@ for i, line in enumerate(this_fit_parameters.splitlines()):
                 sys.exit(1)
 
 print("The test has passed. The fit parameters are identical to the supposed outcome.")
+
+# performe_fits() == r'''
+#         a10=100.0
+#         b10=-1000.0
+#         c10=10000.0
+#         d10=-1000.0
+#         x10=0.05
+#         y10=0.1
+#         xl10=0.0					
+#         xr10=0.0735
+#         fit [xl10:xr10] f10(x) "../Data/D15.48/relvol.Nt24_t1.500000_ALTERNATING" using 1:2:3:4 xyerrors via x10,y10,a10,b10,c10
+#         redchisqr10=FIT_STDFIT**2
+# '''
