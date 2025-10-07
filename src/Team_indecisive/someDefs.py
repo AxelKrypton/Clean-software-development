@@ -296,14 +296,7 @@ def maximum_hkl(datdatei,lambda_):
     metrics = cell_metrics(alpha, beta, gamma, aK, bK, cK)
 
     s      = metrics["s_min"]
-    s11    = metrics["s11"]
-    s22    = metrics["s22"]
-    s33    = metrics["s33"]
-    s12    = metrics["s12"]
-    s23    = metrics["s23"]
-    s13    = metrics["s13"]
     Vsq    = metrics["Vsq"]
-    Volume = metrics["Volume"]
 
     ii = 0
     MAX_ITER = 21
