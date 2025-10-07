@@ -5,17 +5,9 @@ from subprocess import run, PIPE
 from pathlib import Path
 import shutil
 
-def shell(*args):
-    """ 
-    Carry out the passed arguments args in the shell. Can be passed as a single
-    string or as a list. Captures and returns output of shell command. E.g.
-        shell('ls -lah')
-    """
-    args = [str(s) for s in args]
-    process = run(' '.join(args),shell=True,stderr=PIPE,stdout=PIPE,universal_newlines=True)
-    return process.stderr
-#!/bin/bash
-
+from run import run_gnuplot
+from gnucode import get_gnuplot_code
+import numpy as np
 BINSIZE = np.zeros(11)
 
 BINSIZE[10]=6.9e-3
@@ -31,9 +23,30 @@ BINSIZE[1]=4.4e-3
 BINSIZE[0]=-1
 
 
-output = shell(f'gnuplot -e binsize1={BINSIZE[1]} -e binsize2={BINSIZE[2]} -e binsize3={BINSIZE[3]} -e binsize4={BINSIZE[4]} -e binsize5={BINSIZE[5]} -e binsize6={BINSIZE[6]} -e binsize7={BINSIZE[7]} -e binsize8={BINSIZE[8]} -e binsize9={BINSIZE[9]} -e binsize10={BINSIZE[10]} -e gf=0 -e alt=0 D15.48_pr_NEW.gp')
+extra_options=["-e", "gf=0", "-e", "alt=0"]
+
+# build options as ["-e", "BINSIZE1=6.9e-3", "-e", "BINSIZE2=2.9e-3", ...]
 
 
+OPTIONS = []
+for i, val in enumerate(BINSIZE[1:], start=1):
+    OPTIONS += ["-e", f"binsize{i}={val}"]
+OPTIONS+=extra_options
+# run gnuplot with your inline code
+# out, err = run_gnuplot(get_gnuplot_code(), OPTIONS)
+# print("STDERR:", err)
+
+output,err = run_gnuplot(get_gnuplot_code(),OPTIONS)
+def shell(*args):
+    """ 
+    Carry out the passed arguments args in the shell. Can be passed as a single
+    string or as a list. Captures and returns output of shell command. E.g.
+        shell('ls -lah')
+    """
+    args = [str(s) for s in args]
+    process = run(' '.join(args),shell=True,stderr=PIPE,stdout=PIPE,universal_newlines=True)
+    return process.stderr
+#!/bin/bash
 
 if shutil.which('pdflatex'): shell('pdflatex Plots/D15.48_pr_NEW.tex')
 
