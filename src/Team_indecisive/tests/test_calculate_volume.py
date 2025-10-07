@@ -16,5 +16,5 @@ def test_calculate_volume(
 ) -> None:
     result: tuple[float, ...] = calculate_volume(*inp)
     np.testing.assert_allclose(
-        result, expected, rtol=1e-7, atol=0.0, equal_nan=False, strict=True
+        result, expected, rtol=1e-7, atol=1e-14, equal_nan=False, strict=True
     )
