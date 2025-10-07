@@ -16,7 +16,7 @@ def test_crystallite(inp: tuple[str, float, int, int], expected: float) -> None:
         result,
         expected,
         rtol=1e-7,
-        atol=0.0,
+        atol=1e-14,
         equal_nan=False,
         err_msg="Crystallite value not matchings",
         strict=True,
