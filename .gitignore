@@ -334,3 +334,6 @@ TSWLatexianTemp*
 
 # Other OS specific auxiliary files
 .DS_Store
+
+# Output Folder for The_GNUs script
+./src/The_GNUs/The_Script/Plots/*
