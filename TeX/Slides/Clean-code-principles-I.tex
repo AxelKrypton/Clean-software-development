@@ -11,7 +11,7 @@
     \begin{varblock}{block example}{\alt<1-2>{Why is it hard to tell what this code is doing?}{Good names are crucial for readability!}}
         \begin{onlyenv}<1-2>
             \begin{lstlisting}[style=MyCpp]
-                using std::vector<std::vector<int>> = myVecVec;
+                using myVecVec = std::vector<std::vector<int>>;
 
                 myVecVec FC(const myVecVec& b)
                 {
@@ -26,7 +26,7 @@
         \end{onlyenv}
         \begin{onlyenv}<3>
             \begin{lstlisting}[style=MyCpp]
-                using std::vector<std::vector<int>> = myVecVec;
+                using myVecVec = std::vector<std::vector<int>>;
 
                 myVecVec getFlaggedCells(const myVecVec& gameBoard)
                 {
@@ -41,7 +41,7 @@
         \end{onlyenv}
         \begin{onlyenv}<4>
             \begin{lstlisting}[style=MyCpp]
-                using std::vector<std::vector<int>> = SetOfCells;
+                using SetOfCells = std::vector<std::vector<int>>;
 
                 SetOfCells getFlaggedCells(const SetOfCells& gameBoard)
                 {
