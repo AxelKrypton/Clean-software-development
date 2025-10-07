@@ -1,4 +1,53 @@
+def set_terminal_parameters():
+    return (r'set terminal epslatex size 15.11787cm,20cm standalone header "\\usepackage{amsmath,amstext,amssymb} \n \\usepackage[utf8]{inputenc} \n \\usepackage[outdir=./]{epstopdf} \n \
+    \\renewcommand{\\bar}[1]{\\mkern 1.5mu\\overline{\\mkern-1.5mu#1\\mkern-1.5mu}\\mkern 1.5mu} \n \\graphicspath{{../}}  \n \\newcommand{\\upright}[1]{\\mathsf{#1}} \n \
+    \\renewcommand{\\familydefault}{\\sfdefault} \n \\usepackage{sfmath}" font ",11" linewidth 4' + "\n\n")
 
+def set_initial_fit_parameters(num_fit_functions):
+    a_initial_value = 100.0
+    b_initial_value = -1000.0
+    c_initial_value = 10000.0
+    d_initial_value = -1000.0
+
+    string = ""
+    for i in range(1, num_fit_functions+1):
+        string += f"a{i}="
+    string += f"{a_initial_value}\n"
+
+    for i in range(1, num_fit_functions+1):
+        string += f"b{i}="
+    string += f"{b_initial_value}\n"
+
+    for i in range(1, num_fit_functions+1):
+        string += f"c{i}="
+    string += f"{c_initial_value}\n"
+
+    for i in range(1, num_fit_functions+1):
+        string += f"d{i}="
+    string += f"{d_initial_value}\n"
+
+    return string + "\n"
+
+def define_fit_model_functions(num_fit_functions):
+    string = ""
+    for i in range(1, num_fit_functions+1):
+        string += f"f{i}(x)=y{i}+a{i}*(x-x{i})+b{i}*(x-x{i})**3+c{i}*(x-x{i})**4\n"
+    return string + "\n"
+
+#TODO
+def perform_fits(bool: gf, bool: alt):
+    #TODO: generate the code to perform fits here
+    raise NotImplementedError()
+    
+#TODO
+def configure_multiplot():
+    raise NotImplementedError()
+
+#TODO
+def create_multiplot_with_data_and_fit_curve():
+    raise NotImplementedError()
+
+#TODO refactor this function to use the functions implemented above to generate the gnuplot code 
 def get_gnuplot_code():
 
     gnucode=r'''
