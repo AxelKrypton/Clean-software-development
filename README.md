@@ -98,18 +98,18 @@ Practical sessions have been omitted (refer to the training schedule in the slid
 
 ### Preparation workroad
 
-- [ ] Lecture slides
+- [X] Lecture slides
   - [X] Day 1
   - [X] Day 2
   - [X] Day 3
-  - [ ] Day 4
+  - [X] Day 4
   - [X] Day 5
 
-- [ ] Review/improve slides examples
+- [X] Review/improve slides examples
   - [X] Day 1
   - [X] Day 2
   - [X] Day 3
-  - [ ] Day 4
+  - [X] Day 4
   - [X] Day 5
 
 - [X] Practical sessions
