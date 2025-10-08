@@ -65,25 +65,26 @@ function readfiles(files::Vector{String})
     @assert !isempty(original_data.J) "External field column is empty in $(files[1])"
     @assert !any(isnan.(original_data.J)) "External field column contains NaN in $(files[1])"
 
-    T = h5readattr(files[1], "data")["T"]
-    N = h5readattr(files[1], "data")["N"]
-    mSq = h5readattr(files[1], "data")["mSq"]
-    gamma = h5readattr(files[1], "data")["gamma"]
-    D = h5readattr(files[1], "data")["D"]
-    lambda = h5readattr(files[1], "data")["lambda"]
-    precision = h5readattr(files[1], "data")["precision"]
+    data_attr=data_attr_i
+    T = data_attr["T"]
+    N = data_attr["N"]
+    mSq = data_attr["mSq"]
+    gamma = data_attr["gamma"]
+    D = data_attr["D"]
+    lambda = data_attr["lambda"]
+    precision = data_attr["precision"]
 
     for i in ProgressBar(1:number_of_files, unit="files", printing_delay=1)  # Loop over all files in the folder
         @debug "Reading file $(files[i])"
-
+        data_attr_i = h5readattr(files[i], "data")
         # Check that the parameters are identical for all files
-        @assert h5readattr(files[i], "data")["T"] == T "Temperature mismatch in $(files[i])"
-        @assert h5readattr(files[i], "data")["N"] == N "Lattice size mismatch in $(files[i])"
-        @assert h5readattr(files[i], "data")["mSq"] == mSq "Mass squared mismatch in $(files[i])"
-        @assert h5readattr(files[i], "data")["gamma"] == gamma "Gamma mismatch in $(files[i])"
-        @assert h5readattr(files[i], "data")["D"] == D "Dimension mismatch in $(files[i])"
-        @assert h5readattr(files[i], "data")["lambda"] == lambda "Lambda mismatch in $(files[i])"
-        @assert h5readattr(files[i], "data")["precision"] == precision "Precision mismatch in $(files[i])"
+        @assert data_attr_i["T"] == T "Temperature mismatch in $(files[i])"
+        @assert data_attr_i["N"] == N "Lattice size mismatch in $(files[i])"
+        @assert data_attr_i["mSq"] == mSq "Mass squared mismatch in $(files[i])"
+        @assert data_attr_i["gamma"] == gamma "Gamma mismatch in $(files[i])"
+        @assert data_attr_i["D"] == D "Dimension mismatch in $(files[i])"
+        @assert data_attr_i["lambda"] == lambda "Lambda mismatch in $(files[i])"
+        @assert data_attr_i["precision"] == precision "Precision mismatch in $(files[i])"
         @assert h5read(files[i], "data/t") == original_data.t "Time column mismatch in $(files[i])"
         @assert h5read(files[i], "data/J") == original_data.J "External field column mismatch in $(files[i])"
 
@@ -193,30 +194,11 @@ function bootstrap(df, attributes; num_resamples=1000)
 end
 
 function save_to_file(result, file_attr, output_path)
-    D = file_attr["D"]
-    N = file_attr["N"]
-    T = file_attr["T"]
-    q = file_attr["t_delta"]
-    J_delta = file_attr["J_delta"]
-
-    @info "Saving results to $(output_path)"
     if !isdir(output_path)
         mkpath(output_path)
     end
-
-    if D == 2
-        Tc = 4.4629
-    elseif D == 3
-        Tc = 9.37074
-    else
-        @error "Dimension needs to be 2 or 3."
-    end
-
-    τ = round((T - Tc) / Tc, digits=6)
-    ΔJ = round(file_attr["J_delta"], digits=6)
-    Δt = Int(file_attr["t_delta"])
-
-    output_file = "$(D)D_N$(N)_τ$(τ)_dt$(Δt)_dJ$(ΔJ).h5"
+    output_file = create_filename(file_attr)
+    @info "Saving results to $(output_path)/$(output_file)"
 
     h5open(joinpath(output_path, output_file), "w") do file
         data = create_group(file, "data") # create a group
@@ -232,19 +214,48 @@ function save_to_file(result, file_attr, output_path)
         data["κ3_var"] = result.κ3_var
         data["κ4_avg"] = result.κ4_avg
         data["κ4_var"] = result.κ4_var
-
-        HDF5.attributes(data)["D"] = D
-        HDF5.attributes(data)["N"] = N
-        HDF5.attributes(data)["T"] = T
-        HDF5.attributes(data)["J_delta"] = J_delta
-        HDF5.attributes(data)["t_delta"] = q
-        HDF5.attributes(data)["mSq"] = file_attr["mSq"]
-        HDF5.attributes(data)["lambda"] = file_attr["lambda"]
-        HDF5.attributes(data)["gamma"] = file_attr["gamma"]
-        HDF5.attributes(data)["n"] = file_attr["n"]
+        
+        data_attr = HDF5.attributes(data)
+        data_attr["D"] = file_attr["D"]
+        data_attr["N"] = file_attr["N"]
+        data_attr["T"] = file_attr["T"]
+        data_attr["J_delta"] = file_attr["J_delta"]
+        data_attr["t_delta"] = file_attr["t_delta"]
+        data_attr["mSq"] = file_attr["mSq"]
+        data_attr["lambda"] = file_attr["lambda"]
+        data_attr["gamma"] = file_attr["gamma"]
+        data_attr["n"] = file_attr["n"]
     end
 
     return nothing
+end
+
+function create_filename(file_attr)
+    D = file_attr["D"]
+    N = file_attr["N"]
+    T = file_attr["T"]
+    J_delta = file_attr["J_delta"]
+    t_delta = file_attr["t_delta"]
+
+    Tc = get_critical_temperature(D)
+
+    τ = round((T - Tc) / Tc, digits=6)
+    ΔJ = round(J_delta, digits=6)
+    Δt = Int(t_delta)
+
+    output_file = "$(D)D_N$(N)_τ$(τ)_dt$(Δt)_dJ$(ΔJ).h5"
+    return output_file
+end
+
+function get_critical_temperature(dim)
+    if dim == 2
+        Tc = 4.4629
+    elseif dim == 3
+        Tc = 9.37074
+    else
+        @error "Critical temperature calculation, dimension needs to be 2 or 3."
+    end
+    return Tc
 end
 
 function main()

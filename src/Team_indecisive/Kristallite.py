@@ -287,8 +287,13 @@ def kristallite(dat_file,lambda_,t,nseed=None):
        
     return delta
     
-if __name__=="__main__":
+
+def main():
     dat_file = os.path.join(os.path.dirname(__file__), "DATA/SILIZIUM.DAT")
     lambda_=1.5406 #Wavelength in Angström
     t=30 # thickness of the crystal in mu m
     print(kristallite(dat_file,lambda_,t))
+
+
+if __name__=="__main__":
+    main()

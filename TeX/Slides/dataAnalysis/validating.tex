@@ -153,9 +153,19 @@ acintj[1:] = np.cumsum(2*acorj[1:]/acorj[0],axis=0) + 1
 \end{frame}
 
 
-\frame{\frametitle{CC3: Check for consistency between outputs}
+\begin{frame}[fragile]{CC3: Check for consistency between outputs}
 Observables may be constrained by relationships between them.
 Design tests that ensure observables obey these known constraints.
+    \begin{overlayarea}{\textwidth}{0.5\textheight}
+        \begin{onlyenv}<1>
+
+\vspace{2.5cm}
+
+\centering
+
+\hspace{5cm}\textbf{Examples?}
+        \end{onlyenv}
+        \begin{onlyenv}<2>
 \begin{varblock}{example}[0.7\textwidth]{Examples}
 \begin{itemize}
 \item Speed, velocity, acceleration
@@ -164,7 +174,9 @@ Design tests that ensure observables obey these known constraints.
 \item $f\left(f^{-1}\left(x\right)\right)=x$
 \end{itemize}
 \end{varblock}
-}
+        \end{onlyenv}
+    \end{overlayarea}
+\end{frame}
 
 
 \begin{frame}[fragile]{CC3: Check for consistency between outputs}
@@ -174,16 +186,16 @@ between different formats. A \textbf{round-trip} test checks that
 data remain consistent and accurate through these transformations.
 \vspace{3mm}
 \begin{lstlisting}[style=mypython]
-# Make test table
+# Make reference table
 ref = latexTable()
 ref.append(['1','2','3'])
 ref.append(['1','2','3'])
-ref.writeTable('testInterface.tex')
+ref.writeTable('test.tex')
 
 # Round-trip test
-convertTable('testInterface.tex','testInterface.csv',
-             targetDelimiter=',')
-test.readTable('testInterface.csv',delimiter=',')
+convertTable('test.tex','test.csv',targetDelimiter=',')
+convertTable('test.csv','test.tex',sourceDelimiter=',')
+test.readTable('testInterface.tex')
 lpass *= test==ref
 \end{lstlisting}
 \end{varblock}
@@ -194,6 +206,16 @@ lpass *= test==ref
 \centering
 Depending on an observable's interpretation, you may
 already \\ know some properties it must have. Test them!
+    \begin{overlayarea}{\textwidth}{0.5\textheight}
+        \begin{onlyenv}<1>
+
+\vspace{2.5cm}
+
+\centering
+
+\hspace{5cm}\textbf{Examples?}
+        \end{onlyenv}
+        \begin{onlyenv}<2>
 \begin{varblock}{example}[0.85\textwidth]{Examples}
 \begin{itemize}
 \item is your covariance matrix positive semidefinite?
@@ -203,6 +225,8 @@ already \\ know some properties it must have. Test them!
 \item are physical observables at physical parameters real?
 \end{itemize}
 \end{varblock}
+        \end{onlyenv}
+    \end{overlayarea}
 }
 
 

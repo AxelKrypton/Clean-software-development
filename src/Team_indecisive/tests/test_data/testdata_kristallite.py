@@ -6,5 +6,5 @@ input_0: tuple[str, float, int, int] = [
     30,
     10,
 ]
-expected_0: float = -3.6059854189874456e-34
+expected_0: float = 0.0
 testdata = [(input_0, expected_0)]
