@@ -15,18 +15,20 @@ test_data_dir = os.path.join(Path.Path(__file__).parent.parent,"test_data")
 #get size?
 #(check Energy density is roughly 4 times magnetization density for first ~100 elements at lowest temperature)
 
+eggwin_dict = {"conf":0, "m":1, "E":2}
+
 def test_parsed():
-	df_parsed = file_parser(os.path.join(test_data_dir,"simple_example.txt"))
+	df_parsed = file_parser(os.path.join(test_data_dir,"simple_example.txt"), eggwin_dict)
 	df_expected = pd.DataFrame({"m": [0.1,0.4], "E": [0.1,0.4]})
 	assert df_parsed.equals(df_expected)
 
 def test_file_parser_checks_duplicates():
-	df_parsed = file_parser(os.path.join(test_data_dir,"duplicate_example.txt"))
+	df_parsed = file_parser(os.path.join(test_data_dir,"duplicate_example.txt"), eggwin_dict)
 	df_expected = pd.DataFrame({"m": [0.1,0.4], "E": [0.1,0.4]})
 	assert df_parsed.equals(df_expected)
 
 def test_format_data():
-	df_input = file_parser(os.path.join(test_data_dir,"format_example.txt"))
+	df_input = file_parser(os.path.join(test_data_dir,"format_example.txt"), eggwin_dict)
 	df_expected = pd.DataFrame({"m": [0.1,0.4], "E": [0.1,0.4]})
 	df_formatted = format_data(df_input, 64, 256)
 	for index, line in df_formatted.iterrows():

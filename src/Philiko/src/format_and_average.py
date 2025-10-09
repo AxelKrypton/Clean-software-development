@@ -6,8 +6,10 @@ import os
 #grid_size = 8
 #scaling_m = 64
 #scaling_E = 256
+#input_col [0,1,2]] # id, m, E
+###################
 
-def file_parser(file_path):
+def file_parser(file_path, col_dict):
 	#assume file has three columns: conf m and E, separated by whitespace
 	data = {"m": [], "E": []}
 	id = []
@@ -18,10 +20,10 @@ def file_parser(file_path):
 			parts = line.split()
 			if len(parts) >= 2:
 				try:
-					if parts[0] not in id:
-						id.append(parts[0])
-						m_value = float(parts[1])
-						E_value = float(parts[2])
+					if parts[col_dict["conf"]] not in id:
+						id.append(parts[col_dict["conf"]])
+						m_value = float(parts[col_dict["m"]])
+						E_value = float(parts[col_dict["E"]])
 						data["m"].append(m_value)
 						data["E"].append(E_value)
 				except ValueError:
@@ -59,11 +61,11 @@ def conc_input(file_path, df_out: pd.DataFrame = pd.DataFrame(columns=["T", "m_m
 	df_out = pd.concat([df_out,df_new], ignore_index=True)
 	return df_out
 
-def format_and_average(dir_path, grid_size, scaling_m, scaling_E):
+def format_and_average(dir_path, grid_size, scaling_m, scaling_E, dict_cols):
 	df_main = pd.DataFrame(columns=["T", "m_mean", "E_mean"])
 	for file_name in os.listdir(dir_path):
 		file_path = os.path.join(dir_path, file_name)
-		df_input = format_data(file_parser(file_path),scaling_m, scaling_E)
+		df_input = format_data(file_parser(file_path,dict_cols),scaling_m, scaling_E)
 		df_main = conc_input(file_path, df_main, df_input)
 	return df_main
 
