@@ -108,8 +108,8 @@ def Binder_cumulant(vol,df,flag):
     else:
         df.columns = ["conf","E","M"]
     M = df["M"]
-    binder_cum = 1 - (np.mean(M**4) / (3 * (np.mean(M**2))**2))
-    return binder_cum
+    binder_cumulant = 1 - (np.mean(M**4) / (3 * (np.mean(M**2))**2))
+    return binder_cumulant
 
 def binder_cumulant_over_Temperature(flag,vol):
     data = extract_txt(flag)
@@ -126,8 +126,8 @@ def plot_binder_cumulant_over_T(flag,vol):
     plt.plot(temp_list,binder_cumulant_list,label=f"L={vol}")
 
 volume = {"Eggwin":64, "Beaktrix":256, "Siegfried":1024}
-#chicken = ["Eggwin","Beaktrix","Siegfried"]
-chicken=["Eggwin"]
+chicken = ["Eggwin","Beaktrix","Siegfried"]
+#chicken=["Eggwin"]
 #chicken = ["Siegfried"]
 
 for flag in chicken:
