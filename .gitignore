@@ -335,3 +335,4 @@ TSWLatexianTemp*
 # Other OS specific auxiliary files
 .DS_Store
 
+.venv
