@@ -1,6 +1,6 @@
 using DelimitedFiles, DataFrames
 
-pathEggwin = "../../Ising2D/Eggwin/Ising_2D_MCMC_Ns8_Ns8/"
+pathEggwin = "./Ising2D/Eggwin/Ising_2D_MCMC_Ns8_Ns8/"
 
 function readEggwinFile(path::String)
 	files = readdir(path)
@@ -24,22 +24,17 @@ function readEggwinFile(path::String)
 		#drop columns E and M
 		select!(df, Not(["E", "M"]))
 
-
-		# Remove any rows with missing, NaN, or nothing values in any column
-		filter!(row -> all(x -> !(isnan(x) && ismissing(x) && isnothing(x)), row), df)
-
-		# Remove rows where "e" is larger than 1 or smaller than 0
-		filter!(row -> (-1 .<= row.e .<= 1), df)
-		filter!(row -> (0 .<= row.abs_m .<= 1), df)
-
-		# Remove duplicate rows
-		unique!(df)
+        filterDataframe(df)
 
 		push!(df_list, df)
 	end
 
+   
+
 	# Concatenate all DataFrames in the list into a single DataFrame
 	df = reduce(vcat, df_list)
+    # Remove duplicate rows
+    unique!(df)
 
 	# Sort by temperature 
 	sort!(df, [:T])
@@ -48,6 +43,19 @@ function readEggwinFile(path::String)
 	return df
 end
 
+ #Assuming DF already in common format
+ function filterDataframe(df)
+    # Remove any rows with missing, NaN, or nothing values in any column
+    filter!(row -> all(x -> !(isnan(x) && ismissing(x) && isnothing(x)), row), df)
+
+    # Remove rows where "e" is larger than 1 or smaller than 0
+    filter!(row -> (-1 .<= row.e .<= 1), df)
+    filter!(row -> (0 .<= row.abs_m .<= 1), df)
+
+end
+
+
 function readBeaktrixFile(path::String)
 end
-# module JuliaIsingAnalysis
+
+Eggwin_df = readEggwinFile(pathEggwin)
