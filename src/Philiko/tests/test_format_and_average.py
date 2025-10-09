@@ -4,7 +4,7 @@ import os
 import pathlib as Path
 import sys
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), ".."))
-from src.format_and_average import input_parser
+from src.format_and_average import file_parser
 
 test_data_dir = os.path.join(Path.Path(__file__).parent.parent,"test_data")
 
@@ -16,8 +16,21 @@ test_data_dir = os.path.join(Path.Path(__file__).parent.parent,"test_data")
 #(check Energy density is roughly 4 times magnetization density for first ~100 elements at lowest temperature)
 
 def test_parsed():
-	print(test_data_dir)
-	df_parsed = input_parser(os.path.join(test_data_dir,"simple_example.txt"))
+	df_parsed = file_parser(os.path.join(test_data_dir,"simple_example.txt"))
 	df_expected = pd.DataFrame({"m": [0.1,0.4], "E": [0.1,0.4]})
-	df_expected
-	assert df_parsed == df_expected
+	assert df_parsed.equals(df_expected)
+
+def test_file_parser_checks_duplicates():
+	df_parsed = file_parser(os.path.join(test_data_dir,"duplicate_example.txt"))
+	df_expected = pd.DataFrame({"m": [0.1,0.4], "E": [0.1,0.4]})
+	assert df_parsed.equals(df_expected)
+
+def test_format_data():
+	df_input = pd.DataFrame({"m": [0.1,0.4], "E": [0.1,0.4]})
+	df_expected = pd.DataFrame({"m": [0.1,0.4], "E": [0.1,0.4]})
+	df_formatted = format_data(df_input)
+	assert df_formatted.equals(df_expected)
+
+
+def test_parse_file_name():
+	pass
