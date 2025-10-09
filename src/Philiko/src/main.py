@@ -12,10 +12,15 @@ beaktrix = {"folder": os.path.join(Path.Path(__file__).parent.parent.parent.pare
           "scaling_m": 1,
           "scaling_E": 4,
 		  "col_dict": {"conf":0, "m":2, "E":1}}
+siegfried = {"folder": os.path.join(Path.Path(__file__).parent.parent.parent.parent,"Ising2D/Siegfried/two_dimensional_ising_model_markov_chain_monte_carlo_Sz32"),
+            "grid_size": 32,
+            "scaling_m": 1,
+            "scaling_E": -4,
+            "col_dict": {"conf":1, "m":3, "E":2}}
 
 fig, ax = plt.subplots()
 ax1 = ax.twinx()
-for chicken in [beaktrix, eggwin]:
+for chicken in [beaktrix, eggwin, siegfried]:
 
     df = format_and_average(chicken["folder"], chicken["grid_size"], chicken["scaling_m"], chicken["scaling_E"], chicken["col_dict"])
     ax.plot(df["T"], df["m_mean"], label="m,Eggwin", ls = "None", marker = "o")
