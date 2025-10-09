@@ -4,7 +4,7 @@ import os
 import pathlib as Path
 import sys
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), ".."))
-from src.format_and_average import file_parser, format_data, get_temp_from_filename
+from src.format_and_average import file_parser, format_data, get_temp_from_filename, conc_input
 
 test_data_dir = os.path.join(Path.Path(__file__).parent.parent,"test_data")
 
@@ -49,5 +49,12 @@ def test_get_temp_from_filename():
 
 
 
-def test_parse_file_name():
-	pass
+def test_concatenate():
+	df_input = pd.DataFrame({"m": [0.1,0.4], "E": [0.1,0.4]})
+	df_output = pd.DataFrame(columns=["T", "m_mean", "E_mean"])
+	df_output = conc_input(os.path.join(test_data_dir,"Temp1.5.txt"), pd.DataFrame(columns=["T", "m_mean", "E_mean"]), pd.DataFrame({"m": [0.1,0.4], "E": [0.1,0.4]}))
+	df_expected = pd.DataFrame({"T": [1.5], "m_mean": [0.25], "E_mean": [0.25]})
+	assert df_output.equals(df_expected)
+	df_output = conc_input(os.path.join(test_data_dir,"Temp2.5.txt"), df_output, pd.DataFrame({"m": [0.2,0.5], "E": [0.2,0.5]}))
+	df_expected = pd.DataFrame({"T": [1.5, 2.5], "m_mean": [0.25, 0.35], "E_mean": [0.25, 0.35]})
+	assert df_output.equals(df_expected)

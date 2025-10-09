@@ -55,7 +55,8 @@ def get_temp_from_filename(file_path):
 def conc_input(file_path, df_out: pd.DataFrame = pd.DataFrame(columns=["T", "m_mean", "E_mean"]), df_input: pd.DataFrame = pd.DataFrame(columns=["m", "E"])):
 	T = get_temp_from_filename(file_path)
 	m_mean, E_mean = average_m_and_E(df_input)
-	df_out = df_out.append({"T": T, "m_mean": m_mean, "E_mean": E_mean}, ignore_index=True)
+	df_new = pd.DataFrame({"T": [T], "m_mean": [m_mean], "E_mean": [E_mean]})
+	df_out = pd.concat([df_out,df_new], ignore_index=True)
 	return df_out
 
 def format_and_average(dir_path, grid_size, scaling_m, scaling_E):
