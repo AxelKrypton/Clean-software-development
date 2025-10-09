@@ -10,7 +10,7 @@ warnings.filterwarnings("ignore", category=SyntaxWarning)
 
 #base_path = "/Users/vilijadejonge/Downloads/Clean-software-development/Ising2D/" 
 base_path = os.path.join(os.getcwd())
-base_path= base_path + "/"
+base_path= base_path + "/src/"
 print(f"base path check if in Ising2D: {base_path}")
 
 
@@ -59,7 +59,7 @@ for file in tqdm(files_list[0], desc="Processing eggwin", unit="folder"):
     M_original = df["M"]
     E_correct = M_original
     M_correct = E_original
-    E_correct_norm = E_correct / (4 * V)
+    E_correct_norm = -E_correct / (4 * V)
     M_correct_norm = M_correct / V
 
     file_name = os.path.splitext(os.path.basename(file_path))[0]  
@@ -78,7 +78,7 @@ for file in tqdm(files_list[0], desc="Processing eggwin", unit="folder"):
 
 
     #print(f"File saved to: {out_file}")
-
+nearest_neighbors = 4
 #Beatrix restructuing data and fixing errors
 for file in tqdm(files_list[1], desc="Processing beatrix", unit="folder"):
     file_path = os.path.join(folder_path_list[1], file)
@@ -86,8 +86,8 @@ for file in tqdm(files_list[1], desc="Processing beatrix", unit="folder"):
 
     E_correct = df["E"]
     M_correct =  df["M"]
-    E_correct_norm = np.abs(E_correct) #they had negativ convention
-    M_correct_norm = M_correct 
+    E_correct_norm = E_correct / nearest_neighbors
+    M_correct_norm = M_correct
 
     file_name = os.path.splitext(os.path.basename(file_path))[0]
 
@@ -113,7 +113,7 @@ for file in tqdm(files_list[2], desc="Processing siegfried", unit="folder"):
 
     E_correct = df["E"]
     M_correct =  df["M"]
-    E_correct_norm = E_correct
+    E_correct_norm = -E_correct /nearest_neighbors 
     M_correct_norm = M_correct 
 
     file_name = os.path.splitext(os.path.basename(file_path))[0]  
