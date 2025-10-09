@@ -1,4 +1,4 @@
-using DelimitedFiles, DataFrames
+using DelimitedFiles, DataFrames, CairoMakie, Statistics
 
 function filterInvalidRows!(df)
 	# Remove any rows with non-numeric, missing, NaN, or nothing values in any column
@@ -166,5 +166,139 @@ Siegfried_df = readSiegfriedFile(pathSiegfried)
 
 # Combine all DataFrames
 combined_df = vcat(Eggwin_df, Beaktrix_df, Siegfried_df)
+
+
+function bootstrap(df, n_resamples::Int)
+	n = nrow(df)
+
+	resample_energies = Float64[]
+	resample_magnetizations = Float64[]
+	resample_chis = Float64[]
+	resample_binders = Float64[]
+
+	for _ in 1:n_resamples
+		resample_indices = rand(1:n, n)  # Sample with replacement
+		resample = df[resample_indices, :]
+
+		push!(resample_energies, mean(resample.e))
+		push!(resample_magnetizations, mean(resample.abs_m))
+
+		chi, binder = computeChiAndBinder(resample)
+		push!(resample_chis, chi)
+		push!(resample_binders, binder)
+	end
+
+	return mean(resample_energies), std(resample_energies), mean(resample_magnetizations), std(resample_magnetizations), mean(resample_chis), std(resample_chis), mean(resample_binders), std(resample_binders)
+end
+
+function computeChiAndBinder(df)
+	@assert all(df.T .== df.T[1]) "All temperature values in the dataframe must be the same to compute susceptibility."
+	@assert all(df.L .== df.L[1]) "All L values in the dataframe must be the same to compute susceptibility."
+
+	T = df.T[1]
+	V = df.L[1]^2
+
+	mean_m = mean(df.abs_m)
+	mean_m2 = mean(df.abs_m .^ 2)
+
+	chi = V/T * (mean_m2 - mean_m^2)
+
+	mean_m4 = mean(df.abs_m .^ 4)
+	B = 1 - (mean_m4 / (3 * mean_m2^2))
+
+	return chi, B
+end
+
+
+function createAvgPlots(df)
+	fig1 = Figure()
+	ax1 = Axis(fig1[1, 1], xlabel = "Temperature T", ylabel = "Energy per spin e", title = "Energy per spin vs Temperature")
+
+	fig2 = Figure()
+	ax2 = Axis(fig2[1, 1], xlabel = "Temperature T", ylabel = "Absolute value of Magnetization per spin |m|", title = "Magnetization per spin vs Temperature")
+
+	fig3 = Figure()
+	ax3 = Axis(fig3[1, 1], xlabel = "Temperature T", ylabel = "Susceptibility χ", title = "Susceptibility vs Temperature")
+
+	fig4 = Figure()
+	ax4 = Axis(fig4[1, 1], xlabel = "Temperature T", ylabel = "Binder Cumulant B", title = "Binder Cumulant vs Temperature")
+
+	gdf = groupby(df, :L)
+	for subdf in gdf
+		# perform bootstrap for each temperature
+		subdf_grouped_by_temperature = groupby(subdf, :T)
+
+		T = Float64[]
+		mean_energy = Float64[]
+		std_energy = Float64[]
+
+		mean_magnetization = Float64[]
+		std_magnetization = Float64[]
+
+		mean_chis = Float64[]
+		std_chis = Float64[]
+
+		mean_binders = Float64[]
+		std_binders = Float64[]
+
+		for subsubdf in subdf_grouped_by_temperature
+			mean_e, std_e, mean_m, std_m, mean_chi, std_chi, mean_binder, std_binder = bootstrap(subsubdf, 1000)
+
+			push!(T, subsubdf.T[1])
+
+			push!(mean_energy, mean_e)
+			push!(std_energy, std_e)
+
+			push!(mean_magnetization, mean_m)
+			push!(std_magnetization, std_m)
+
+			push!(mean_chis, mean_chi)
+			push!(std_chis, std_chi)
+
+			push!(mean_binders, mean_binder)
+			push!(std_binders, std_binder)
+		end
+
+		lines!(ax1, T, mean_energy; label = "L = $(subdf.L[1])")
+		errorbars!(ax1, T, mean_energy, std_energy, whiskerwidth = 5)
+
+		lines!(ax2, T, mean_magnetization; label = "L = $(subdf.L[1])")
+		errorbars!(ax2, T, mean_magnetization, std_magnetization, whiskerwidth = 5)
+
+		lines!(ax3, T, mean_chis; label = "L = $(subdf.L[1])")
+		errorbars!(ax3, T, mean_chis, std_chis, whiskerwidth = 5)
+
+		lines!(ax4, T, mean_binders; label = "L = $(subdf.L[1])")
+		errorbars!(ax4, T, mean_binders, std_binders, whiskerwidth = 5)
+
+	end
+
+	axislegend(ax1; position = :rb)
+	axislegend(ax2; position = :rt)
+	axislegend(ax3; position = :rt)
+	axislegend(ax4; position = :rt)
+
+	display(fig1)
+	save("avg_energy_vs_temperature.pdf", fig1)
+
+	display(fig2)
+	save("avg_magnetization_vs_temperature.pdf", fig2)
+
+	display(fig3)
+	save("susceptibility_vs_temperature.pdf", fig3)
+
+	display(fig4)
+	save("binder_cumulant_vs_temperature.pdf", fig4)
+
+	return nothing
+end
+
+
+
+
+
+
+
+
 
 #TODO: Check that the combined dataframe fulfills alls requirements (only numeric values, no NaN, no Inf, no missing, no nothing, no duplicates, e in [-1, 1], abs_m in [0, 1] etc.)
