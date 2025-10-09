@@ -26,12 +26,17 @@ def test_file_parser_checks_duplicates():
 	assert df_parsed.equals(df_expected)
 
 def test_format_data():
-	df_input = pd.DataFrame({"m": [0.1,0.4], "E": [0.1,0.4]})
+	df_input = file_parser(os.path.join(test_data_dir,"format_example.txt"))
 	df_expected = pd.DataFrame({"m": [0.1,0.4], "E": [0.1,0.4]})
-	df_formatted = format_data(df_input)
-	for line in df_formatted:
-		assert -1 <= line["m"] <= 1
-		assert -1 <= line["E"] <= 1
+	df_formatted = format_data(df_input, 64, 256)
+	for index, line in df_formatted.iterrows():
+		assert -1 <= float(line["m"]) <= 1
+		assert -1 <= float(line["E"]) <= 1
+	df_formatted = format_data(df_input, 64, -256)
+	for index, line in df_formatted.iterrows():
+		assert -1 <= float(line["m"]) <= 1
+		assert -1 <= float(line["E"]) <= 1
+
 
 
 def test_parse_file_name():
