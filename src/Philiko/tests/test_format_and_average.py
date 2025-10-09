@@ -2,7 +2,8 @@ import pytest
 import pandas as pd
 import os
 import pathlib as Path
-
+import sys
+sys.path.insert(1, os.path.join(os.path.dirname(__file__), ".."))
 from src.format_and_average import input_parser
 
 test_data_dir = os.path.join(Path.Path(__file__).parent.parent,"test_data")
