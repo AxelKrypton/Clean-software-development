@@ -1,9 +1,22 @@
-using DelimitedFiles, DataFrames, CairoMakie, Statistics
+module JuliaIsingAnalysis
 
-function filterInvalidRows!(df)
-	# Remove any rows with non-numeric, missing, NaN, or nothing values in any column
+using DelimitedFiles
+using DataFrames
+using CairoMakie
+using Statistics
+
+export main, readEggwinFile, readBeaktrixFile, readSiegfriedFile, createPlots, computeChiAndBinder, bootstrap, PATH_TO_BEAKTRIX_DATA, PATH_TO_EGGWIN_DATA, PATH_TO_SIEGFRIED_DATA
+
+const PATH_TO_DATA_DIRECTORY = joinpath(@__DIR__, "..", "..", "..", "Ising2D")
+const PATH_TO_EGGWIN_DATA = joinpath(PATH_TO_DATA_DIRECTORY, "Eggwin", "Ising_2D_MCMC_Ns8_Ns8")
+const PATH_TO_BEAKTRIX_DATA = joinpath(PATH_TO_DATA_DIRECTORY, "Beaktrix", "ising2d_L16")
+const PATH_TO_SIEGFRIED_DATA = joinpath(PATH_TO_DATA_DIRECTORY, "Siegfried", "two_dimensional_ising_model_markov_chain_monte_carlo_Sz32")
+
+"""
+Removes any duplicate rows and rows with non-numeric data (including NaN, Inf, missing, nothing) from the given DataFrame.
+"""
+function filterInvalidRows!(df::DataFrame)
 	filter!(row -> all(x -> (isa(x, Number) && !isinf(x) && !isnan(x) && !ismissing(x) && !isnothing(x)), row), df)
-	# Remove duplicate rows
 	unique!(df)
 end
 
@@ -58,8 +71,6 @@ function readEggwinFile(path::String)
 
 	return df
 end
-
-
 
 function readBeaktrixFile(path::String)
 	files = readdir(path)
@@ -156,18 +167,6 @@ function readSiegfriedFile(path::String)
 	return df
 end
 
-pathEggwin = "../../Ising2D/Eggwin/Ising_2D_MCMC_Ns8_Ns8/"
-pathBeaktrix = "../../Ising2D/Beaktrix/ising2d_L16"
-pathSiegfried = "../../Ising2D/Siegfried/two_dimensional_ising_model_markov_chain_monte_carlo_Sz32/"
-
-Eggwin_df = readEggwinFile(pathEggwin)
-Beaktrix_df = readBeaktrixFile(pathBeaktrix)
-Siegfried_df = readSiegfriedFile(pathSiegfried)
-
-# Combine all DataFrames
-combined_df = vcat(Eggwin_df, Beaktrix_df, Siegfried_df)
-
-
 function bootstrap(df, n_resamples::Int)
 	n = nrow(df)
 
@@ -208,7 +207,6 @@ function computeChiAndBinder(df)
 
 	return chi, B
 end
-
 
 function createPlots(df)
 	fig1 = Figure()
@@ -299,12 +297,23 @@ function createPlots(df)
 	return nothing
 end
 
+function main()
+	Eggwin_df = readEggwinFile(PATH_TO_EGGWIN_DATA)
+	Beaktrix_df = readBeaktrixFile(PATH_TO_BEAKTRIX_DATA)
+	Siegfried_df = readSiegfriedFile(PATH_TO_SIEGFRIED_DATA)
+
+	combined_df = vcat(Eggwin_df, Beaktrix_df, Siegfried_df)
+	unique!(combined_df) # Ensure no duplicates between datasets
+
+	createPlots(combined_df)
+end
+
+@static if (abspath(PROGRAM_FILE) == @__FILE__)
+	main()
+end
+
+
+end
 
 
 
-
-
-
-
-
-#TODO: Check that the combined dataframe fulfills alls requirements (only numeric values, no NaN, no Inf, no missing, no nothing, no duplicates, e in [-1, 1], abs_m in [0, 1] etc.)
