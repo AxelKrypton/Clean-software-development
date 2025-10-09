@@ -21,7 +21,7 @@ def file_parser(file_path):
 						data["E"].append(E_value)
 				except ValueError:
 					continue
-	return format_data(pd.DataFrame(data))
+	return pd.DataFrame(data)
 
 def format_data(df):
 	pass

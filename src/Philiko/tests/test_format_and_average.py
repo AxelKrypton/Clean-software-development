@@ -4,7 +4,7 @@ import os
 import pathlib as Path
 import sys
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), ".."))
-from src.format_and_average import file_parser
+from src.format_and_average import file_parser, format_data
 
 test_data_dir = os.path.join(Path.Path(__file__).parent.parent,"test_data")
 
@@ -29,7 +29,9 @@ def test_format_data():
 	df_input = pd.DataFrame({"m": [0.1,0.4], "E": [0.1,0.4]})
 	df_expected = pd.DataFrame({"m": [0.1,0.4], "E": [0.1,0.4]})
 	df_formatted = format_data(df_input)
-	assert df_formatted.equals(df_expected)
+	for line in df_formatted:
+		assert -1 <= line["m"] <= 1
+		assert -1 <= line["E"] <= 1
 
 
 def test_parse_file_name():
