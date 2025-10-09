@@ -1,8 +1,12 @@
 using DelimitedFiles, DataFrames
 
+<<<<<<< HEAD
 pathEggwin = "../../Ising2D/Eggwin/Ising_2D_MCMC_Ns8_Ns8/"
 pathBeaktrix = "../../Ising2D/Beaktrix/ising2d_L16"
 pathSiegfried = "../../Ising2D/Siegfried/two_dimensional_ising_model_markov_chain_monte_carlo_Sz32/"
+=======
+pathEggwin = "./Ising2D/Eggwin/Ising_2D_MCMC_Ns8_Ns8/"
+>>>>>>> 563d32cddd3c7511daaa144ba075507ef53f57c0
 
 function readEggwinFile(path::String)
 	files = readdir(path)
@@ -30,18 +34,26 @@ function readEggwinFile(path::String)
 		#drop columns E and M
 		select!(df, Not(["E", "M"]))
 
+<<<<<<< HEAD
 		# Remove rows where "e" is larger than 1 or smaller than 0
 		filter!(row -> (-1 .<= row.e .<= 1), df)
 		filter!(row -> (0 .<= row.abs_m .<= 1), df)
 
 		# Check for duplicates within the file
 		unique!(df)
+=======
+        filterDataframe(df)
+>>>>>>> 563d32cddd3c7511daaa144ba075507ef53f57c0
 
 		push!(df_list, df)
 	end
 
+   
+
 	# Concatenate all DataFrames in the list into a single DataFrame
 	df = reduce(vcat, df_list)
+    # Remove duplicate rows
+    unique!(df)
 
 	# Check for duplicates between files
 	unique!(df)
@@ -53,6 +65,19 @@ function readEggwinFile(path::String)
 	return df
 end
 
+<<<<<<< HEAD
+=======
+ #Assuming DF already in common format
+ function filterDataframe(df)
+    # Remove any rows with missing, NaN, or nothing values in any column
+    filter!(row -> all(x -> !(isnan(x) && ismissing(x) && isnothing(x)), row), df)
+
+    # Remove rows where "e" is larger than 1 or smaller than 0
+    filter!(row -> (-1 .<= row.e .<= 1), df)
+    filter!(row -> (0 .<= row.abs_m .<= 1), df)
+
+end
+>>>>>>> 563d32cddd3c7511daaa144ba075507ef53f57c0
 
 
 function readBeaktrixFile(path::String)
@@ -103,6 +128,7 @@ function readBeaktrixFile(path::String)
 	return df
 end
 
+<<<<<<< HEAD
 function readSiegfriedFile(path::String)
 	files = readdir(path)
 
@@ -160,3 +186,6 @@ function readSiegfriedFile(path::String)
 	return df
 end
 
+=======
+Eggwin_df = readEggwinFile(pathEggwin)
+>>>>>>> 563d32cddd3c7511daaa144ba075507ef53f57c0
