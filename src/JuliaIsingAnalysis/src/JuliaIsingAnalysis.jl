@@ -210,7 +210,7 @@ function computeChiAndBinder(df)
 end
 
 
-function createAvgPlots(df)
+function createPlots(df)
 	fig1 = Figure()
 	ax1 = Axis(fig1[1, 1], xlabel = "Temperature T", ylabel = "Energy per spin e", title = "Energy per spin vs Temperature")
 
@@ -222,6 +222,9 @@ function createAvgPlots(df)
 
 	fig4 = Figure()
 	ax4 = Axis(fig4[1, 1], xlabel = "Temperature T", ylabel = "Binder Cumulant B", title = "Binder Cumulant vs Temperature")
+
+	fig5 = Figure()
+	ax5 = Axis(fig5[1, 1], xlabel = "Temperature T", ylabel = "Binder Cumulant Ratios B(L)/B(2 L)", title = "Binder Cumulant Ratios vs Temperature")
 
 	gdf = groupby(df, :L)
 	for subdf in gdf
@@ -259,6 +262,7 @@ function createAvgPlots(df)
 			push!(std_binders, std_binder)
 		end
 
+
 		lines!(ax1, T, mean_energy; label = "L = $(subdf.L[1])")
 		errorbars!(ax1, T, mean_energy, std_energy, whiskerwidth = 5)
 
@@ -270,13 +274,15 @@ function createAvgPlots(df)
 
 		lines!(ax4, T, mean_binders; label = "L = $(subdf.L[1])")
 		errorbars!(ax4, T, mean_binders, std_binders, whiskerwidth = 5)
-
 	end
 
 	axislegend(ax1; position = :rb)
 	axislegend(ax2; position = :rt)
 	axislegend(ax3; position = :rt)
 	axislegend(ax4; position = :rt)
+
+	# Add vertical line at critical temperature
+	vlines!.([ax1, ax2, ax3, ax4], [2/log(1+sqrt(2))], color = :red, linestyle = :dash)
 
 	display(fig1)
 	save("avg_energy_vs_temperature.pdf", fig1)
