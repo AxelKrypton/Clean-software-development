@@ -1,0 +1,11 @@
+author: "string"
+folder_name: "string"
+column_names : []
+data:
+  temperature:
+  T_value:
+    column_1: []
+    column_2: []
+    column_3: []
+    column_4: []
+
