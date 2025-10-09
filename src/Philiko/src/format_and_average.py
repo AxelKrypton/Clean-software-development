@@ -1,8 +1,6 @@
 import pandas as pd
 import os
 
-df_main = pd.DataFrame()
-
 ####### TODO: Write in README
 #user has to change these values according to input format
 #grid_size = 8
@@ -54,13 +52,21 @@ def get_temp_from_filename(file_path):
 	return float(temp)
 
 
-def conc_input(file_path):
+def conc_input(file_path, df_out: pd.DataFrame = pd.DataFrame(columns=["T", "m_mean", "E_mean"]), df_input: pd.DataFrame = pd.DataFrame(columns=["m", "E"])):
 	T = get_temp_from_filename(file_path)
-	m_mean, E_mean = average_m_and_E(file_parser(file_path))
+	m_mean, E_mean = average_m_and_E(df_input)
+	df_out = df_out.append({"T": T, "m_mean": m_mean, "E_mean": E_mean}, ignore_index=True)
+	return df_out
 
-def format_and_average(file_path, grid_size, scaling_m, scaling_E):
-	df_input = file_parser(file_path)
-	df_main = conc_input(file_path)
-	df_cleaned = format_data(df, scaling_m, scaling_E)
-	df_averaged = average_data(df_cleaned)
-	return df_averaged
+def format_and_average(dir_path, grid_size, scaling_m, scaling_E):
+	df_main = pd.DataFrame(columns=["T", "m_mean", "E_mean"])
+	for file_name in os.listdir(dir_path):
+		file_path = os.path.join(dir_path, file_name)
+		df_input = format_data(file_parser(file_path),scaling_m, scaling_E)
+		df_main = conc_input(file_path, df_main, df_input)
+	return df_main
+
+def __main__(dir_path, grid_size, scaling_m, scaling_E):
+	df = format_and_average(dir_path, grid_size, scaling_m, scaling_E)
+	print(df.head())
+	return
