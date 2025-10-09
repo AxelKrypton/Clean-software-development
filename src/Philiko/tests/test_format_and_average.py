@@ -4,7 +4,7 @@ import os
 import pathlib as Path
 import sys
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), ".."))
-from src.format_and_average import file_parser
+from src.format_and_average import file_parser, format_data, get_temp_from_filename
 
 test_data_dir = os.path.join(Path.Path(__file__).parent.parent,"test_data")
 
@@ -26,10 +26,27 @@ def test_file_parser_checks_duplicates():
 	assert df_parsed.equals(df_expected)
 
 def test_format_data():
-	df_input = pd.DataFrame({"m": [0.1,0.4], "E": [0.1,0.4]})
+	df_input = file_parser(os.path.join(test_data_dir,"format_example.txt"))
 	df_expected = pd.DataFrame({"m": [0.1,0.4], "E": [0.1,0.4]})
-	df_formatted = format_data(df_input)
-	assert df_formatted.equals(df_expected)
+	df_formatted = format_data(df_input, 64, 256)
+	for index, line in df_formatted.iterrows():
+		assert -1 <= float(line["m"]) <= 1
+		assert -1 <= float(line["E"]) <= 1
+	df_formatted = format_data(df_input, 64, -256)
+	for index, line in df_formatted.iterrows():
+		assert -1 <= float(line["m"]) <= 1
+		assert -1 <= float(line["E"]) <= 1
+
+def test_get_temp_from_filename():
+	file_name = os.path.join(test_data_dir,"Temp1.5.txt")
+	assert 1.5 == get_temp_from_filename(file_name)
+	file_name = os.path.join(test_data_dir,"T1.54.txt")
+	assert 1.54 == get_temp_from_filename(file_name)
+	file_name = os.path.join(test_data_dir,"T.54.txt")
+	assert 0.54 == get_temp_from_filename(file_name)
+	file_name = os.path.join(test_data_dir,"T54.txt")
+	assert 54.0 == get_temp_from_filename(file_name)
+
 
 
 def test_parse_file_name():
