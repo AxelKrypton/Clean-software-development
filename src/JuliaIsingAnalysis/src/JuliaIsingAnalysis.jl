@@ -3,7 +3,6 @@ using DelimitedFiles, DataFrames
 function filterInvalidRows!(df)
 	# Remove any rows with non-numeric, missing, NaN, or nothing values in any column
 	filter!(row -> all(x -> (isa(x, Number) && !isinf(x) && !isnan(x) && !ismissing(x) && !isnothing(x)), row), df)
-
 	# Remove duplicate rows
 	unique!(df)
 end
@@ -31,6 +30,11 @@ function readEggwinFile(path::String)
 		df[!, "L"] .= L
 
 		filterInvalidRows!(df)
+
+		# Check that Configuration number can be converted to integer
+		@assert all(isinteger.(df.Configuration)) "Configuration number in file $(file) contains non-integer values."
+		# Convert Configuration number from float to integer
+		df[!, :Configuration] = convert.(Int64, df[!, :Configuration])
 
 		# Normalization
 		V = L*L
@@ -73,6 +77,11 @@ function readBeaktrixFile(path::String)
 		df[!, "L"] .= L
 
 		filterInvalidRows!(df)
+
+		# Check that Configuration number can be converted to integer
+		@assert all(isinteger.(df.Configuration)) "Configuration number in file $(file) contains non-integer values."
+		# Convert Configuration number from float to integer
+		df[!, :Configuration] = convert.(Int64, df[!, :Configuration])
 
 		# Normalization
 		df[!, "e"] .= df[!, "E"] ./ 4
@@ -120,6 +129,11 @@ function readSiegfriedFile(path::String)
 
 		filterInvalidRows!(df)
 
+		# Check that Configuration number can be converted to integer
+		@assert all(isinteger.(df.Configuration)) "Configuration number in file $(file) contains non-integer values."
+		# Convert Configuration number from float to integer
+		df[!, :Configuration] = convert.(Int64, df[!, :Configuration])
+
 		# Normalization
 		df[!, "e"] .= -df[!, "E"] ./ 4
 		df[!, "abs_m"] .= abs.(df[!, "M"] ./ 1)
@@ -149,3 +163,8 @@ pathSiegfried = "../../Ising2D/Siegfried/two_dimensional_ising_model_markov_chai
 Eggwin_df = readEggwinFile(pathEggwin)
 Beaktrix_df = readBeaktrixFile(pathBeaktrix)
 Siegfried_df = readSiegfriedFile(pathSiegfried)
+
+# Combine all DataFrames
+combined_df = vcat(Eggwin_df, Beaktrix_df, Siegfried_df)
+
+#TODO: Check that the combined dataframe fulfills alls requirements (only numeric values, no NaN, no Inf, no missing, no nothing, no duplicates, e in [-1, 1], abs_m in [0, 1] etc.)
