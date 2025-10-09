@@ -15,10 +15,10 @@ def get_data_loader_siegfried() -> data_type:
     return loader_siegfried()
 
 
-def test_loader_siegfried_l(get_data_loader_siegfried: data_type) -> None:
+def test_loader_siegfried_lattice_size(get_data_loader_siegfried: data_type) -> None:
     l_out, _, _, _ = get_data_loader_siegfried
-    expected_l: int = 32
-    assert l_out == expected_l
+    expected_lattice_size: int = 32
+    assert l_out == expected_lattice_size
 
 
 def test_loader_siegfried_num_files(get_data_loader_siegfried: data_type) -> None:

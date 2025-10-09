@@ -6,7 +6,7 @@ data_type = tuple[int, list[float], list[np.ndarray], list[np.ndarray]]
 
 
 def loader_siegfried() -> data_type:
-    """Load data from siegfreid files.
+    """Load data from siegfried files.
 
     Special which have to be covered for loading this files:
     - Datapoints per file is not constant
@@ -42,7 +42,7 @@ def loader_siegfried() -> data_type:
         energy_density.append(data[:, 2])
         magnetization.append(data[:, 3])
 
-    lattice_size: int = 32  # TODO: is this called the lattice_size?
+    lattice_size: int = 32
     return lattice_size, temperature, energy_density, magnetization
 
 
