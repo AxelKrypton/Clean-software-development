@@ -49,6 +49,8 @@ def test_length_file_t2p25(get_data_loader_beaktrix: data_type) -> None:
 
 def test_last_line_file_t2p25(get_data_loader_beaktrix: data_type) -> None:
     _, _, energy_densities, magnetizations = get_data_loader_beaktrix
+    # check file no 8 (T = 2.25) because it has a corrupted last line
+    # that contains only one column / value
     file_index_t2p25 = 8
     np.testing.assert_almost_equal(energy_densities[file_index_t2p25][-1], -2.84375)
     np.testing.assert_almost_equal(magnetizations[file_index_t2p25][-1], 0.75)

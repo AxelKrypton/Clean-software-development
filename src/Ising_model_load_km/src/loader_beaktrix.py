@@ -69,8 +69,9 @@ def loader_beaktrix() -> data_type:
             energy_densities.append(data[:, 1])
             magnetizations.append(data[:, 2])
 
-    # TODO check for normalization
+    # TODO(karina): check for normalization
     return beaktrix_l, temperatures, energy_densities, magnetizations
 
 
-loader_beaktrix()
+if __name__ == "__main__":
+    loader_beaktrix()
